@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Doer</string>
+    <string name="home">Home</string>
+    <string name="note">Note</string>
+    <string name="add">Add</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="deleted">Deleted</string>
+    <string name="edit">Edit</string>
+    <string name="dismiss">Dismiss</string>
+</resources>

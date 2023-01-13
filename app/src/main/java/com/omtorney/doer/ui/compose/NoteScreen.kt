@@ -1,8 +1,9 @@
 package com.omtorney.doer.ui.compose
 
 import android.widget.Toast
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -16,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -43,22 +45,8 @@ fun NoteScreen(
                 }
             },
             backgroundColor = MaterialTheme.colors.primary,
-            contentColor = Color.White,
             actions = {
-                Button(
-                    onClick = {
-                        note?.let { note ->
-                            if (note.id == null)
-                                viewModel.addNote(noteText)
-                            else
-                                viewModel.editNote(noteText)
-                        } ?: run { viewModel.addNote(noteText) }
-                        onClickClose()
-                    },
-                ) {
-                    Text(text = stringResource(R.string.save))
-                }
-                Button(
+                IconButton(
                     onClick = {
                         note?.let { viewModel.deleteNote(it) }
                         Toast.makeText(
@@ -69,21 +57,39 @@ fun NoteScreen(
                         onClickClose()
                     }
                 ) {
-                    Text(text = stringResource(R.string.delete))
+                    Icon(
+                        painter = painterResource(R.drawable.ic_round_delete_outline),
+                        contentDescription = stringResource(R.string.delete)
+                    )
+                }
+                IconButton(
+                    onClick = {
+                        note?.let { note ->
+                            if (note.id == null)
+                                viewModel.addNote(noteText)
+                            else
+                                viewModel.editNote(noteText)
+                        } ?: run { viewModel.addNote(noteText) }
+                        onClickClose()
+                    },
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_round_save_alt),
+                        contentDescription = stringResource(R.string.save)
+                    )
                 }
             }
         )
     }) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .background(color = MaterialTheme.colors.background)
-        ) {
+        Column(modifier = Modifier.padding(paddingValues)) {
             BasicTextField(
                 value = noteText,
                 onValueChange = { text ->
                     noteText = text
                 },
+                textStyle = MaterialTheme.typography.body1.copy(
+                    color = MaterialTheme.colors.onBackground
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
@@ -92,7 +98,7 @@ fun NoteScreen(
             Text(
                 text = "Note id: ${note?.id}",
                 textAlign = TextAlign.Center,
-                color = Color.Gray.copy(alpha = 0.5f),
+                color = Color.Gray.copy(alpha = 0.3f),
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         }

@@ -1,4 +1,4 @@
-package com.omtorney.doer.presentation
+package com.omtorney.doer.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

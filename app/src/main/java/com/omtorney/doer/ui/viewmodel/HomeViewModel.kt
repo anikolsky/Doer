@@ -1,12 +1,12 @@
-package com.omtorney.doer.presentation
+package com.omtorney.doer.ui.viewmodel
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.omtorney.doer.data.Repository
 import com.omtorney.doer.data.database.NoteDao
+import com.omtorney.doer.domain.Repository
 import com.omtorney.doer.model.Note
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,10 +24,24 @@ class HomeViewModel @Inject constructor(
     val selectedNote: State<Note?>
         get() = _selectedNote
 
+    private var deletedNote: Note? = null
+
     val allNotes = this.noteDao.getAll().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
         initialValue = emptyList()
+    )
+
+    val lineSeparatorState = repository.getLineSeparatorState.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = true
+    )
+
+    val accentColor = repository.getAccentColor.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = repository.getInitialColor
     )
 
     fun addNote(noteText: String) = viewModelScope.launch {
@@ -40,8 +54,19 @@ class HomeViewModel @Inject constructor(
         repository.updateNote(note)
     }
 
-    fun deleteNote(note: Note) = viewModelScope.launch {
-        repository.deleteNote(note)
+    fun deleteNote(note: Note) {
+        deletedNote = note
+        viewModelScope.launch {
+            repository.deleteNote(note)
+        }
+    }
+
+    fun undoDeleteNote() {
+        if (deletedNote != null)
+            viewModelScope.launch {
+                repository.addNote(deletedNote!!)
+                deletedNote = null
+            }
     }
 
     fun selectNote(note: Note) {

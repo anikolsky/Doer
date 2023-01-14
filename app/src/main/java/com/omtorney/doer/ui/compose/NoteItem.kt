@@ -27,13 +27,14 @@ import com.omtorney.doer.ui.theme.DoerTheme
 @Composable
 fun NoteItem(
     note: Note,
-    onNoteClick: (Note) -> Unit,
+    onNoteClick: () -> Unit,
     onLongClick: (Note) -> Unit,
     dismissState: DismissState,
     modifier: Modifier = Modifier
 ) {
     SwipeToDismiss(
         state = dismissState,
+        dismissThresholds = { FractionalThreshold(0.25f) },
         background = {
             val direction = dismissState.dismissDirection ?: return@SwipeToDismiss
             val alignment = when (direction) {
@@ -71,7 +72,7 @@ fun NoteItem(
             modifier = Modifier
                 .background(color = MaterialTheme.colors.background)
                 .combinedClickable(
-                    onClick = { onNoteClick(note) },
+                    onClick = { onNoteClick() },
                     onLongClick = { onLongClick(note) }
                 )
 

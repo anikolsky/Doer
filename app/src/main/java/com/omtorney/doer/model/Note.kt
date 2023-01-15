@@ -35,20 +35,20 @@ sealed class NotePriority(
     val status: String,
     val color: Color
 ) {
-    object High : NotePriority("High", Color(Constants.highPriorityColor))
-    object Medium : NotePriority("Medium", Color(Constants.mediumPriorityColor))
-    object Low : NotePriority("Low", Color(Constants.lowPriorityColor))
-    object No : NotePriority("No", Color.Gray)
+    object High : NotePriority("1", Color(Constants.highPriorityColor))
+    object Medium : NotePriority("2", Color(Constants.mediumPriorityColor))
+    object Low : NotePriority("3", Color(Constants.lowPriorityColor))
+    object No : NotePriority("4", Color.Gray)
 }
 
 class NotePriorityConverter {
     @TypeConverter
     fun fromString(value: String): NotePriority {
         return when (value) {
-            "High" -> NotePriority.High
-            "Medium" -> NotePriority.Medium
-            "Low" -> NotePriority.Low
-            "No" -> NotePriority.No
+            "1" -> NotePriority.High
+            "2" -> NotePriority.Medium
+            "3" -> NotePriority.Low
+            "4" -> NotePriority.No
             else -> throw IllegalArgumentException("Invalid priority")
         }
     }

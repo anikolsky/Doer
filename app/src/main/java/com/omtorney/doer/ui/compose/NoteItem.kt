@@ -14,9 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
+import androidx.compose.ui.unit.sp
 import com.omtorney.doer.R
 import com.omtorney.doer.model.Note
 import com.omtorney.doer.model.NotePriority
@@ -36,6 +37,8 @@ fun NoteItem(
     dismissState: DismissState,
     modifier: Modifier = Modifier
 ) {
+    val followingText = note.text.lines().drop(1)
+
     SwipeToDismiss(
         state = dismissState,
         dismissThresholds = { FractionalThreshold(0.20f) },
@@ -86,14 +89,27 @@ fun NoteItem(
                     .width(4.dp)
                     .height(45.dp)
                     .background(note.priority.color)
+                    .align(Alignment.Top)
             )
-            Text(
-                text = note.text,
-                maxLines = 1,
+            Column(
                 modifier = Modifier
-                    .weight(1f)
-                    .padding(vertical = 12.dp, horizontal = 8.dp)
-            )
+                    .fillMaxWidth()
+                    .padding(vertical = 12.dp, horizontal = 12.dp)
+            ) {
+                Text(
+                    text = note.text,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                )
+                note.text.lines().drop(1).forEach {
+                    Text(
+                        text = it,
+                        color = Color.Gray,
+                        fontSize = 12.sp
+                    )
+                }
+            }
         }
     }
 }

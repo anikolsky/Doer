@@ -1,11 +1,9 @@
 package com.omtorney.doer.ui.compose
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
@@ -13,13 +11,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.omtorney.doer.R
-import com.omtorney.doer.ui.viewmodel.SettingsViewModel
 import com.omtorney.doer.ui.theme.DoerTheme
+import com.omtorney.doer.ui.viewmodel.SettingsViewModel
 
 @Composable
 fun SettingsScreen(
@@ -27,6 +26,7 @@ fun SettingsScreen(
     onClickClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     var colorMenuExpanded by remember { mutableStateOf(false) }
     val lineSeparatorState = viewModel.lineSeparatorState.collectAsState()
     val accentColor by viewModel.accentColor.collectAsState()
@@ -48,11 +48,11 @@ fun SettingsScreen(
         }
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
-            Column(modifier = Modifier.padding(8.dp)) {
+            Column(modifier = Modifier.padding(8.dp, bottom = 4.dp)) {
                 LineSeparatorSwitcher(
+                    color = accentColor,
                     checked = lineSeparatorState.value,
-                    onCheckedChange = { viewModel.setLineSeparatorState(it) },
-                    color = accentColor
+                    onCheckedChange = { viewModel.setLineSeparatorState(it) }
                 )
                 AccentColor(
                     color = accentColor,
@@ -61,16 +61,48 @@ fun SettingsScreen(
                     onClickDropdownMenuItem = { viewModel.setAccentColor(it) },
                     onDismissRequest = { colorMenuExpanded = false }
                 )
+                DatabaseActions(
+                    color = accentColor,
+                    onExportClick = {
+                        viewModel.backupDatabase()
+                        Toast.makeText(context, "Exported", Toast.LENGTH_SHORT).show()
+                    },
+                    onImportClick = { viewModel.restoreDatabase() }
+                )
             }
         }
     }
 }
 
 @Composable
+fun DatabaseActions(
+    color: Long,
+    onExportClick: () -> Unit,
+    onImportClick: () -> Unit
+) {
+    Row {
+        Text(text = "Database", modifier = Modifier.weight(1f))
+        Button(
+            onClick = onExportClick,
+            colors = ButtonDefaults.buttonColors(Color(color))
+        ) {
+            Text(text = "Export")
+        }
+        Spacer(modifier = Modifier.width(8.dp))
+        Button(
+            onClick = onImportClick,
+            colors = ButtonDefaults.buttonColors(Color(color))
+        ) {
+            Text(text = "Import")
+        }
+    }
+}
+
+@Composable
 fun LineSeparatorSwitcher(
+    color: Long,
     checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-    color: Long
+    onCheckedChange: (Boolean) -> Unit
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(
@@ -114,9 +146,7 @@ fun AccentColor(
                         onClickDropdownMenuItem(0xFF4D4D5A)
                         onDismissRequest()
                     },
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .background(Color(0xFF4D4D5A))
+                    modifier = Modifier.background(Color(0xFF4D4D5A))
                 ) {
                     Text(text = "Grey")
                 }
@@ -125,9 +155,7 @@ fun AccentColor(
                         onClickDropdownMenuItem(0xFFFFCF44)
                         onDismissRequest()
                     },
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .background(Color(0xFFFFCF44))
+                    modifier = Modifier.background(Color(0xFFFFCF44))
                 ) {
                     Text(text = "Yellow")
                 }
@@ -136,9 +164,7 @@ fun AccentColor(
                         onClickDropdownMenuItem(0xFFFF6859)
                         onDismissRequest()
                     },
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .background(Color(0xFFFF6859))
+                    modifier = Modifier.background(Color(0xFFFF6859))
                 ) {
                     Text(text = "Orange")
                 }
@@ -147,9 +173,7 @@ fun AccentColor(
                         onClickDropdownMenuItem(0xFF045D56)
                         onDismissRequest()
                     },
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .background(Color(0xFF045D56))
+                    modifier = Modifier.background(Color(0xFF045D56))
                 ) {
                     Text(text = "Dark Green")
                 }
@@ -158,9 +182,7 @@ fun AccentColor(
                         onClickDropdownMenuItem(0xFF173d96)
                         onDismissRequest()
                     },
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .background(Color(0xFF173d96))
+                    modifier = Modifier.background(Color(0xFF173d96))
                 ) {
                     Text(text = "Dark Blue")
                 }

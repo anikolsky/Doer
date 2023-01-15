@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.omtorney.doer.R
 import com.omtorney.doer.model.Note
@@ -94,42 +93,34 @@ fun NoteScreen(
                 }
             )
         }) { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues)) {
-            BasicTextField(
-                value = selectedNoteText,
-                onValueChange = { changedText ->
-                    selectedNoteText = changedText
-                },
-                textStyle = MaterialTheme.typography.body1.copy(
-                    color = MaterialTheme.colors.onBackground
-                ),
-                cursorBrush = SolidColor(MaterialTheme.colors.onBackground),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.5f)
-                    .padding(16.dp)
-            )
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(0.5.dp)
-                    .background(color = Color(accentColor).copy(alpha = 0.5f))
-            )
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-            ) {
+        Box(modifier = Modifier.padding(paddingValues)) {
+            Column(modifier = Modifier.padding(8.dp)) {
+                BasicTextField(
+                    value = selectedNoteText,
+                    onValueChange = { changedText ->
+                        selectedNoteText = changedText
+                    },
+                    textStyle = MaterialTheme.typography.body1.copy(
+                        color = MaterialTheme.colors.onBackground
+                    ),
+                    cursorBrush = SolidColor(MaterialTheme.colors.onBackground),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(8.dp)
+                        .fillMaxSize()
+                )
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(color = Color(accentColor).copy(alpha = 0.2f))
+                )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     radioOptions.forEach { option ->
-                        Text(
-                            text = option.status,
-                            color = option.color
-                        )
                         RadioButton(
                             selected = option == selectedNotePriority,
                             onClick = { selectedNotePriority = option },
@@ -142,13 +133,19 @@ fun NoteScreen(
                 }
                 Text(
                     text = "Priority: ${selectedNotePriority.status}",
-                    color = selectedNotePriority.color.copy(alpha = 0.3f),
-                    modifier = Modifier.align(Alignment.BottomStart)
+                    color = selectedNotePriority.color.copy(alpha = 0.3f)
                 )
                 Text(
                     text = "Note id: ${selectedNote?.id}",
-                    color = Color.Gray.copy(alpha = 0.3f),
-                    modifier = Modifier.align(Alignment.BottomEnd)
+                    color = Color.Gray.copy(alpha = 0.3f)
+                )
+                Text(
+                    text = "Created at ${selectedNote?.createdAt}",
+                    color = Color.Gray.copy(alpha = 0.3f)
+                )
+                Text(
+                    text = "Changed at ${selectedNote?.changedAt}",
+                    color = Color.Gray.copy(alpha = 0.3f)
                 )
             }
         }

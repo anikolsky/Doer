@@ -2,6 +2,8 @@ package com.omtorney.doer.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.omtorney.doer.domain.AccentColorUseCase
+import com.omtorney.doer.domain.LineSeparatorStateUseCase
 import com.omtorney.doer.domain.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -11,24 +13,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val repository: Repository
+    private val repository: Repository,
+    lineSeparatorStateUseCase: LineSeparatorStateUseCase,
+    accentColorUseCase: AccentColorUseCase
 ) : ViewModel() {
 
-    val lineSeparatorState = repository.getLineSeparatorState.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = true
-    )
+    val lineSeparatorState = lineSeparatorStateUseCase.execute
 
     fun setLineSeparatorState(state: Boolean) = viewModelScope.launch {
         repository.setLineSeparatorState(state)
     }
 
-    val accentColor = repository.getAccentColor.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = repository.getInitialColor
-    )
+    val accentColor = accentColorUseCase.execute
 
     fun setAccentColor(color: Long) = viewModelScope.launch {
         repository.setAccentColor(color)

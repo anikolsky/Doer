@@ -1,10 +1,7 @@
 package com.omtorney.doer.ui.compose
 
-import android.content.Context
-import android.widget.Toast
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -15,14 +12,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.omtorney.doer.R
-import com.omtorney.doer.ui.viewmodel.HomeViewModel
 import com.omtorney.doer.model.Note
+import com.omtorney.doer.model.NotePriority
+import com.omtorney.doer.ui.viewmodel.HomeViewModel
+import com.omtorney.doer.util.Constants
+import kotlinx.coroutines.launch
 
 @Composable
 fun NoteScreen(
@@ -30,39 +29,71 @@ fun NoteScreen(
     onClickClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    val selectedNote = viewModel.selectedNote.value
-    var selectedNoteText by rememberSaveable { mutableStateOf(selectedNote?.noteText ?: "") }
     val accentColor by viewModel.accentColor.collectAsState()
+    val selectedNote = viewModel.selectedNote.value
+    var selectedNoteText by rememberSaveable { mutableStateOf(selectedNote?.text ?: "") }
+    var selectedNotePriority by remember {
+        mutableStateOf(selectedNote?.priority ?: Constants.initialPriority)
+    }
+    val radioOptions = listOf(
+        NotePriority.High,
+        NotePriority.Medium,
+        NotePriority.Low,
+        NotePriority.No
+    )
+    val scaffoldState = rememberScaffoldState()
+    val coroutineScope = rememberCoroutineScope()
 
-    Scaffold(topBar = {
-        TopAppBar(
-            title = { Text(text = stringResource(R.string.edit)) },
-            navigationIcon = {
-                IconButton(onClick = onClickClose) {
-                    Icon(
-                        imageVector = Icons.Rounded.ArrowBack,
-                        contentDescription = stringResource(R.string.dismiss)
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = stringResource(R.string.edit)) },
+                navigationIcon = {
+                    IconButton(onClick = onClickClose) {
+                        Icon(
+                            imageVector = Icons.Rounded.ArrowBack,
+                            contentDescription = stringResource(R.string.dismiss)
+                        )
+                    }
+                },
+                backgroundColor = Color(accentColor),
+                actions = {
+                    DeleteIconButton(
+                        viewModel = viewModel,
+                        note = selectedNote,
+                        onClickClose = onClickClose,
+                        onDelete = {
+                            coroutineScope.launch {
+                                scaffoldState.snackbarHostState.showSnackbar(
+                                    message = "Deleted",
+                                    actionLabel = "Undo",
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
+                        }
+                    )
+                    SaveIconButton(
+                        viewModel = viewModel,
+                        note = selectedNote,
+                        text = selectedNoteText,
+                        priority = selectedNotePriority,
+                        onClickClose = onClickClose
                     )
                 }
-            },
-            backgroundColor = Color(accentColor),
-            actions = {
-                DeleteIconButton(
-                    note = selectedNote,
-                    viewModel = viewModel,
-                    context = context,
-                    onClickClose = onClickClose
-                )
-                SaveIconButton(
-                    note = selectedNote,
-                    viewModel = viewModel,
-                    noteText = selectedNoteText,
-                    onClickClose = onClickClose
-                )
-            }
-        )
-    }) { paddingValues ->
+            )
+        },
+        scaffoldState = scaffoldState,
+        snackbarHost = {
+            SnackbarHost(
+                hostState = it,
+                snackbar = { data ->
+                    SnackbarUndoDeleteNote(
+                        data = data,
+                        viewModel = viewModel
+                    )
+                }
+            )
+        }) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
             BasicTextField(
                 value = selectedNoteText,
@@ -75,35 +106,67 @@ fun NoteScreen(
                 cursorBrush = SolidColor(MaterialTheme.colors.onBackground),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f)
+                    .fillMaxHeight(0.5f)
                     .padding(16.dp)
             )
-            Text(
-                text = "Note id: ${selectedNote?.id}",
-                textAlign = TextAlign.Center,
-                color = Color.Gray.copy(alpha = 0.3f),
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(0.5.dp)
+                    .background(color = Color(accentColor).copy(alpha = 0.5f))
             )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    radioOptions.forEach { option ->
+                        Text(
+                            text = option.status,
+                            color = option.color
+                        )
+                        RadioButton(
+                            selected = option == selectedNotePriority,
+                            onClick = { selectedNotePriority = option },
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = option.color,
+                                unselectedColor = option.color
+                            )
+                        )
+                    }
+                }
+                Text(
+                    text = "Priority: ${selectedNotePriority.status}",
+                    color = selectedNotePriority.color.copy(alpha = 0.3f),
+                    modifier = Modifier.align(Alignment.BottomStart)
+                )
+                Text(
+                    text = "Note id: ${selectedNote?.id}",
+                    color = Color.Gray.copy(alpha = 0.3f),
+                    modifier = Modifier.align(Alignment.BottomEnd)
+                )
+            }
         }
     }
 }
 
 @Composable
 fun DeleteIconButton(
-    note: Note?,
     viewModel: HomeViewModel,
-    context: Context,
-    onClickClose: () -> Unit
+    note: Note?,
+    onClickClose: () -> Unit,
+    onDelete: () -> Unit
 ) {
     IconButton(
         onClick = {
             note?.let {
                 viewModel.deleteNote(it)
-                Toast.makeText(
-                    context,
-                    context.getString(R.string.deleted),
-                    Toast.LENGTH_SHORT
-                ).show()
+                onDelete()
             }
             onClickClose()
         }
@@ -117,19 +180,20 @@ fun DeleteIconButton(
 
 @Composable
 fun SaveIconButton(
-    note: Note?,
     viewModel: HomeViewModel,
-    noteText: String,
+    note: Note?,
+    text: String,
+    priority: NotePriority,
     onClickClose: () -> Unit
 ) {
     IconButton(
         onClick = {
             note?.let { note ->
                 if (note.id == null)
-                    viewModel.addNote(noteText)
+                    viewModel.addNote(text = text, priority = priority)
                 else
-                    viewModel.editNote(noteText)
-            } ?: run { viewModel.addNote(noteText) }
+                    viewModel.editNote(text = text, priority = priority)
+            } ?: run { viewModel.addNote(text = text, priority = priority) }
             onClickClose()
         },
     ) {

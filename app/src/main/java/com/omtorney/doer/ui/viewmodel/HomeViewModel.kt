@@ -6,18 +6,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omtorney.doer.data.database.NoteDao
+import com.omtorney.doer.domain.AccentColorUseCase
+import com.omtorney.doer.domain.LineSeparatorStateUseCase
 import com.omtorney.doer.domain.Repository
 import com.omtorney.doer.model.Note
+import com.omtorney.doer.model.NotePriority
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val noteDao: NoteDao,
-    private val repository: Repository
+    private val repository: Repository,
+    lineSeparatorStateUseCase: LineSeparatorStateUseCase,
+    accentColorUseCase: AccentColorUseCase
 ) : ViewModel() {
 
     private val _selectedNote: MutableState<Note?> = mutableStateOf(null)
@@ -32,25 +38,28 @@ class HomeViewModel @Inject constructor(
         initialValue = emptyList()
     )
 
-    val lineSeparatorState = repository.getLineSeparatorState.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = true
-    )
+    val lineSeparatorState = lineSeparatorStateUseCase.execute
 
-    val accentColor = repository.getAccentColor.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = repository.getInitialColor
-    )
+    val accentColor = accentColorUseCase.execute
 
-    fun addNote(noteText: String) = viewModelScope.launch {
-        val note = Note(noteText = noteText)
+    fun addNote(text: String, priority: NotePriority) = viewModelScope.launch {
+        val note = Note(
+            text = text,
+            priority = priority,
+            createdAt = LocalDateTime.now(),
+            changedAt = LocalDateTime.now(),
+        )
         repository.addNote(note)
     }
 
-    fun editNote(noteText: String) = viewModelScope.launch {
-        val note = Note(id = selectedNote.value?.id, noteText = noteText)
+    fun editNote(text: String, priority: NotePriority) = viewModelScope.launch {
+        val note = Note(
+            id = selectedNote.value?.id,
+            text = text,
+            priority = priority,
+            createdAt = selectedNote.value?.createdAt,
+            changedAt = LocalDateTime.now()
+        )
         repository.updateNote(note)
     }
 

@@ -16,9 +16,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.omtorney.doer.R
 import com.omtorney.doer.model.Note
+import com.omtorney.doer.model.NotePriority
 import com.omtorney.doer.ui.theme.DoerTheme
+import java.time.LocalDateTime
+import java.util.*
 
 @OptIn(
     ExperimentalMaterialApi::class,
@@ -34,7 +38,7 @@ fun NoteItem(
 ) {
     SwipeToDismiss(
         state = dismissState,
-        dismissThresholds = { FractionalThreshold(0.25f) },
+        dismissThresholds = { FractionalThreshold(0.20f) },
         background = {
             val direction = dismissState.dismissDirection ?: return@SwipeToDismiss
             val alignment = when (direction) {
@@ -68,17 +72,23 @@ fun NoteItem(
             }
         }
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically,
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .background(color = MaterialTheme.colors.background)
                 .combinedClickable(
                     onClick = { onNoteClick() },
                     onLongClick = { onLongClick(note) }
                 )
-
         ) {
+            Box(
+                modifier = Modifier
+                    .width(4.dp)
+                    .height(45.dp)
+                    .background(note.priority.color)
+            )
             Text(
-                text = note.noteText,
+                text = note.text,
                 maxLines = 1,
                 modifier = Modifier
                     .weight(1f)
@@ -89,10 +99,9 @@ fun NoteItem(
 }
 
 @OptIn(ExperimentalMaterialApi::class)
-@Preview(showBackground = true, widthDp = 320)
+@Preview(showBackground = true)
 @Preview(
     showBackground = true,
-    widthDp = 320,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     name = "Dark"
 )
@@ -100,7 +109,14 @@ fun NoteItem(
 fun NoteItemPreview() {
     DoerTheme {
         Surface {
-            NoteItem(Note(1, "Note text"), {}, {}, rememberDismissState())
+            NoteItem(Note(
+                1,
+                "Note text",
+                NotePriority.High,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+            ), {}, {}, rememberDismissState()
+            )
         }
     }
 }

@@ -1,8 +1,9 @@
 package com.omtorney.doer.ui.compose
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -19,10 +20,9 @@ fun DoerApp() {
     val homeViewModel: HomeViewModel = hiltViewModel()
     val settingsViewModel: SettingsViewModel = hiltViewModel()
 
-    systemUiController.setStatusBarColor(
-        color = Color.Transparent,
-        darkIcons = true
-    )
+    val accentColor by homeViewModel.accentColor.collectAsState()
+
+    systemUiController.setStatusBarColor(color = Color(accentColor))
 
     NavHost(
         navController = navController,

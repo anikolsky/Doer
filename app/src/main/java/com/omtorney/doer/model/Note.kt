@@ -1,8 +1,12 @@
 package com.omtorney.doer.model
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.compose.ui.graphics.Color
+import androidx.room.*
+import com.omtorney.doer.util.Constants
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.util.*
 
 @Entity(tableName = "notes")
 data class Note(
@@ -11,6 +15,59 @@ data class Note(
     @ColumnInfo(name = "id")
     val id: Long? = null,
 
-    @ColumnInfo(name = "note_text")
-    val noteText: String
+    @ColumnInfo(name = "text")
+    val text: String,
+
+    @TypeConverters(NotePriorityConverter::class)
+    @ColumnInfo(name = "priority")
+    val priority: NotePriority,
+
+    @TypeConverters(LocalDateTimeConverter::class)
+    @ColumnInfo(name = "created_at")
+    val createdAt: LocalDateTime?,
+
+    @TypeConverters(LocalDateTimeConverter::class)
+    @ColumnInfo(name = "changed_at")
+    val changedAt: LocalDateTime?
 )
+
+sealed class NotePriority(
+    val status: String,
+    val color: Color
+) {
+    object High : NotePriority("High", Color(Constants.highPriorityColor))
+    object Medium : NotePriority("Medium", Color(Constants.mediumPriorityColor))
+    object Low : NotePriority("Low", Color(Constants.lowPriorityColor))
+    object No : NotePriority("No", Color.Gray)
+}
+
+class NotePriorityConverter {
+    @TypeConverter
+    fun fromString(value: String): NotePriority {
+        return when (value) {
+            "High" -> NotePriority.High
+            "Medium" -> NotePriority.Medium
+            "Low" -> NotePriority.Low
+            "No" -> NotePriority.No
+            else -> throw IllegalArgumentException("Invalid priority")
+        }
+    }
+
+    @TypeConverter
+    fun notePriorityToString(priority: NotePriority): String {
+        return priority.status
+    }
+}
+
+class LocalDateTimeConverter {
+    @TypeConverter
+    fun fromTimestamp(value: Long): LocalDateTime {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(value), ZoneId.systemDefault())
+    }
+
+    @TypeConverter
+    fun dateToTimestamp(date: LocalDateTime): Long {
+        return date.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+    }
+}
+

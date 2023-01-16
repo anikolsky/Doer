@@ -1,4 +1,4 @@
-package com.omtorney.doer.ui.compose
+package com.omtorney.doer.ui.component
 
 import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
@@ -145,7 +145,7 @@ fun PinnedNoteItem(
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(vertical = 12.dp, horizontal = 16.dp)
+                    .padding(vertical = 12.dp, horizontal = 12.dp)
             ) {
                 Text(
                     text = note.text,
@@ -163,7 +163,8 @@ fun PinnedNoteItem(
             Icon(
                 painter = painterResource(R.drawable.ic_round_push_pin),
                 tint = MaterialTheme.colors.onBackground.copy(alpha = 0.5f),
-                contentDescription = "Pinned"
+                contentDescription = "Pinned",
+                modifier = Modifier.size(15.dp)
             )
         }
     }

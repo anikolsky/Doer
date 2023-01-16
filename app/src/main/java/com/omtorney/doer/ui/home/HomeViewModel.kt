@@ -1,4 +1,4 @@
-package com.omtorney.doer.ui.viewmodel
+package com.omtorney.doer.ui.home
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
@@ -50,7 +50,7 @@ class HomeViewModel @Inject constructor(
             changedAt = LocalDateTime.now(),
             isPinned = false
         )
-        repository.addNote(note)
+        repository.insertNote(note)
     }
 
     fun editNote(text: String, priority: NotePriority) = viewModelScope.launch {
@@ -62,7 +62,7 @@ class HomeViewModel @Inject constructor(
             changedAt = LocalDateTime.now(),
             isPinned = selectedNote.value?.isPinned ?: false
         )
-        repository.updateNote(note)
+        repository.insertNote(note)
     }
 
     fun deleteNote(note: Note) {
@@ -75,7 +75,7 @@ class HomeViewModel @Inject constructor(
     fun undoDeleteNote() {
         if (deletedNote != null)
             viewModelScope.launch {
-                repository.addNote(deletedNote!!)
+                repository.insertNote(deletedNote!!)
                 deletedNote = null
             }
     }
@@ -91,7 +91,7 @@ class HomeViewModel @Inject constructor(
     fun pinNote(note: Note) {
         val notePinned = note.copy(isPinned = !note.isPinned)
         viewModelScope.launch {
-            repository.updateNote(notePinned)
+            repository.insertNote(notePinned)
             _selectedNote.value = notePinned
         }
     }

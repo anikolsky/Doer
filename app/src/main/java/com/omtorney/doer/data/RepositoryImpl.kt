@@ -11,9 +11,7 @@ class RepositoryImpl @Inject constructor(
     private val noteDao: NoteDao,
     private val settingsStore: SettingsStore
 ) : Repository {
-    override suspend fun addNote(note: Note) = noteDao.insert(note)
-
-    override suspend fun updateNote(note: Note) = noteDao.update(note)
+    override suspend fun insertNote(note: Note) = noteDao.insert(note)
 
     override suspend fun deleteNote(note: Note) = noteDao.delete(note)
 

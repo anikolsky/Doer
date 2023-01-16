@@ -13,7 +13,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
-import com.omtorney.doer.ui.compose.DoerApp
 import com.omtorney.doer.ui.theme.DoerTheme
 import dagger.hilt.android.AndroidEntryPoint
 

@@ -1,4 +1,4 @@
-package com.omtorney.doer.ui.compose
+package com.omtorney.doer.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -10,8 +10,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.omtorney.doer.ui.viewmodel.HomeViewModel
-import com.omtorney.doer.ui.viewmodel.SettingsViewModel
+import com.omtorney.doer.ui.home.HomeScreen
+import com.omtorney.doer.ui.component.NoteScreen
+import com.omtorney.doer.ui.settings.SettingsScreen
+import com.omtorney.doer.ui.home.HomeViewModel
+import com.omtorney.doer.ui.settings.SettingsViewModel
 
 @Composable
 fun DoerApp() {

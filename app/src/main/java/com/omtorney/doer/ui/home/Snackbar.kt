@@ -1,11 +1,10 @@
-package com.omtorney.doer.ui.compose
+package com.omtorney.doer.ui.home
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.omtorney.doer.ui.viewmodel.HomeViewModel
 
 @Composable
 fun SnackbarUndoDeleteNote(

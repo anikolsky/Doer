@@ -1,4 +1,4 @@
-package com.omtorney.doer.ui.compose
+package com.omtorney.doer.ui.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -18,7 +18,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.omtorney.doer.R
-import com.omtorney.doer.ui.viewmodel.HomeViewModel
+import com.omtorney.doer.ui.component.NoteItem
+import com.omtorney.doer.ui.component.PinnedNoteItem
 import kotlinx.coroutines.launch
 
 @OptIn(
@@ -131,11 +132,9 @@ fun HomeScreen(
                         modifier = Modifier.animateItemPlacement()
                     )
                     if (lineSeparatorState) {
-                        Spacer(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(0.5.dp)
-                                .background(color = Color(accentColor).copy(alpha = 0.2f))
+                        Divider(
+                            thickness = 0.8.dp,
+                            color = Color(accentColor).copy(alpha = 0.3f)
                         )
                     }
                 }

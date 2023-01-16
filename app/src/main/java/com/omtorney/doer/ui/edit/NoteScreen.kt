@@ -1,4 +1,4 @@
-package com.omtorney.doer.ui.compose
+package com.omtorney.doer.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -16,9 +16,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.omtorney.doer.R
-import com.omtorney.doer.model.Note
 import com.omtorney.doer.model.NotePriority
-import com.omtorney.doer.ui.viewmodel.HomeViewModel
+import com.omtorney.doer.ui.home.HomeViewModel
+import com.omtorney.doer.ui.home.SnackbarUndoDeleteNote
 import com.omtorney.doer.util.Constants
 import kotlinx.coroutines.launch
 
@@ -155,11 +155,10 @@ fun NoteScreen(
                         .padding(8.dp)
                         .fillMaxSize()
                 )
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(color = Color(accentColor).copy(alpha = 0.2f))
+                Divider(
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    thickness = 1.dp,
+                    color = Color(accentColor).copy(alpha = 0.3f)
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,

@@ -1,4 +1,4 @@
-package com.omtorney.doer.ui.compose
+package com.omtorney.doer.ui.settings
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.widget.Toast
@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.omtorney.doer.R
 import com.omtorney.doer.ui.theme.DoerTheme
-import com.omtorney.doer.ui.viewmodel.SettingsViewModel
 
 @Composable
 fun SettingsScreen(
@@ -65,11 +64,10 @@ fun SettingsScreen(
                     onClickDropdownMenuItem = { viewModel.setAccentColor(it) },
                     onDismissRequest = { colorMenuExpanded = false }
                 )
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(color = Color(accentColor).copy(alpha = 0.5f))
+                Divider(
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    thickness = 1.dp,
+                    color = Color(accentColor).copy(alpha = 0.3f)
                 )
                 DatabaseActions(
                     color = accentColor,
@@ -116,7 +114,7 @@ fun LineSeparatorSwitcher(
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(
-            text = "Line separator",
+            text = "Divide notes",
             modifier = Modifier.weight(1f)
         )
         Switch(

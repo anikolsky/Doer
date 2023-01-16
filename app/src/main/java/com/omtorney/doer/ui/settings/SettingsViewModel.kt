@@ -1,4 +1,4 @@
-package com.omtorney.doer.ui.viewmodel
+package com.omtorney.doer.ui.settings
 
 import android.os.Environment
 import android.util.Log

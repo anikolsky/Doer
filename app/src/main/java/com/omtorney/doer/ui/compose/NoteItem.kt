@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -37,8 +38,6 @@ fun NoteItem(
     dismissState: DismissState,
     modifier: Modifier = Modifier
 ) {
-    val followingText = note.text.lines().drop(1)
-
     SwipeToDismiss(
         state = dismissState,
         dismissThresholds = { FractionalThreshold(0.20f) },
@@ -79,6 +78,7 @@ fun NoteItem(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .background(color = MaterialTheme.colors.background)
+                .fillMaxWidth()
                 .combinedClickable(
                     onClick = { onNoteClick() },
                     onLongClick = { onLongClick(note) }
@@ -87,6 +87,7 @@ fun NoteItem(
             Box(
                 modifier = Modifier
                     .width(4.dp)
+//                    .fillMaxHeight()
                     .height(45.dp)
                     .background(note.priority.color)
                     .align(Alignment.Top)
@@ -99,8 +100,7 @@ fun NoteItem(
                 Text(
                     text = note.text,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier
+                    overflow = TextOverflow.Clip,
                 )
                 note.text.lines().drop(1).forEach {
                     Text(
@@ -111,6 +111,54 @@ fun NoteItem(
                 }
             }
         }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun PinnedNoteItem(
+    note: Note,
+    onNoteClick: () -> Unit,
+    onLongClick: (Note) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .background(color = MaterialTheme.colors.background)
+            .fillMaxWidth()
+            .combinedClickable(onClick = { onNoteClick() }, onLongClick = { onLongClick(note) })
+    ) {
+        Box(
+            modifier = Modifier
+                .width(4.dp)
+//                    .fillMaxHeight()
+                .height(45.dp)
+                .background(note.priority.color)
+                .align(Alignment.Top)
+        )
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(vertical = 12.dp, horizontal = 12.dp)
+        ) {
+            Text(
+                text = note.text,
+                maxLines = 1,
+                overflow = TextOverflow.Clip,
+            )
+            note.text.lines().drop(1).forEach {
+                Text(
+                    text = it,
+                    color = Color.Gray,
+                    fontSize = 12.sp
+                )
+            }
+        }
+        Icon(
+            painter = painterResource(R.drawable.ic_round_push_pin),
+            contentDescription = "Pinned"
+        )
     }
 }
 
@@ -130,7 +178,8 @@ fun NoteItemPreview() {
                 "Note text",
                 NotePriority.High,
                 LocalDateTime.now(),
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                false
             ), {}, {}, rememberDismissState()
             )
         }

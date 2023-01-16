@@ -48,7 +48,7 @@ fun SettingsScreen(
         }
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
-            Column(modifier = Modifier.padding(8.dp, bottom = 4.dp)) {
+            Column(modifier = Modifier.padding(8.dp)) {
                 LineSeparatorSwitcher(
                     color = accentColor,
                     checked = lineSeparatorState.value,
@@ -80,7 +80,7 @@ fun DatabaseActions(
     onExportClick: () -> Unit,
     onImportClick: () -> Unit
 ) {
-    Row {
+    Row(verticalAlignment = Alignment.CenterVertically) {
         Text(text = "Database", modifier = Modifier.weight(1f))
         Button(
             onClick = onExportClick,

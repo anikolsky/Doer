@@ -28,7 +28,10 @@ data class Note(
 
     @TypeConverters(LocalDateTimeConverter::class)
     @ColumnInfo(name = "changed_at")
-    val changedAt: LocalDateTime?
+    val changedAt: LocalDateTime?,
+
+    @ColumnInfo(name = "pinned")
+    var isPinned: Boolean = false
 )
 
 sealed class NotePriority(

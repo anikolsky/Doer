@@ -31,6 +31,7 @@ fun NoteScreen(
     val accentColor by viewModel.accentColor.collectAsState()
     val selectedNote = viewModel.selectedNote.value
     var selectedNoteText by rememberSaveable { mutableStateOf(selectedNote?.text ?: "") }
+    var selectedNotePinned by rememberSaveable { mutableStateOf(selectedNote?.isPinned) }
     var selectedNotePriority by remember {
         mutableStateOf(selectedNote?.priority ?: Constants.initialPriority)
     }
@@ -57,27 +58,72 @@ fun NoteScreen(
                 },
                 backgroundColor = Color(accentColor),
                 actions = {
-                    DeleteIconButton(
-                        viewModel = viewModel,
-                        note = selectedNote,
-                        onClickClose = onClickClose,
-                        onDelete = {
-                            coroutineScope.launch {
-                                scaffoldState.snackbarHostState.showSnackbar(
-                                    message = "Deleted",
-                                    actionLabel = "Undo",
-                                    duration = SnackbarDuration.Short
-                                )
+                    // Pin button
+                    IconButton(
+                        onClick = {
+                            selectedNote?.let {
+                                viewModel.pinNote(selectedNote)
+                                selectedNotePinned = !selectedNotePinned!!
                             }
                         }
-                    )
-                    SaveIconButton(
-                        viewModel = viewModel,
-                        note = selectedNote,
-                        text = selectedNoteText,
-                        priority = selectedNotePriority,
-                        onClickClose = onClickClose
-                    )
+                    ) {
+                        Icon(
+                            painter = if (selectedNotePinned == true)
+                                painterResource(R.drawable.ic_round_push_pin)
+                            else
+                                painterResource(R.drawable.ic_outline_push_pin),
+                            contentDescription = stringResource(R.string.pin)
+                        )
+                    }
+                    // Delete button
+                    IconButton(
+                        onClick = {
+                            selectedNote?.let {
+                                viewModel.deleteNote(it)
+                                coroutineScope.launch {
+                                    scaffoldState.snackbarHostState.showSnackbar(
+                                        message = "Deleted",
+                                        actionLabel = "Undo",
+                                        duration = SnackbarDuration.Short
+                                    )
+                                }
+                            }
+                            onClickClose()
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_round_delete_outline),
+                            contentDescription = stringResource(R.string.delete)
+                        )
+                    }
+                    // Save button
+                    IconButton(
+                        onClick = {
+                            selectedNote?.let { note ->
+                                if (note.id == null)
+                                    viewModel.addNote(
+                                        text = selectedNoteText,
+                                        priority = selectedNotePriority
+                                    )
+                                else
+                                    viewModel.editNote(
+                                        text = selectedNoteText,
+                                        priority = selectedNotePriority
+                                    )
+                            } ?: run {
+                                viewModel.addNote(
+                                    text = selectedNoteText,
+                                    priority = selectedNotePriority
+                                )
+                            }
+                            onClickClose()
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_round_save_alt),
+                            contentDescription = stringResource(R.string.save)
+                        )
+                    }
                 }
             )
         },
@@ -149,54 +195,5 @@ fun NoteScreen(
                 )
             }
         }
-    }
-}
-
-@Composable
-fun DeleteIconButton(
-    viewModel: HomeViewModel,
-    note: Note?,
-    onClickClose: () -> Unit,
-    onDelete: () -> Unit
-) {
-    IconButton(
-        onClick = {
-            note?.let {
-                viewModel.deleteNote(it)
-                onDelete()
-            }
-            onClickClose()
-        }
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_round_delete_outline),
-            contentDescription = stringResource(R.string.delete)
-        )
-    }
-}
-
-@Composable
-fun SaveIconButton(
-    viewModel: HomeViewModel,
-    note: Note?,
-    text: String,
-    priority: NotePriority,
-    onClickClose: () -> Unit
-) {
-    IconButton(
-        onClick = {
-            note?.let { note ->
-                if (note.id == null)
-                    viewModel.addNote(text = text, priority = priority)
-                else
-                    viewModel.editNote(text = text, priority = priority)
-            } ?: run { viewModel.addNote(text = text, priority = priority) }
-            onClickClose()
-        },
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_round_save_alt),
-            contentDescription = stringResource(R.string.save)
-        )
     }
 }

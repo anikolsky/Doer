@@ -2,7 +2,10 @@ package com.omtorney.doer.ui.compose
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
@@ -81,43 +84,60 @@ fun HomeScreen(
         LazyColumn(modifier = Modifier.padding(paddingValues)) {
             items(
                 items = notes,
+                key = { it.id?.plus(1000) ?: "" } // TODO get other unique id
+            ) { note ->
+                if (note.isPinned) {
+                    PinnedNoteItem(
+                        note = note,
+                        onNoteClick = {
+                            viewModel.selectNote(note)
+                            onNoteClick()
+                        },
+                        onLongClick = { viewModel.pinNote(note) }
+                    )
+                }
+            }
+            items(
+                items = notes,
                 key = { it.id ?: "" }
             ) { note ->
-                val dismissState = rememberDismissState(
-                    confirmStateChange = {
-                        if (it == DismissValue.DismissedToStart ||
-                            it == DismissValue.DismissedToEnd
-                        ) {
-                            viewModel.deleteNote(note)
-                            coroutineScope.launch {
-                                scaffoldState.snackbarHostState.showSnackbar(
-                                    message = "Deleted",
-                                    actionLabel = "Undo",
-                                    duration = SnackbarDuration.Short
-                                )
+                if (!note.isPinned) {
+                    val dismissState = rememberDismissState(
+                        confirmStateChange = {
+                            if (it == DismissValue.DismissedToStart ||
+                                it == DismissValue.DismissedToEnd
+                            ) {
+                                viewModel.deleteNote(note)
+                                coroutineScope.launch {
+                                    scaffoldState.snackbarHostState.showSnackbar(
+                                        message = "Deleted",
+                                        actionLabel = "Undo",
+                                        duration = SnackbarDuration.Short
+                                    )
+                                }
+                                return@rememberDismissState true
                             }
-                            return@rememberDismissState true
+                            return@rememberDismissState false
                         }
-                        return@rememberDismissState false
-                    }
-                )
-                NoteItem(
-                    note = note,
-                    onNoteClick = {
-                        viewModel.selectNote(note)
-                        onNoteClick()
-                    },
-                    onLongClick = { /* TODO something */ },
-                    dismissState = dismissState,
-                    modifier = Modifier.animateItemPlacement()
-                )
-                if (lineSeparatorState) {
-                    Spacer(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(0.5.dp)
-                            .background(color = Color(accentColor).copy(alpha = 0.2f))
                     )
+                    NoteItem(
+                        note = note,
+                        onNoteClick = {
+                            viewModel.selectNote(note)
+                            onNoteClick()
+                        },
+                        onLongClick = { viewModel.pinNote(note) },
+                        dismissState = dismissState,
+                        modifier = Modifier.animateItemPlacement()
+                    )
+                    if (lineSeparatorState) {
+                        Spacer(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(0.5.dp)
+                                .background(color = Color(accentColor).copy(alpha = 0.2f))
+                        )
+                    }
                 }
             }
         }

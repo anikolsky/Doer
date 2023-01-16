@@ -52,11 +52,12 @@ class MainActivity : ComponentActivity() {
             ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
         }
         if (areAllGranted) {
-            Toast.makeText(this, "Permissions are granted!", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(this, "Permissions are granted!", Toast.LENGTH_SHORT).show()
         } else {
             launcher.launch(REQUEST_PERMISSIONS)
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)
             shouldShowRequestPermissionRationale(Manifest.permission.MANAGE_EXTERNAL_STORAGE)
         }
     }
@@ -74,7 +75,10 @@ class MainActivity : ComponentActivity() {
             if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
                 add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
             }
-            add(Manifest.permission.MANAGE_EXTERNAL_STORAGE)
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
+                add(Manifest.permission.MANAGE_EXTERNAL_STORAGE)
+            }
+
         }.toTypedArray()
     }
 }

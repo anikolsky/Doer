@@ -48,6 +48,7 @@ class HomeViewModel @Inject constructor(
             priority = priority,
             createdAt = LocalDateTime.now(),
             changedAt = LocalDateTime.now(),
+            isPinned = false
         )
         repository.addNote(note)
     }
@@ -58,7 +59,8 @@ class HomeViewModel @Inject constructor(
             text = text,
             priority = priority,
             createdAt = selectedNote.value?.createdAt,
-            changedAt = LocalDateTime.now()
+            changedAt = LocalDateTime.now(),
+            isPinned = selectedNote.value?.isPinned ?: false
         )
         repository.updateNote(note)
     }
@@ -84,5 +86,13 @@ class HomeViewModel @Inject constructor(
 
     fun resetSelectedNote() {
         _selectedNote.value = null
+    }
+
+    fun pinNote(note: Note) {
+        val notePinned = note.copy(isPinned = !note.isPinned)
+        viewModelScope.launch {
+            repository.updateNote(notePinned)
+            _selectedNote.value = notePinned
+        }
     }
 }

@@ -4,7 +4,6 @@ import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -79,18 +78,17 @@ fun NoteItem(
             modifier = Modifier
                 .background(color = MaterialTheme.colors.background)
                 .fillMaxWidth()
+                .height(IntrinsicSize.Max)
                 .combinedClickable(
                     onClick = { onNoteClick() },
                     onLongClick = { onLongClick(note) }
                 )
         ) {
-            Box(
+            Spacer(
                 modifier = Modifier
                     .width(4.dp)
-//                    .fillMaxHeight()
-                    .height(45.dp)
+                    .fillMaxHeight()
                     .background(note.priority.color)
-                    .align(Alignment.Top)
             )
             Column(
                 modifier = Modifier
@@ -122,43 +120,75 @@ fun PinnedNoteItem(
     onLongClick: (Note) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .background(color = MaterialTheme.colors.background)
+    Surface(
+        color = note.priority.color.copy(alpha = 0.2f),
+        modifier = modifier
+            .height(IntrinsicSize.Max)
             .fillMaxWidth()
-            .combinedClickable(onClick = { onNoteClick() }, onLongClick = { onLongClick(note) })
     ) {
-        Box(
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .width(4.dp)
-//                    .fillMaxHeight()
-                .height(45.dp)
-                .background(note.priority.color)
-                .align(Alignment.Top)
-        )
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .padding(vertical = 12.dp, horizontal = 12.dp)
-        ) {
-            Text(
-                text = note.text,
-                maxLines = 1,
-                overflow = TextOverflow.Clip,
-            )
-            note.text.lines().drop(1).forEach {
-                Text(
-                    text = it,
-                    color = Color.Gray,
-                    fontSize = 12.sp
+                .background(color = MaterialTheme.colors.background.copy(alpha = 0.5f))
+                .fillMaxWidth()
+                .combinedClickable(
+                    onClick = { onNoteClick() },
+                    onLongClick = { onLongClick(note) }
                 )
+        ) {
+            Spacer(
+                modifier = Modifier
+                    .width(4.dp)
+                    .fillMaxHeight()
+                    .background(note.priority.color)
+            )
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(vertical = 12.dp, horizontal = 16.dp)
+            ) {
+                Text(
+                    text = note.text,
+                    maxLines = 1,
+                    overflow = TextOverflow.Clip,
+                )
+                note.text.lines().drop(1).forEach {
+                    Text(
+                        text = it,
+                        color = Color.Gray,
+                        fontSize = 12.sp
+                    )
+                }
             }
+            Icon(
+                painter = painterResource(R.drawable.ic_round_push_pin),
+                tint = MaterialTheme.colors.onBackground.copy(alpha = 0.5f),
+                contentDescription = "Pinned"
+            )
         }
-        Icon(
-            painter = painterResource(R.drawable.ic_round_push_pin),
-            contentDescription = "Pinned"
-        )
+    }
+}
+
+@Preview(showBackground = true)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    name = "Dark"
+)
+@Composable
+fun NotePinnedItemPreview() {
+    DoerTheme {
+        Surface {
+            PinnedNoteItem(Note(
+                1,
+                "Note text",
+                NotePriority.High,
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                false
+            ), {}, {}
+            )
+        }
     }
 }
 

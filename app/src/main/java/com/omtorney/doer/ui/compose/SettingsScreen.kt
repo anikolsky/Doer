@@ -48,7 +48,11 @@ fun SettingsScreen(
         }
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
-            Column(modifier = Modifier.padding(8.dp)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(8.dp)
+            ) {
                 LineSeparatorSwitcher(
                     color = accentColor,
                     checked = lineSeparatorState.value,
@@ -60,6 +64,12 @@ fun SettingsScreen(
                     onClickColorButton = { colorMenuExpanded = true },
                     onClickDropdownMenuItem = { viewModel.setAccentColor(it) },
                     onDismissRequest = { colorMenuExpanded = false }
+                )
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(color = Color(accentColor).copy(alpha = 0.5f))
                 )
                 DatabaseActions(
                     color = accentColor,
@@ -146,7 +156,7 @@ fun AccentColor(
                         onClickDropdownMenuItem(0xFF4D4D5A)
                         onDismissRequest()
                     },
-                    modifier = Modifier.background(Color(0xFF4D4D5A))
+                    modifier = Modifier.background(Color(0xFF33333D))
                 ) {
                     Text(text = "Grey")
                 }

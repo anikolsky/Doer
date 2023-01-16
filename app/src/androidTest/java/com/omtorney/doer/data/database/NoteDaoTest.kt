@@ -14,7 +14,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Month
 import java.util.*
@@ -57,7 +56,7 @@ class NoteDaoTest {
         val note = note
 
         noteDao.insert(note)
-        val notes = noteDao.getAll().first()
+        val notes = noteDao.getNotes().first()
 
         assertThat(notes.first()).isEqualTo(note)
     }
@@ -69,9 +68,9 @@ class NoteDaoTest {
         val newText = "test note 2"
 
         noteDao.insert(note)
-        val notes = noteDao.getAll().first()
+        val notes = noteDao.getNotes().first()
         noteDao.update(notes.first().copy(text = newText))
-        val newNotes = noteDao.getAll().first()
+        val newNotes = noteDao.getNotes().first()
 
         assertThat(newNotes.first().text).isEqualTo(newText)
     }
@@ -82,9 +81,9 @@ class NoteDaoTest {
         val note = note
 
         noteDao.insert(note)
-        val notes = noteDao.getAll().first()
+        val notes = noteDao.getNotes().first()
         noteDao.delete(notes.first())
-        val newNotes = noteDao.getAll().first()
+        val newNotes = noteDao.getNotes().first()
 
         assertThat(newNotes).isEmpty()
     }

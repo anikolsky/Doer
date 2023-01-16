@@ -1,8 +1,7 @@
 package com.omtorney.doer.model
 
-import androidx.compose.ui.graphics.Color
 import androidx.room.*
-import com.omtorney.doer.util.Constants
+import com.omtorney.doer.util.NotePriority
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -27,22 +26,12 @@ data class Note(
     val createdAt: LocalDateTime?,
 
     @TypeConverters(LocalDateTimeConverter::class)
-    @ColumnInfo(name = "changed_at")
-    val changedAt: LocalDateTime?,
+    @ColumnInfo(name = "modified_at")
+    val modifiedAt: LocalDateTime?,
 
     @ColumnInfo(name = "pinned")
     var isPinned: Boolean = false
 )
-
-sealed class NotePriority(
-    val status: String,
-    val color: Color
-) {
-    object High : NotePriority("1", Color(Constants.highPriorityColor))
-    object Medium : NotePriority("2", Color(Constants.mediumPriorityColor))
-    object Low : NotePriority("3", Color(Constants.lowPriorityColor))
-    object No : NotePriority("4", Color.Gray)
-}
 
 class NotePriorityConverter {
     @TypeConverter
@@ -55,7 +44,6 @@ class NotePriorityConverter {
             else -> throw IllegalArgumentException("Invalid priority")
         }
     }
-
     @TypeConverter
     fun notePriorityToString(priority: NotePriority): String {
         return priority.status
@@ -67,10 +55,10 @@ class LocalDateTimeConverter {
     fun fromTimestamp(value: Long): LocalDateTime {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(value), ZoneId.systemDefault())
     }
-
     @TypeConverter
     fun dateToTimestamp(date: LocalDateTime): Long {
         return date.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
     }
 }
 
+class InvalidNoteException(message: String): Exception(message)

@@ -1,6 +1,5 @@
 package com.omtorney.doer.ui.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
@@ -189,7 +188,7 @@ fun NoteScreen(
                     color = Color.Gray.copy(alpha = 0.3f)
                 )
                 Text(
-                    text = "Changed at ${selectedNote?.changedAt}",
+                    text = "Changed at ${selectedNote?.modifiedAt}",
                     color = Color.Gray.copy(alpha = 0.3f)
                 )
             }

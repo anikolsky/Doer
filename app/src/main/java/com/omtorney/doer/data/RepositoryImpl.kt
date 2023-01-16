@@ -11,6 +11,11 @@ class RepositoryImpl @Inject constructor(
     private val noteDao: NoteDao,
     private val settingsStore: SettingsStore
 ) : Repository {
+
+    override fun getNotes(): Flow<List<Note>> = noteDao.getNotes()
+
+    override suspend fun getNoteById(id: Int): Note? = noteDao.getNoteById(id)
+
     override suspend fun insertNote(note: Note) = noteDao.insert(note)
 
     override suspend fun deleteNote(note: Note) = noteDao.delete(note)

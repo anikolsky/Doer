@@ -7,9 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.omtorney.doer.data.database.NoteDao
-import com.omtorney.doer.domain.AccentColorUseCase
-import com.omtorney.doer.domain.LineSeparatorStateUseCase
-import com.omtorney.doer.domain.Repository
+import com.omtorney.doer.domain.*
+import com.omtorney.doer.domain.usecase.AccentColor
+import com.omtorney.doer.domain.usecase.LineSeparatorState
+import com.omtorney.doer.domain.usecase.NoteUseCases
 import com.omtorney.doer.model.Note
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -18,10 +19,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val repository: Repository,
-    private val noteDao: NoteDao,
-    lineSeparatorStateUseCase: LineSeparatorStateUseCase,
-    accentColorUseCase: AccentColorUseCase
+    private val noteUseCases: NoteUseCases,
+    private val noteDao: NoteDao, // TODO get rid of
+    private val repository: Repository, // TODO get rid of
+    lineSeparatorState: LineSeparatorState,
+    accentColor: AccentColor
 ) : ViewModel() {
 
     private val backupFile = File(
@@ -29,13 +31,13 @@ class SettingsViewModel @Inject constructor(
         "backup.json"
     )
 
-    val lineSeparatorState = lineSeparatorStateUseCase.execute
+    val lineSeparatorState = lineSeparatorState.execute
 
     fun setLineSeparatorState(state: Boolean) = viewModelScope.launch {
         repository.setLineSeparatorState(state)
     }
 
-    val accentColor = accentColorUseCase.execute
+    val accentColor = accentColor.execute
 
     fun setAccentColor(color: Long) = viewModelScope.launch {
         repository.setAccentColor(color)
@@ -43,7 +45,7 @@ class SettingsViewModel @Inject constructor(
 
     fun backupDatabase() {
         val gson = GsonBuilder().setPrettyPrinting().create()
-        val notes = noteDao.getAll()
+        val notes = noteUseCases.getNotes
         Log.d("TESTLOG", "notes: $notes")
         val jsonData = gson.toJson(notes)
         Log.d("TESTLOG", "jsonData: $jsonData")

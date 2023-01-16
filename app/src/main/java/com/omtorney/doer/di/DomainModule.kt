@@ -1,8 +1,7 @@
 package com.omtorney.doer.di
 
-import com.omtorney.doer.domain.AccentColorUseCase
-import com.omtorney.doer.domain.LineSeparatorStateUseCase
-import com.omtorney.doer.domain.Repository
+import com.omtorney.doer.domain.*
+import com.omtorney.doer.domain.usecase.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,13 +14,23 @@ object DomainModule {
 
     @Provides
     @Singleton
-    fun provideAccentColorUseCase(repository: Repository): AccentColorUseCase {
-        return AccentColorUseCase(repository)
+    fun provideNoteUseCases(repository: Repository): NoteUseCases {
+        return NoteUseCases(
+            getNotes = GetNotes(repository),
+            addNote = AddNote(repository),
+            deleteNote = DeleteNote(repository)
+        )
     }
 
     @Provides
     @Singleton
-    fun provideLineSeparatorStateUseCase(repository: Repository): LineSeparatorStateUseCase {
-        return LineSeparatorStateUseCase(repository)
+    fun provideAccentColorUseCase(repository: Repository): AccentColor {
+        return AccentColor(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideLineSeparatorStateUseCase(repository: Repository): LineSeparatorState {
+        return LineSeparatorState(repository)
     }
 }

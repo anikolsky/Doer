@@ -1,12 +1,13 @@
-package com.omtorney.doer.domain
+package com.omtorney.doer.domain.usecase
 
+import com.omtorney.doer.domain.Repository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
-class LineSeparatorStateUseCase @Inject constructor(repository: Repository) {
+class LineSeparatorState @Inject constructor(repository: Repository) {
 
     private val scope = CoroutineScope(Dispatchers.Default)
 

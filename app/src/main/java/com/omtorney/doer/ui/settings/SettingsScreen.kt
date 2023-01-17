@@ -21,41 +21,42 @@ import com.omtorney.doer.ui.theme.DoerTheme
 
 @Composable
 fun SettingsScreen(
-    viewModel: SettingsViewModel,
-    onClickClose: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: SettingsViewModel = hiltViewModel(),
+    onClickClose: () -> Unit
 ) {
     val context = LocalContext.current
     var colorMenuExpanded by remember { mutableStateOf(false) }
-    val lineSeparatorState = viewModel.lineSeparatorState.collectAsState()
+    val lineDividerState = viewModel.lineDividerState.collectAsState()
     val accentColor by viewModel.accentColor.collectAsState()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = stringResource(R.string.settings)) },
-                backgroundColor = Color(accentColor),
-                navigationIcon = {
+    Scaffold(modifier = modifier) { paddingValues ->
+        Box(modifier = Modifier.padding(paddingValues)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(8.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     IconButton(onClick = onClickClose) {
                         Icon(
                             imageVector = Icons.Rounded.ArrowBack,
                             contentDescription = stringResource(R.string.dismiss)
                         )
                     }
+                    Text(
+                        text = stringResource(R.string.app_name),
+                        style = MaterialTheme.typography.h5,
+                        modifier = Modifier.weight(1f)
+                    )
                 }
-            )
-        }
-    ) { paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues)) {
-            Column(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .padding(8.dp)
-            ) {
-                LineSeparatorSwitcher(
+                LineDividerSwitcher(
                     color = accentColor,
-                    checked = lineSeparatorState.value,
-                    onCheckedChange = { viewModel.setLineSeparatorState(it) }
+                    checked = lineDividerState.value,
+                    onCheckedChange = { viewModel.setLineDividerState(it) }
                 )
                 AccentColor(
                     color = accentColor,
@@ -107,7 +108,7 @@ fun DatabaseActions(
 }
 
 @Composable
-fun LineSeparatorSwitcher(
+fun LineDividerSwitcher(
     color: Long,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit
@@ -203,6 +204,6 @@ fun AccentColor(
 @Composable
 fun SettingsScreenPreview() {
     DoerTheme {
-        SettingsScreen(hiltViewModel(), {})
+        SettingsScreen(Modifier, hiltViewModel(), {})
     }
 }

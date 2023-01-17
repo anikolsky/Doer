@@ -1,4 +1,4 @@
-package com.omtorney.doer.ui.component
+package com.omtorney.doer.ui.notes
 
 import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
@@ -20,62 +20,45 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.omtorney.doer.R
 import com.omtorney.doer.model.Note
-import com.omtorney.doer.model.NotePriority
 import com.omtorney.doer.ui.theme.DoerTheme
+import com.omtorney.doer.util.Constants
+import com.omtorney.doer.util.NotePriority
+import me.saket.swipe.SwipeAction
+import me.saket.swipe.SwipeableActionsBox
 import java.time.LocalDateTime
 import java.util.*
 
-@OptIn(
-    ExperimentalMaterialApi::class,
-    ExperimentalFoundationApi::class
-)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NoteItem(
     note: Note,
     onNoteClick: () -> Unit,
     onLongClick: (Note) -> Unit,
-    dismissState: DismissState,
+    onSwipeStart: (Note) -> Unit,
+    onSwipeEnd: (Note) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    SwipeToDismiss(
-        state = dismissState,
-        dismissThresholds = { FractionalThreshold(0.20f) },
-        background = {
-            val direction = dismissState.dismissDirection ?: return@SwipeToDismiss
-            val alignment = when (direction) {
-                DismissDirection.StartToEnd -> Alignment.CenterStart
-                DismissDirection.EndToStart -> Alignment.CenterEnd
-            }
-            val iconTint = when (dismissState.targetValue) {
-                DismissValue.Default -> Color.Gray
-                DismissValue.DismissedToStart -> Color.White
-                DismissValue.DismissedToEnd -> Color.White
-            }
-            val color by animateColorAsState(
-                when (dismissState.targetValue) {
-                    DismissValue.Default -> Color.Gray
-                    DismissValue.DismissedToStart -> Color.Red
-                    DismissValue.DismissedToEnd -> Color.Red
-                }
-            )
-            Box(
-                contentAlignment = alignment,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = color)
-                    .padding(horizontal = 16.dp)
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_round_delete),
-                    contentDescription = stringResource(R.string.delete),
-                    tint = iconTint
-                )
-            }
-        }
+    val delete = SwipeAction(
+        icon = painterResource(R.drawable.ic_round_delete),
+        background = Color.Red,
+        onSwipe = { onSwipeEnd(note) },
+        isUndo = true
+    )
+
+    val pin = SwipeAction(
+        icon = painterResource(R.drawable.ic_round_push_pin),
+        background = note.priority.color,
+        onSwipe = { onSwipeStart(note) }
+    )
+
+    SwipeableActionsBox(
+        startActions = listOf(pin),
+        endActions = listOf(delete),
+        modifier = modifier
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
+            modifier = modifier
                 .background(color = MaterialTheme.colors.background)
                 .fillMaxWidth()
                 .height(IntrinsicSize.Max)
@@ -97,20 +80,28 @@ fun NoteItem(
             ) {
                 Text(
                     text = note.text,
+                    style = MaterialTheme.typography.h6,
+                    color = MaterialTheme.colors.onSurface,
                     maxLines = 1,
-                    overflow = TextOverflow.Clip,
+                    overflow = TextOverflow.Clip, // TODO Ellipsis after .width(IntrinsicSize.Max)
                 )
-                note.text.lines().drop(1).forEach {
+                note.text.lines().drop(1).forEach { textLine ->
                     Text(
-                        text = it,
-                        color = Color.Gray,
-                        fontSize = 12.sp
+                        text = textLine,
+                        style = MaterialTheme.typography.body1,
+                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.5f),
+                        maxLines = 10, // TODO add option
+                        // overflow = TextOverflow.Clip, // TODO Ellipsis after .width(IntrinsicSize.Max)
                     )
                 }
             }
         }
     }
 }
+
+// TODO common NoteItem:
+//  1 - wrap with SwipeableActionsBox,
+//  2 - pass modifier with background color (if needed)
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -149,14 +140,18 @@ fun PinnedNoteItem(
             ) {
                 Text(
                     text = note.text,
+                    style = MaterialTheme.typography.h6,
+                    color = MaterialTheme.colors.onSurface,
                     maxLines = 1,
-                    overflow = TextOverflow.Clip,
+                    overflow = TextOverflow.Clip, // TODO Ellipsis after .width(IntrinsicSize.Max)
                 )
-                note.text.lines().drop(1).forEach {
+                note.text.lines().drop(1).forEach { textLine ->
                     Text(
-                        text = it,
-                        color = Color.Gray,
-                        fontSize = 12.sp
+                        text = textLine,
+                        style = MaterialTheme.typography.body1,
+                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.5f),
+                        maxLines = 10, // TODO add option
+                        // overflow = TextOverflow.Clip, // TODO Ellipsis after .width(IntrinsicSize.Max)
                     )
                 }
             }
@@ -193,7 +188,6 @@ fun NotePinnedItemPreview() {
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Preview(showBackground = true)
 @Preview(
     showBackground = true,
@@ -211,7 +205,7 @@ fun NoteItemPreview() {
                 LocalDateTime.now(),
                 LocalDateTime.now(),
                 false
-            ), {}, {}, rememberDismissState()
+            ), {}, {}, {}, {}
             )
         }
     }

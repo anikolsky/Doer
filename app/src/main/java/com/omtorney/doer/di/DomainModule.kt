@@ -17,20 +17,21 @@ object DomainModule {
     fun provideNoteUseCases(repository: Repository): NoteUseCases {
         return NoteUseCases(
             getNotes = GetNotes(repository),
+            getNote = GetNote(repository),
             addNote = AddNote(repository),
-            deleteNote = DeleteNote(repository)
+            deleteNote = DeleteNote(repository),
+            pinNote = PinNote(repository)
         )
     }
 
     @Provides
     @Singleton
-    fun provideAccentColorUseCase(repository: Repository): AccentColor {
-        return AccentColor(repository)
-    }
-
-    @Provides
-    @Singleton
-    fun provideLineSeparatorStateUseCase(repository: Repository): LineSeparatorState {
-        return LineSeparatorState(repository)
+    fun provideSettingsUseCases(repository: Repository): SettingsUseCases {
+        return SettingsUseCases(
+            getAccentColor = GetAccentColor(repository),
+            setAccentColor = SetAccentColor(repository),
+            getLineDivideState = GetLineDivideState(repository),
+            setLineDivideState = SetLineDivideState(repository)
+        )
     }
 }

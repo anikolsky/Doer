@@ -58,6 +58,7 @@ dependencies {
     implementation 'androidx.datastore:datastore-preferences:1.0.0'
     implementation 'com.google.accompanist:accompanist-systemuicontroller:0.28.0'
     implementation 'com.google.code.gson:gson:2.10'
+    implementation 'me.saket.swipe:swipe:1.0.0'
 
     // Lifecycle
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"

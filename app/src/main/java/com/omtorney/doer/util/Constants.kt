@@ -1,7 +1,5 @@
 package com.omtorney.doer.util
 
-import com.omtorney.doer.model.NotePriority
-
 object Constants {
 
     const val initialColor = 0xFF045D56

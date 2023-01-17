@@ -11,21 +11,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.omtorney.doer.ui.home.HomeScreen
-import com.omtorney.doer.ui.component.NoteScreen
+import com.omtorney.doer.ui.edit.NoteScreen
 import com.omtorney.doer.ui.settings.SettingsScreen
 import com.omtorney.doer.ui.home.HomeViewModel
 import com.omtorney.doer.ui.settings.SettingsViewModel
 
 @Composable
 fun DoerApp() {
-    val systemUiController = rememberSystemUiController()
     val navController = rememberNavController()
-    val homeViewModel: HomeViewModel = hiltViewModel()
-    val settingsViewModel: SettingsViewModel = hiltViewModel()
-
-    val accentColor by homeViewModel.accentColor.collectAsState()
-
-    systemUiController.setStatusBarColor(color = Color(accentColor))
+//    val systemUiController = rememberSystemUiController()
+//    val homeViewModel: HomeViewModel = hiltViewModel()
+//    val accentColor by homeViewModel.accentColor.collectAsState()
+//    systemUiController.setStatusBarColor(color = Color(accentColor))
 
     NavHost(
         navController = navController,
@@ -33,7 +30,6 @@ fun DoerApp() {
     ) {
         composable(Screen.Home.route) {
             HomeScreen(
-                viewModel = homeViewModel,
                 onNoteClick = {
                     navController.navigate(Screen.Note.route) {
                         popUpTo(navController.graph.findStartDestination().id) { saveState = true }
@@ -59,16 +55,10 @@ fun DoerApp() {
             )
         }
         composable(Screen.Note.route) {
-            NoteScreen(
-                viewModel = homeViewModel,
-                onClickClose = { navController.popBackStack() }
-            )
+            NoteScreen(onClickClose = { navController.popBackStack() })
         }
         composable(Screen.Settings.route) {
-            SettingsScreen(
-                viewModel = settingsViewModel,
-                onClickClose = { navController.popBackStack() }
-            )
+            SettingsScreen(onClickClose = { navController.popBackStack() })
         }
     }
 }

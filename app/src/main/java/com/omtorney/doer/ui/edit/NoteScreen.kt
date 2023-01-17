@@ -1,4 +1,4 @@
-package com.omtorney.doer.ui.component
+package com.omtorney.doer.ui.edit
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
@@ -14,18 +14,19 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.omtorney.doer.R
-import com.omtorney.doer.model.NotePriority
-import com.omtorney.doer.ui.home.HomeViewModel
-import com.omtorney.doer.ui.home.SnackbarUndoDeleteNote
+import com.omtorney.doer.ui.home.NotesEvent
 import com.omtorney.doer.util.Constants
+import com.omtorney.doer.util.NotePriority
 import kotlinx.coroutines.launch
 
 @Composable
 fun NoteScreen(
-    viewModel: HomeViewModel,
-    onClickClose: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: NoteEditViewModel = hiltViewModel(),
+    onClickClose: () -> Unit
 ) {
     val accentColor by viewModel.accentColor.collectAsState()
     val selectedNote = viewModel.selectedNote.value
@@ -44,24 +45,37 @@ fun NoteScreen(
     val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = stringResource(R.string.edit)) },
-                navigationIcon = {
+        scaffoldState = scaffoldState,
+        modifier = modifier
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+        ) {
+            Column(modifier = Modifier.padding(8.dp)) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    /** Back button */
                     IconButton(onClick = onClickClose) {
                         Icon(
                             imageVector = Icons.Rounded.ArrowBack,
                             contentDescription = stringResource(R.string.dismiss)
                         )
                     }
-                },
-                backgroundColor = Color(accentColor),
-                actions = {
-                    // Pin button
+                    /** App name */
+                    Text(
+                        text = stringResource(R.string.app_name),
+                        style = MaterialTheme.typography.h5,
+                        modifier = Modifier.weight(1f)
+                    )
+                    /** Pin button */
                     IconButton(
                         onClick = {
                             selectedNote?.let {
-                                viewModel.pinNote(selectedNote)
+                                viewModel.pinNote(it)
                                 selectedNotePinned = !selectedNotePinned!!
                             }
                         }
@@ -74,11 +88,11 @@ fun NoteScreen(
                             contentDescription = stringResource(R.string.pin)
                         )
                     }
-                    // Delete button
+                    /** Delete button */
                     IconButton(
                         onClick = {
                             selectedNote?.let {
-                                viewModel.deleteNote(it)
+                                viewModel.onEvent(NotesEvent.Delete(it))
                                 coroutineScope.launch {
                                     scaffoldState.snackbarHostState.showSnackbar(
                                         message = "Deleted",
@@ -95,7 +109,7 @@ fun NoteScreen(
                             contentDescription = stringResource(R.string.delete)
                         )
                     }
-                    // Save button
+                    /** Save button */
                     IconButton(
                         onClick = {
                             selectedNote?.let { note ->
@@ -124,22 +138,6 @@ fun NoteScreen(
                         )
                     }
                 }
-            )
-        },
-        scaffoldState = scaffoldState,
-        snackbarHost = {
-            SnackbarHost(
-                hostState = it,
-                snackbar = { data ->
-                    SnackbarUndoDeleteNote(
-                        data = data,
-                        viewModel = viewModel
-                    )
-                }
-            )
-        }) { paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues)) {
-            Column(modifier = Modifier.padding(8.dp)) {
                 BasicTextField(
                     value = selectedNoteText,
                     onValueChange = { changedText ->
@@ -177,19 +175,23 @@ fun NoteScreen(
                 }
                 Text(
                     text = "Priority: ${selectedNotePriority.status}",
-                    color = selectedNotePriority.color.copy(alpha = 0.3f)
+                    color = selectedNotePriority.color.copy(alpha = 0.3f),
+                    fontSize = 12.sp
                 )
                 Text(
                     text = "Note id: ${selectedNote?.id}",
-                    color = Color.Gray.copy(alpha = 0.3f)
+                    color = Color.Gray.copy(alpha = 0.3f),
+                    fontSize = 12.sp
                 )
                 Text(
                     text = "Created at ${selectedNote?.createdAt}",
-                    color = Color.Gray.copy(alpha = 0.3f)
+                    color = Color.Gray.copy(alpha = 0.3f),
+                    fontSize = 12.sp
                 )
                 Text(
                     text = "Changed at ${selectedNote?.modifiedAt}",
-                    color = Color.Gray.copy(alpha = 0.3f)
+                    color = Color.Gray.copy(alpha = 0.3f),
+                    fontSize = 12.sp
                 )
             }
         }

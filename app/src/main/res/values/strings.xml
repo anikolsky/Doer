@@ -12,4 +12,6 @@
     <string name="export_db">Export</string>
     <string name="import_db">Import</string>
     <string name="pin">Pin</string>
+    <string name="sort">Sort</string>
+    <string name="undo">Undo</string>
 </resources>

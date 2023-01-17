@@ -21,13 +21,11 @@ data class Note(
     @ColumnInfo(name = "priority")
     val priority: NotePriority,
 
-    @TypeConverters(LocalDateTimeConverter::class)
     @ColumnInfo(name = "created_at")
-    val createdAt: LocalDateTime?,
+    val createdAt: Long,
 
-    @TypeConverters(LocalDateTimeConverter::class)
     @ColumnInfo(name = "modified_at")
-    val modifiedAt: LocalDateTime?,
+    val modifiedAt: Long,
 
     @ColumnInfo(name = "pinned")
     var isPinned: Boolean = false
@@ -35,29 +33,18 @@ data class Note(
 
 class NotePriorityConverter {
     @TypeConverter
-    fun fromString(value: String): NotePriority {
+    fun fromByte(value: Int): NotePriority {
         return when (value) {
-            "1" -> NotePriority.High
-            "2" -> NotePriority.Medium
-            "3" -> NotePriority.Low
-            "4" -> NotePriority.No
+            1 -> NotePriority.High
+            2 -> NotePriority.Medium
+            3 -> NotePriority.Low
+            4 -> NotePriority.No
             else -> throw IllegalArgumentException("Invalid priority")
         }
     }
     @TypeConverter
-    fun notePriorityToString(priority: NotePriority): String {
+    fun notePriorityToString(priority: NotePriority): Int {
         return priority.status
-    }
-}
-
-class LocalDateTimeConverter {
-    @TypeConverter
-    fun fromTimestamp(value: Long): LocalDateTime {
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(value), ZoneId.systemDefault())
-    }
-    @TypeConverter
-    fun dateToTimestamp(date: LocalDateTime): Long {
-        return date.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
     }
 }
 

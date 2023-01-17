@@ -1,36 +1,33 @@
 package com.omtorney.doer.ui.home
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.omtorney.doer.domain.*
-import com.omtorney.doer.domain.usecase.AccentColor
-import com.omtorney.doer.domain.usecase.LineSeparatorState
 import com.omtorney.doer.domain.usecase.NoteUseCases
+import com.omtorney.doer.domain.usecase.SettingsUseCases
+import com.omtorney.doer.model.InvalidNoteException
 import com.omtorney.doer.model.Note
-import com.omtorney.doer.ui.notes.NotesEvent
 import com.omtorney.doer.ui.notes.NotesState
+import com.omtorney.doer.util.Constants
 import com.omtorney.doer.util.NoteOrder
 import com.omtorney.doer.util.NotePriority
 import com.omtorney.doer.util.OrderType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val repository: Repository, // TODO get rid of
     private val noteUseCases: NoteUseCases,
-    lineSeparatorState: LineSeparatorState, // TODO get rid of
-    accentColor: AccentColor // TODO get rid of
+    private val settingsUseCases: SettingsUseCases,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val _state = mutableStateOf(NotesState())
@@ -39,6 +36,22 @@ class HomeViewModel @Inject constructor(
     private var deletedNote: Note? = null
 
     private var getNotesJob: Job? = null
+
+//    private val _selectedNote: MutableState<Note?> = mutableStateOf(null)
+//    val selectedNote: State<Note?>
+//        get() = _selectedNote
+
+    val accentColor = settingsUseCases.getAccentColor.invoke().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = Constants.initialColor
+    )
+
+    val lineDividerState = settingsUseCases.getLineDivideState.invoke().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = true
+    )
 
     init {
         getNotes(NoteOrder.DateCreated(OrderType.Descending))
@@ -58,6 +71,13 @@ class HomeViewModel @Inject constructor(
                 viewModelScope.launch {
                     noteUseCases.deleteNote(event.note)
                     deletedNote = event.note
+                }
+            }
+            is NotesEvent.Pin -> {
+                viewModelScope.launch {
+                    val notePinned = event.note.copy(isPinned = !event.note.isPinned)
+                    noteUseCases.addNote(notePinned)
+//                    event.note = notePinned
                 }
             }
             is NotesEvent.RestoreNote -> {
@@ -86,63 +106,38 @@ class HomeViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
+//    fun addNote(text: String, priority: NotePriority) = viewModelScope.launch {
+//        val note = Note(
+//            text = text,
+//            priority = priority,
+//            createdAt = LocalDateTime.now(),
+//            modifiedAt = LocalDateTime.now(),
+//            isPinned = false
+//        )
+//        try {
+//            noteUseCases.addNote(note)
+//        } catch (e: InvalidNoteException) {
+//            Log.d("TESTLOG", "addNote: ${e.message}")
+//        }
+//    }
+//
+//    fun editNote(text: String, priority: NotePriority) = viewModelScope.launch {
+//        val note = Note(
+//            id = selectedNote.value?.id,
+//            text = text,
+//            priority = priority,
+//            createdAt = selectedNote.value?.createdAt,
+//            modifiedAt = LocalDateTime.now(),
+//            isPinned = selectedNote.value?.isPinned ?: false
+//        )
+//        noteUseCases.addNote(note)
+//    }
 
-    private val _selectedNote: MutableState<Note?> = mutableStateOf(null)
-    val selectedNote: State<Note?>
-        get() = _selectedNote
+//    fun selectNote(note: Note) {
+//        _selectedNote.value = note
+//    }
 
-
-    val allNotes = getNotesUseCase.getNotes().stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = emptyList()
-    )
-
-    val lineSeparatorState = lineSeparatorState.execute
-
-    val accentColor = accentColor.execute
-
-    fun addNote(text: String, priority: NotePriority) = viewModelScope.launch {
-        val note = Note(
-            text = text,
-            priority = priority,
-            createdAt = LocalDateTime.now(),
-            modifiedAt = LocalDateTime.now(),
-            isPinned = false
-        )
-        repository.insertNote(note) // TODO get rid of
-    }
-
-    fun editNote(text: String, priority: NotePriority) = viewModelScope.launch {
-        val note = Note(
-            id = selectedNote.value?.id,
-            text = text,
-            priority = priority,
-            createdAt = selectedNote.value?.createdAt,
-            modifiedAt = LocalDateTime.now(),
-            isPinned = selectedNote.value?.isPinned ?: false
-        )
-        repository.insertNote(note) // TODO get rid of
-    }
-
-    fun deleteNote(note: Note) {
-        deletedNote = note
-
-    }
-
-    fun selectNote(note: Note) {
-        _selectedNote.value = note
-    }
-
-    fun resetSelectedNote() {
-        _selectedNote.value = null
-    }
-
-    fun pinNote(note: Note) {
-        val notePinned = note.copy(isPinned = !note.isPinned)
-        viewModelScope.launch {
-            repository.insertNote(notePinned) // TODO get rid of
-            _selectedNote.value = notePinned
-        }
-    }
+//    fun resetSelectedNote() {
+//        _selectedNote.value = null
+//    }
 }

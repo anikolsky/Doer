@@ -19,8 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.omtorney.doer.R
 import com.omtorney.doer.ui.components.OrderSection
-import com.omtorney.doer.ui.notes.NoteItem
-import com.omtorney.doer.ui.notes.PinnedNoteItem
+import com.omtorney.doer.ui.components.NoteItem
+import com.omtorney.doer.ui.components.PinnedNoteItem
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
-    onNoteClick: () -> Unit,
+    onNoteClick: (Int) -> Unit,
     onAddNoteClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
@@ -43,7 +43,6 @@ fun HomeScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-//                    viewModel.resetSelectedNote()
                     onAddNoteClick()
                 },
                 backgroundColor = Color(accentColor)
@@ -109,10 +108,7 @@ fun HomeScreen(
                     if (note.isPinned) {
                         PinnedNoteItem(
                             note = note,
-                            onNoteClick = {
-//                                viewModel.selectNote(note)
-                                onNoteClick()
-                            },
+                            onNoteClick = { onNoteClick(note.id!!) },
                             onLongClick = { viewModel.onEvent(NotesEvent.Pin(note)) }
                         )
                     }
@@ -127,10 +123,7 @@ fun HomeScreen(
                     if (!note.isPinned) {
                         NoteItem(
                             note = note,
-                            onNoteClick = {
-//                                viewModel.selectNote(note)
-                                onNoteClick()
-                            },
+                            onNoteClick = { onNoteClick(note.id!!) },
                             onLongClick = { viewModel.onEvent(NotesEvent.Pin(note)) },
                             onSwipeStart = { viewModel.onEvent(NotesEvent.Pin(note)) },
                             onSwipeEnd = {

@@ -2,9 +2,6 @@ package com.omtorney.doer.model
 
 import androidx.room.*
 import com.omtorney.doer.util.NotePriority
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
 import java.util.*
 
 @Entity(tableName = "notes")
@@ -19,7 +16,7 @@ data class Note(
 
     @TypeConverters(NotePriorityConverter::class)
     @ColumnInfo(name = "priority")
-    val priority: NotePriority,
+    val priority: Int,
 
     @ColumnInfo(name = "created_at")
     val createdAt: Long,
@@ -43,7 +40,7 @@ class NotePriorityConverter {
         }
     }
     @TypeConverter
-    fun notePriorityToString(priority: NotePriority): Int {
+    fun notePriorityToInt(priority: NotePriority): Int {
         return priority.status
     }
 }

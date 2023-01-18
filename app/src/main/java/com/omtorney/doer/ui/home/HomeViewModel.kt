@@ -2,7 +2,6 @@ package com.omtorney.doer.ui.home
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omtorney.doer.domain.usecase.NoteUseCases
@@ -20,8 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val noteUseCases: NoteUseCases,
-    private val settingsUseCases: SettingsUseCases,
-    savedStateHandle: SavedStateHandle
+    private val settingsUseCases: SettingsUseCases
 ) : ViewModel() {
 
     private val _state = mutableStateOf(NotesState())
@@ -67,7 +65,6 @@ class HomeViewModel @Inject constructor(
                 viewModelScope.launch {
                     val notePinned = event.note.copy(isPinned = !event.note.isPinned)
                     noteUseCases.addNote(notePinned)
-//                    event.note = notePinned
                 }
             }
             is NotesEvent.RestoreNote -> {
@@ -95,39 +92,4 @@ class HomeViewModel @Inject constructor(
             }
             .launchIn(viewModelScope)
     }
-
-//    fun addNote(text: String, priority: NotePriority) = viewModelScope.launch {
-//        val note = Note(
-//            text = text,
-//            priority = priority,
-//            createdAt = LocalDateTime.now(),
-//            modifiedAt = LocalDateTime.now(),
-//            isPinned = false
-//        )
-//        try {
-//            noteUseCases.addNote(note)
-//        } catch (e: InvalidNoteException) {
-//            Log.d("TESTLOG", "addNote: ${e.message}")
-//        }
-//    }
-//
-//    fun editNote(text: String, priority: NotePriority) = viewModelScope.launch {
-//        val note = Note(
-//            id = selectedNote.value?.id,
-//            text = text,
-//            priority = priority,
-//            createdAt = selectedNote.value?.createdAt,
-//            modifiedAt = LocalDateTime.now(),
-//            isPinned = selectedNote.value?.isPinned ?: false
-//        )
-//        noteUseCases.addNote(note)
-//    }
-
-//    fun selectNote(note: Note) {
-//        _selectedNote.value = note
-//    }
-
-//    fun resetSelectedNote() {
-//        _selectedNote.value = null
-//    }
 }

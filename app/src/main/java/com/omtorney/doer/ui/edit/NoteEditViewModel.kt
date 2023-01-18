@@ -10,9 +10,10 @@ import com.omtorney.doer.domain.usecase.SettingsUseCases
 import com.omtorney.doer.model.InvalidNoteException
 import com.omtorney.doer.model.Note
 import com.omtorney.doer.util.Constants
-import com.omtorney.doer.util.NotePriority
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,9 +24,6 @@ class NoteEditViewModel @Inject constructor(
     private val settingsUseCases: SettingsUseCases,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-
-//    private val _state = mutableStateOf(NoteEditState())
-//    val state: State<NoteEditState> = _state
 
     private var currentNoteId: Int? = null
 
@@ -47,14 +45,14 @@ class NoteEditViewModel @Inject constructor(
     private val _modifiedAt = mutableStateOf(NoteEditState())
     val modifiedAt: State<NoteEditState> = _modifiedAt
 
-
+    private val _eventFlow = MutableSharedFlow<UiEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
 
     val accentColor = settingsUseCases.getAccentColor.invoke().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
         initialValue = Constants.initialColor
     )
-
 
     init {
         savedStateHandle.get<Int>("noteId")?.let { noteId ->
@@ -85,9 +83,6 @@ class NoteEditViewModel @Inject constructor(
             is NoteEditEvent.Pin -> {
                 viewModelScope.launch {
                     _isPinned.value = isPinned.value.copy(isPinned = event.isPinned)
-//                    val notePinned = event.note.copy(isPinned = !event.note.isPinned)
-//                    noteUseCases.addNote(notePinned)
-//                    event.note = notePinned
                 }
             }
             is NoteEditEvent.Save -> {
@@ -103,8 +98,13 @@ class NoteEditViewModel @Inject constructor(
                                 isPinned = false
                             )
                         )
+                        _eventFlow.emit(UiEvent.SaveNote)
                     } catch (e: InvalidNoteException) {
-                        // TODO catch InvalidNoteException
+                        _eventFlow.emit(
+                            UiEvent.ShowSnackbar(
+                                message = e.message ?: "Couldn't save note"
+                            )
+                        )
                     }
                 }
             }
@@ -114,5 +114,10 @@ class NoteEditViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    sealed class UiEvent {
+        data class ShowSnackbar(val message: String) : UiEvent()
+        object SaveNote : UiEvent()
     }
 }

@@ -35,7 +35,6 @@ fun OrderSection(
                 onSelect = { onOrderChange(NoteOrder.DateModified(noteOrder.orderType)) }
             )
         }
-//        Spacer(modifier = Modifier.height(16.dp))
         Row(modifier = modifier) {
             DefaultRadioButton(
                 text = "Ascending",

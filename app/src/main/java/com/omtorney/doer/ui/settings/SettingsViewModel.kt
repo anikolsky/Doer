@@ -2,18 +2,14 @@ package com.omtorney.doer.ui.settings
 
 import android.os.Environment
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.GsonBuilder
-import com.omtorney.doer.domain.*
 import com.omtorney.doer.domain.usecase.NoteUseCases
 import com.omtorney.doer.domain.usecase.SettingsUseCases
 import com.omtorney.doer.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.File

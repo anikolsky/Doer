@@ -1,31 +1,24 @@
-package com.omtorney.doer.ui.notes
+package com.omtorney.doer.ui.components
 
 import android.content.res.Configuration
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.omtorney.doer.R
 import com.omtorney.doer.model.Note
 import com.omtorney.doer.ui.theme.DoerTheme
-import com.omtorney.doer.util.Constants
-import com.omtorney.doer.util.NotePriority
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
-import java.time.LocalDateTime
 import java.util.*
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -47,7 +40,7 @@ fun NoteItem(
 
     val pin = SwipeAction(
         icon = painterResource(R.drawable.ic_round_push_pin),
-        background = note.priority.color,
+        background = Color.Blue,
         onSwipe = { onSwipeStart(note) }
     )
 
@@ -71,7 +64,7 @@ fun NoteItem(
                 modifier = Modifier
                     .width(4.dp)
                     .fillMaxHeight()
-                    .background(note.priority.color)
+//                    .background(note.priority.color)
             )
             Column(
                 modifier = Modifier
@@ -112,7 +105,7 @@ fun PinnedNoteItem(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        color = note.priority.color.copy(alpha = 0.2f),
+        color = Color.Red.copy(alpha = 0.2f),
         modifier = modifier
             .height(IntrinsicSize.Max)
             .fillMaxWidth()
@@ -131,7 +124,7 @@ fun PinnedNoteItem(
                 modifier = Modifier
                     .width(4.dp)
                     .fillMaxHeight()
-                    .background(note.priority.color)
+//                    .background(note.priority.color)
             )
             Column(
                 modifier = Modifier
@@ -178,7 +171,7 @@ fun NotePinnedItemPreview() {
             PinnedNoteItem(Note(
                 1,
                 "Note text",
-                NotePriority.High,
+                1,
                 System.currentTimeMillis(),
                 System.currentTimeMillis(),
                 false
@@ -201,7 +194,7 @@ fun NoteItemPreview() {
             NoteItem(Note(
                 1,
                 "Note text",
-                NotePriority.High,
+                1,
                 System.currentTimeMillis(),
                 System.currentTimeMillis(),
                 false

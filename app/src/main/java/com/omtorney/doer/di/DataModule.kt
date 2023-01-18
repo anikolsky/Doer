@@ -30,13 +30,13 @@ object DataModule {
 
     @Provides
     @Singleton
-    fun provideNoteDao(appDatabase: AppDatabase) : NoteDao {
+    fun provideNoteDao(appDatabase: AppDatabase): NoteDao {
         return appDatabase.noteDao()
     }
 
     @Provides
     @Singleton
-    fun provideSettingsStore(@ApplicationContext appContext: Context) : SettingsStore {
+    fun provideSettingsStore(@ApplicationContext appContext: Context): SettingsStore {
         return SettingsStore(appContext)
     }
 

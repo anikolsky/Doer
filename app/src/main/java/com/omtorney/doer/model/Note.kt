@@ -12,7 +12,7 @@ data class Note(
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    val id: Long? = null,
+    val id: Int? = null,
 
     @ColumnInfo(name = "text")
     val text: String,
@@ -33,7 +33,7 @@ data class Note(
 
 class NotePriorityConverter {
     @TypeConverter
-    fun fromByte(value: Int): NotePriority {
+    fun fromInt(value: Int): NotePriority {
         return when (value) {
             1 -> NotePriority.High
             2 -> NotePriority.Medium

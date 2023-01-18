@@ -1,7 +1,5 @@
 package com.omtorney.doer.ui.home
 
-import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
@@ -9,18 +7,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omtorney.doer.domain.usecase.NoteUseCases
 import com.omtorney.doer.domain.usecase.SettingsUseCases
-import com.omtorney.doer.model.InvalidNoteException
 import com.omtorney.doer.model.Note
-import com.omtorney.doer.ui.notes.NotesState
 import com.omtorney.doer.util.Constants
 import com.omtorney.doer.util.NoteOrder
-import com.omtorney.doer.util.NotePriority
 import com.omtorney.doer.util.OrderType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,10 +30,6 @@ class HomeViewModel @Inject constructor(
     private var deletedNote: Note? = null
 
     private var getNotesJob: Job? = null
-
-//    private val _selectedNote: MutableState<Note?> = mutableStateOf(null)
-//    val selectedNote: State<Note?>
-//        get() = _selectedNote
 
     val accentColor = settingsUseCases.getAccentColor.invoke().stateIn(
         scope = viewModelScope,

@@ -179,8 +179,8 @@ fun NotePinnedItemPreview() {
                 1,
                 "Note text",
                 NotePriority.High,
-                LocalDateTime.now(),
-                LocalDateTime.now(),
+                System.currentTimeMillis(),
+                System.currentTimeMillis(),
                 false
             ), {}, {}
             )
@@ -202,8 +202,8 @@ fun NoteItemPreview() {
                 1,
                 "Note text",
                 NotePriority.High,
-                LocalDateTime.now(),
-                LocalDateTime.now(),
+                System.currentTimeMillis(),
+                System.currentTimeMillis(),
                 false
             ), {}, {}, {}, {}
             )

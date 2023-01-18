@@ -24,23 +24,37 @@ class NoteEditViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
+//    private val _state = mutableStateOf(NoteEditState())
+//    val state: State<NoteEditState> = _state
+
+    private var currentNoteId: Int? = null
+
+    private val _noteText = mutableStateOf(NoteEditState())
+    val noteText: State<NoteEditState> = _noteText
+
+    private val _priority = mutableStateOf(NoteEditState())
+    val priority: State<NoteEditState> = _priority
+
+    private val _isPinned = mutableStateOf(NoteEditState())
+    val isPinned: State<NoteEditState> = _isPinned
+
+    private val _id = mutableStateOf(NoteEditState())
+    val id: State<NoteEditState> = _id
+
+    private val _createdAt = mutableStateOf(NoteEditState())
+    val createdAt: State<NoteEditState> = _createdAt
+
+    private val _modifiedAt = mutableStateOf(NoteEditState())
+    val modifiedAt: State<NoteEditState> = _modifiedAt
+
+
+
     val accentColor = settingsUseCases.getAccentColor.invoke().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
         initialValue = Constants.initialColor
     )
 
-    private val _noteText = mutableStateOf(NoteEditState())
-    val noteText: State<NoteEditState> = _noteText
-
-    private var currentNoteId: Long? = null
-
-    // TODO NoteEditState
-    private val _isPinned = mutableStateOf(false)
-    val isPinned: State<Boolean> = _isPinned
-
-    private val _priority = mutableStateOf(NotePriority.No)
-    val priority: State<NotePriority> = _priority
 
     init {
         savedStateHandle.get<Int>("noteId")?.let { noteId ->
@@ -48,9 +62,9 @@ class NoteEditViewModel @Inject constructor(
                 viewModelScope.launch {
                     noteUseCases.getNote(noteId)?.also { note ->
                         currentNoteId = note.id
-                        _noteText.value = noteText.value.copy(
-                            text = note.text
-                        )
+                        _noteText.value = noteText.value.copy(text = note.text)
+                        _priority.value = priority.value.copy(priority = note.priority)
+                        _isPinned.value = isPinned.value.copy(isPinned = note.isPinned)
                     }
                 }
             }
@@ -59,36 +73,46 @@ class NoteEditViewModel @Inject constructor(
 
     fun onEvent(event: NoteEditEvent) {
         when (event) {
-            is NoteEditEvent.Delete -> {
-//                noteUseCases.deleteNote()
+            is NoteEditEvent.EnteredText -> {
+                _noteText.value = noteText.value.copy(text = event.text)
             }
-            is NoteEditEvent.EnteredText -> {}
+            is NoteEditEvent.Delete -> {
+                viewModelScope.launch {
+                    val note: Note? = noteUseCases.getNote(event.id)
+                    note?.let { noteUseCases.deleteNote(it) }
+                }
+            }
             is NoteEditEvent.Pin -> {
                 viewModelScope.launch {
-                    val notePinned = event.note.copy(isPinned = !event.note.isPinned)
-                    noteUseCases.addNote(notePinned)
+                    _isPinned.value = isPinned.value.copy(isPinned = event.isPinned)
+//                    val notePinned = event.note.copy(isPinned = !event.note.isPinned)
+//                    noteUseCases.addNote(notePinned)
 //                    event.note = notePinned
                 }
             }
-            NoteEditEvent.SaveNoteEdit -> {
+            is NoteEditEvent.Save -> {
                 viewModelScope.launch {
                     try {
                         noteUseCases.addNote(
                             Note(
                                 id = currentNoteId,
                                 text = noteText.value.text,
-                                priority = priority.value,
+                                priority = priority.value.priority,
                                 createdAt = System.currentTimeMillis(),
                                 modifiedAt = System.currentTimeMillis(),
                                 isPinned = false
                             )
                         )
                     } catch (e: InvalidNoteException) {
-
+                        // TODO catch InvalidNoteException
                     }
                 }
             }
-            is NoteEditEvent.SetPriority -> {}
+            is NoteEditEvent.SetPriority -> {
+                viewModelScope.launch {
+                    _priority.value = priority.value.copy(priority = event.priority)
+                }
+            }
         }
     }
 }

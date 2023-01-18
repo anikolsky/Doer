@@ -1,4 +1,4 @@
-package com.omtorney.doer.ui.notes
+package com.omtorney.doer.ui.home
 
 import com.omtorney.doer.model.Note
 import com.omtorney.doer.util.NoteOrder

@@ -1,0 +1,86 @@
+package com.omtorney.doer.settings.presentation.components
+
+import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import com.github.skydoves.colorpicker.compose.*
+
+@Composable
+fun ColorPickerDialog(
+    onChooseClick: (Color) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val controller = rememberColorPickerController()
+
+    Dialog(onDismissRequest = onDismiss) {
+        Column(
+            modifier = Modifier
+                .clip(RoundedCornerShape(8.dp))
+                .background(color = MaterialTheme.colors.background)
+                .padding(16.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AlphaTile(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp)
+                        .clip(RoundedCornerShape(6.dp)),
+                    controller = controller
+                )
+            }
+            HsvColorPicker(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(450.dp)
+                    .padding(10.dp),
+                controller = controller,
+                onColorChanged = {
+                    Log.d("Color", it.hexCode)
+                }
+            )
+            AlphaSlider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+                    .height(35.dp),
+                controller = controller,
+                tileOddColor = Color.White,
+                tileEvenColor = Color.Black
+            )
+            BrightnessSlider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+                    .height(35.dp),
+                controller = controller,
+            )
+            Row {
+                Button(onClick = onDismiss) {
+                    Text(text = "Dismiss")
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                Button(onClick = {
+                    onChooseClick(controller.selectedColor.value)
+                    onDismiss()
+                }) {
+                    Text(text = "Select")
+                }
+            }
+        }
+    }
+}

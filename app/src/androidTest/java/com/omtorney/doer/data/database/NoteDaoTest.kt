@@ -5,8 +5,9 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
-import com.omtorney.doer.model.Note
-import com.omtorney.doer.model.NotePriority
+import com.omtorney.doer.core.data.database.AppDatabase
+import com.omtorney.doer.core.data.database.NoteDao
+import com.omtorney.doer.core.model.Note
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -35,8 +36,7 @@ class NoteDaoTest {
 
     @Before
     fun setUp() {
-        date = LocalDateTime.of(2023, Month.JANUARY, 15, 12, 0, 0)
-        note = Note(1, "test note 1", NotePriority.High, date, date)
+        note = Note(1, "test note 1", 1, 0L, 0L)
     }
 
     @After
@@ -69,7 +69,7 @@ class NoteDaoTest {
 
         noteDao.insert(note)
         val notes = noteDao.getNotes().first()
-        noteDao.update(notes.first().copy(text = newText))
+        noteDao.insert(notes.first().copy(text = newText))
         val newNotes = noteDao.getNotes().first()
 
         assertThat(newNotes.first().text).isEqualTo(newText)

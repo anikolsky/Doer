@@ -1,4 +1,4 @@
-package com.omtorney.doer.ui.components
+package com.omtorney.doer.notes.presentation.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -53,7 +53,7 @@ fun NoteItem(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
-                .background(color = MaterialTheme.colors.background)
+                .background(color = MaterialTheme.colors.surface)
                 .fillMaxWidth()
                 .height(IntrinsicSize.Max)
                 .combinedClickable(
@@ -74,7 +74,7 @@ fun NoteItem(
             ) {
                 Text(
                     text = note.text,
-                    style = MaterialTheme.typography.h6,
+                    style = MaterialTheme.typography.body1,
                     color = MaterialTheme.colors.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -82,7 +82,7 @@ fun NoteItem(
                 note.text.lines().drop(1).forEach { textLine ->
                     Text(
                         text = textLine,
-                        style = MaterialTheme.typography.body1,
+                        style = MaterialTheme.typography.body2,
                         color = MaterialTheme.colors.onSurface.copy(alpha = 0.5f),
                         maxLines = 10, // TODO add option
                         overflow = TextOverflow.Ellipsis
@@ -106,7 +106,7 @@ fun PinnedNoteItem(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        color = Color.Red.copy(alpha = 0.2f),
+        color = MaterialTheme.colors.surface,
         modifier = modifier
             .height(IntrinsicSize.Max)
             .fillMaxWidth()
@@ -114,7 +114,7 @@ fun PinnedNoteItem(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .background(color = MaterialTheme.colors.background.copy(alpha = 0.5f))
+                .background(color = Color.Red.copy(alpha = 0.1f))
                 .fillMaxWidth()
                 .combinedClickable(
                     onClick = { onNoteClick() },
@@ -134,7 +134,7 @@ fun PinnedNoteItem(
             ) {
                 Text(
                     text = note.text,
-                    style = MaterialTheme.typography.h6,
+                    style = MaterialTheme.typography.body1,
                     color = MaterialTheme.colors.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -142,7 +142,7 @@ fun PinnedNoteItem(
                 note.text.lines().drop(1).forEach { textLine ->
                     Text(
                         text = textLine,
-                        style = MaterialTheme.typography.body1,
+                        style = MaterialTheme.typography.body2,
                         color = MaterialTheme.colors.onSurface.copy(alpha = 0.5f),
                         maxLines = 10, // TODO add an option
                         overflow = TextOverflow.Ellipsis
@@ -153,7 +153,7 @@ fun PinnedNoteItem(
                 painter = painterResource(R.drawable.ic_round_push_pin),
                 tint = MaterialTheme.colors.onBackground.copy(alpha = 0.5f),
                 contentDescription = "Pinned",
-                modifier = Modifier.size(15.dp)
+                modifier = Modifier.size(25.dp).padding(end = 8.dp)
             )
         }
     }

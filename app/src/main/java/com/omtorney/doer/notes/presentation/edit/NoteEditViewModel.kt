@@ -56,6 +56,12 @@ class NoteEditViewModel @Inject constructor(
         initialValue = Constants.initialColor
     )
 
+    val secondaryColor = settingsUseCases.getSecondaryColor.invoke().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = Constants.initialColor
+    )
+
     init {
         savedStateHandle.get<Int>("noteId")?.let { noteId ->
             if (noteId != -1) {

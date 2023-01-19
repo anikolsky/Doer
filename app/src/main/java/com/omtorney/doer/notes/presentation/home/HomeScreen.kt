@@ -19,12 +19,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.omtorney.doer.R
 import com.omtorney.doer.ui.components.OrderSection
-import com.omtorney.doer.ui.components.NoteItem
-import com.omtorney.doer.ui.components.PinnedNoteItem
+import com.omtorney.doer.notes.presentation.components.NoteItem
+import com.omtorney.doer.notes.presentation.components.PinnedNoteItem
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -68,8 +69,10 @@ fun HomeScreen(
                 .fillMaxSize()
                 .background(
                     brush = Brush.linearGradient(
-//                        colors = listOf(Color(0xFF000C68), Color(0xFF53A6CC)),
-                        colors = listOf(Color(accentColor), Color(secondaryColor)), // TODO add an option
+                        colors = listOf(
+                            Color(accentColor),
+                            Color(secondaryColor)
+                        ),
                         start = Offset(
                             0f,
                             0f
@@ -88,7 +91,9 @@ fun HomeScreen(
             ) {
                 Text(
                     text = stringResource(R.string.app_name),
-                    style = MaterialTheme.typography.h5,
+                    style = MaterialTheme.typography.h5.merge(
+                        TextStyle(color = contentColorFor(backgroundColor = Color(accentColor)))
+                    ),
                     modifier = Modifier
                         .weight(1f)
                         .padding(start = 8.dp)
@@ -96,13 +101,15 @@ fun HomeScreen(
                 IconButton(onClick = { viewModel.onEvent(NotesEvent.ToggleOrderSection) }) {
                     Icon(
                         imageVector = Icons.Rounded.MoreVert,
-                        contentDescription = stringResource(R.string.sort)
+                        contentDescription = stringResource(R.string.sort),
+                        tint = contentColorFor(backgroundColor = Color(accentColor))
                     )
                 }
                 IconButton(onClick = onSettingsClick) {
                     Icon(
                         imageVector = Icons.Rounded.Settings,
-                        contentDescription = stringResource(R.string.settings)
+                        contentDescription = stringResource(R.string.settings),
+                        tint = contentColorFor(backgroundColor = Color(accentColor))
                     )
                 }
             }
@@ -131,6 +138,12 @@ fun HomeScreen(
                             onNoteClick = { onNoteClick(note.id!!) },
                             onLongClick = { viewModel.onEvent(NotesEvent.Pin(note)) }
                         )
+                        if (lineDividerState) {
+                            Divider(
+                                thickness = 0.5.dp,
+                                color = MaterialTheme.colors.onBackground.copy(alpha = 0.5f) // TODO add an option
+                            )
+                        }
                     }
                 }
                 items(
@@ -162,8 +175,8 @@ fun HomeScreen(
                         )
                         if (lineDividerState) {
                             Divider(
-                                thickness = 0.8.dp,
-                                color = MaterialTheme.colors.onBackground.copy(alpha = 0.3f) // TODO add an option
+                                thickness = 0.5.dp,
+                                color = MaterialTheme.colors.onBackground.copy(alpha = 0.5f) // TODO add an option
                             )
                         }
                     }

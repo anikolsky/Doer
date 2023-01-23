@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.omtorney.doer.R
@@ -92,7 +93,10 @@ fun HomeScreen(
                 Text(
                     text = stringResource(R.string.app_name),
                     style = MaterialTheme.typography.h5.merge(
-                        TextStyle(color = contentColorFor(backgroundColor = Color(accentColor)))
+                        TextStyle(
+                            color = contentColorFor(backgroundColor = Color(accentColor)),
+                            fontWeight = FontWeight.Bold
+                        )
                     ),
                     modifier = Modifier
                         .weight(1f)

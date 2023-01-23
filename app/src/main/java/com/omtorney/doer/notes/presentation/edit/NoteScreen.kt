@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -38,12 +39,7 @@ fun NoteScreen(
     val accentColor by viewModel.accentColor.collectAsState()
     val secondaryColor by viewModel.secondaryColor.collectAsState()
 
-    val enteredText by viewModel.noteText
-    val selectedPriority by viewModel.priority
-    val selectedPinned by viewModel.isPinned
-    val selectedId by viewModel.id
-    val selectedCreatedAt by viewModel.createdAt
-    val selectedModifiedAt by viewModel.modifiedAt
+    val state by viewModel.state
 
     val radioOptions = listOf(
         NotePriority.High,
@@ -133,18 +129,21 @@ fun NoteScreen(
                     Text(
                         text = stringResource(R.string.app_name),
                         style = MaterialTheme.typography.h5.merge(
-                            TextStyle(color = contentColorFor(backgroundColor = Color(accentColor)))
+                            TextStyle(
+                                color = contentColorFor(backgroundColor = Color(accentColor)),
+                                fontWeight = FontWeight.Bold
+                            )
                         ),
                         modifier = Modifier.weight(1f)
                     )
                     /** Pin button */
                     IconButton(
                         onClick = {
-                            viewModel.onEvent(NoteEditEvent.Pin(isPinned = !selectedPinned.isPinned))
+                            viewModel.onEvent(NoteEditEvent.Pin(isPinned = !state.isPinned))
                         }
                     ) {
                         Icon(
-                            painter = if (selectedPinned.isPinned)
+                            painter = if (state.isPinned)
                                 painterResource(R.drawable.ic_round_push_pin)
                             else
                                 painterResource(R.drawable.ic_outline_push_pin),
@@ -155,7 +154,7 @@ fun NoteScreen(
                     /** Delete button */
                     IconButton(
                         onClick = {
-                            viewModel.onEvent(NoteEditEvent.Delete(selectedId.id!!))
+                            viewModel.onEvent(NoteEditEvent.Delete(state.id!!))
                             coroutineScope.launch {
                                 scaffoldState.snackbarHostState.showSnackbar(
                                     message = "Deleted",
@@ -182,7 +181,7 @@ fun NoteScreen(
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         BasicTextField(
-                            value = enteredText.text,
+                            value = state.text,
                             onValueChange = { viewModel.onEvent(NoteEditEvent.EnteredText(it)) },
                             textStyle = MaterialTheme.typography.body1.copy(
                                 color = MaterialTheme.colors.onBackground
@@ -207,7 +206,7 @@ fun NoteScreen(
                             radioOptions.forEach { notePriority ->
                                 val priorityIndex = NotePriorityConverter().toInt(notePriority)
                                 RadioButton(
-                                    selected = priorityIndex == selectedPriority.priority,
+                                    selected = priorityIndex == state.priority,
                                     onClick = {
                                         viewModel.onEvent(
                                             NoteEditEvent.SetPriority(
@@ -223,21 +222,21 @@ fun NoteScreen(
                             }
                         }
                         Text(
-                            text = "Priority: ${selectedPriority.priority}",
+                            text = "Priority: ${state.priority}",
                             fontSize = 12.sp
                         )
                         Text(
-                            text = "Note id: ${selectedId.id}",
+                            text = "Note id: ${state.id}",
                             color = Color.Gray.copy(alpha = 0.3f),
                             fontSize = 12.sp
                         )
                         Text(
-                            text = "Created at ${selectedCreatedAt.createdAt}",
+                            text = "Created at ${state.createdAt}",
                             color = Color.Gray.copy(alpha = 0.3f),
                             fontSize = 12.sp
                         )
                         Text(
-                            text = "Modified at ${selectedModifiedAt.modifiedAt}",
+                            text = "Modified at ${state.modifiedAt}",
                             color = Color.Gray.copy(alpha = 0.3f),
                             fontSize = 12.sp
                         )

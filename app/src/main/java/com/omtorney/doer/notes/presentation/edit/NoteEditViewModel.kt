@@ -1,15 +1,17 @@
 package com.omtorney.doer.notes.presentation.edit
 
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omtorney.doer.core.domain.usecase.NoteUseCases
-import com.omtorney.doer.settings.domain.usecase.SettingsUseCases
 import com.omtorney.doer.core.model.InvalidNoteException
 import com.omtorney.doer.core.model.Note
 import com.omtorney.doer.core.util.Constants
+import com.omtorney.doer.settings.domain.usecase.SettingsUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -27,25 +29,8 @@ class NoteEditViewModel @Inject constructor(
 
     private var currentNoteId: Int? = null
 
-    // TODO make single state of the following
-
-    private val _noteText = mutableStateOf(NoteEditState())
-    val noteText: State<NoteEditState> = _noteText
-
-    private val _priority = mutableStateOf(NoteEditState())
-    val priority: State<NoteEditState> = _priority
-
-    private val _isPinned = mutableStateOf(NoteEditState())
-    val isPinned: State<NoteEditState> = _isPinned
-
-    private val _id = mutableStateOf(NoteEditState())
-    val id: State<NoteEditState> = _id
-
-    private val _createdAt = mutableStateOf(NoteEditState())
-    val createdAt: State<NoteEditState> = _createdAt
-
-    private val _modifiedAt = mutableStateOf(NoteEditState())
-    val modifiedAt: State<NoteEditState> = _modifiedAt
+    private val _state = mutableStateOf(NoteEditState())
+    val state: State<NoteEditState> = _state
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
@@ -68,9 +53,11 @@ class NoteEditViewModel @Inject constructor(
                 viewModelScope.launch {
                     noteUseCases.getNote(noteId)?.also { note ->
                         currentNoteId = note.id
-                        _noteText.value = noteText.value.copy(text = note.text)
-                        _priority.value = priority.value.copy(priority = note.priority)
-                        _isPinned.value = isPinned.value.copy(isPinned = note.isPinned)
+                        _state.value = state.value.copy(
+                            text = note.text,
+                            priority = note.priority,
+                            isPinned = note.isPinned
+                        )
                     }
                 }
             }
@@ -80,7 +67,7 @@ class NoteEditViewModel @Inject constructor(
     fun onEvent(event: NoteEditEvent) {
         when (event) {
             is NoteEditEvent.EnteredText -> {
-                _noteText.value = noteText.value.copy(text = event.text)
+                _state.value = state.value.copy(text = event.text)
             }
             is NoteEditEvent.Delete -> {
                 viewModelScope.launch {
@@ -90,7 +77,7 @@ class NoteEditViewModel @Inject constructor(
             }
             is NoteEditEvent.Pin -> {
                 viewModelScope.launch {
-                    _isPinned.value = isPinned.value.copy(isPinned = event.isPinned)
+                    _state.value = state.value.copy(isPinned = event.isPinned)
                 }
             }
             is NoteEditEvent.Save -> {
@@ -99,8 +86,8 @@ class NoteEditViewModel @Inject constructor(
                         noteUseCases.addNote(
                             Note(
                                 id = currentNoteId,
-                                text = noteText.value.text,
-                                priority = priority.value.priority,
+                                text = state.value.text,
+                                priority = state.value.priority,
                                 createdAt = System.currentTimeMillis(),
                                 modifiedAt = System.currentTimeMillis(),
                                 isPinned = false
@@ -118,7 +105,7 @@ class NoteEditViewModel @Inject constructor(
             }
             is NoteEditEvent.SetPriority -> {
                 viewModelScope.launch {
-                    _priority.value = priority.value.copy(priority = event.priority)
+                    _state.value = state.value.copy(priority = event.priority)
                 }
             }
         }

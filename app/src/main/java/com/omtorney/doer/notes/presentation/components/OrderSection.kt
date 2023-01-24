@@ -1,12 +1,12 @@
-package com.omtorney.doer.ui.components
+package com.omtorney.doer.notes.presentation.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.omtorney.doer.core.presentation.theme.DoerTheme
-import com.omtorney.doer.notes.presentation.components.DefaultRadioButton
 import com.omtorney.doer.notes.util.NoteOrder
 import com.omtorney.doer.notes.util.OrderType
 
@@ -14,38 +14,50 @@ import com.omtorney.doer.notes.util.OrderType
 fun OrderSection(
     modifier: Modifier = Modifier,
     noteOrder: NoteOrder = NoteOrder.DateCreated(OrderType.Descending),
-    onOrderChange: (NoteOrder) -> Unit
+    onOrderChange: (NoteOrder) -> Unit,
+    color: Color
 ) {
-    Column(modifier = modifier) {
-        Row {
+    Row(
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        modifier = modifier
+    ) {
+        Column {
+            DefaultRadioButton(
+                text = "Priority",
+                selected = noteOrder is NoteOrder.Priority,
+                color = color,
+                onSelect = { onOrderChange(NoteOrder.Priority(noteOrder.orderType)) }
+            )
             DefaultRadioButton(
                 text = "Text",
                 selected = noteOrder is NoteOrder.Text,
+                color = color,
                 onSelect = { onOrderChange(NoteOrder.Text(noteOrder.orderType)) }
             )
-            Spacer(modifier = Modifier.width(8.dp))
             DefaultRadioButton(
                 text = "Created",
                 selected = noteOrder is NoteOrder.DateCreated,
+                color = color,
                 onSelect = { onOrderChange(NoteOrder.DateCreated(noteOrder.orderType)) }
             )
-            Spacer(modifier = Modifier.width(8.dp))
             DefaultRadioButton(
                 text = "Modified",
                 selected = noteOrder is NoteOrder.DateModified,
+                color = color,
                 onSelect = { onOrderChange(NoteOrder.DateModified(noteOrder.orderType)) }
             )
         }
-        Row(modifier = modifier) {
+        Column {
             DefaultRadioButton(
                 text = "Ascending",
                 selected = noteOrder.orderType is OrderType.Ascending,
+                color = color,
                 onSelect = { onOrderChange(noteOrder.copy(OrderType.Ascending)) }
             )
-            Spacer(modifier = Modifier.width(8.dp))
             DefaultRadioButton(
                 text = "Descending",
                 selected = noteOrder.orderType is OrderType.Descending,
+                color = color,
                 onSelect = { onOrderChange(noteOrder.copy(OrderType.Descending)) }
             )
         }
@@ -56,6 +68,6 @@ fun OrderSection(
 @Composable
 fun OrderSectionPreview() {
     DoerTheme {
-        OrderSection(onOrderChange = {})
+        OrderSection(onOrderChange = {}, color = Color.Blue)
     }
 }

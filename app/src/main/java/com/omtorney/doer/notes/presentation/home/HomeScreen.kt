@@ -24,7 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.omtorney.doer.R
-import com.omtorney.doer.ui.components.OrderSection
+import com.omtorney.doer.notes.presentation.components.OrderSection
 import com.omtorney.doer.notes.presentation.components.NoteItem
 import com.omtorney.doer.notes.presentation.components.PinnedNoteItem
 import kotlinx.coroutines.launch
@@ -127,7 +127,8 @@ fun HomeScreen(
                         .fillMaxWidth()
                         .padding(16.dp),
                     noteOrder = state.noteOrder,
-                    onOrderChange = { viewModel.onEvent(NotesEvent.Order(it)) }
+                    onOrderChange = { viewModel.onEvent(NotesEvent.Order(it)) },
+                    color = Color(secondaryColor)
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))

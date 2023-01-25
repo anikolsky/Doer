@@ -1,11 +1,12 @@
 package com.omtorney.doer.notes.presentation.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.omtorney.doer.core.presentation.theme.DoerTheme
 import com.omtorney.doer.notes.util.NoteOrder
 import com.omtorney.doer.notes.util.OrderType
@@ -19,7 +20,7 @@ fun OrderSection(
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
-        modifier = modifier
+        modifier = modifier.background(color = MaterialTheme.colors.surface.copy(alpha = 0.9f))
     ) {
         Column {
             DefaultRadioButton(

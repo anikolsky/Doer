@@ -68,9 +68,7 @@ fun NoteItem(
                     .background(NotePriorityConverter().fromInt(note.priority).color)
             )
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 12.dp, horizontal = 12.dp)
+                modifier = Modifier.padding(12.dp)
             ) {
                 Text(
                     text = note.text,
@@ -115,7 +113,6 @@ fun PinnedNoteItem(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .background(color = Color.Red.copy(alpha = 0.1f))
-                .fillMaxWidth()
                 .combinedClickable(
                     onClick = { onNoteClick() },
                     onLongClick = { /* onLongClick(note) */ }
@@ -130,7 +127,7 @@ fun PinnedNoteItem(
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(vertical = 12.dp, horizontal = 12.dp)
+                    .padding(12.dp)
             ) {
                 Text(
                     text = note.text,
@@ -172,7 +169,7 @@ fun NotePinnedItemPreview() {
             PinnedNoteItem(
                 Note(
                 1,
-                "Note text",
+                "Note text note text note text note text note text\nnote text note text",
                 1,
                 System.currentTimeMillis(),
                 System.currentTimeMillis(),
@@ -196,7 +193,7 @@ fun NoteItemPreview() {
             NoteItem(
                 Note(
                 1,
-                "Note text",
+                "Note text note text note text note text note text\nnote text note text",
                 1,
                 System.currentTimeMillis(),
                 System.currentTimeMillis(),

@@ -54,9 +54,12 @@ class NoteEditViewModel @Inject constructor(
                     noteUseCases.getNote(noteId)?.also { note ->
                         currentNoteId = note.id
                         _state.value = state.value.copy(
+                            id = note.id,
                             text = note.text,
                             priority = note.priority,
-                            isPinned = note.isPinned
+                            isPinned = note.isPinned,
+                            createdAt = note.createdAt,
+                            modifiedAt = note.modifiedAt,
                         )
                     }
                 }
@@ -77,7 +80,7 @@ class NoteEditViewModel @Inject constructor(
             }
             is NoteEditEvent.Pin -> {
                 viewModelScope.launch {
-                    _state.value = state.value.copy(isPinned = event.isPinned)
+                    _state.value = state.value.copy(isPinned = !state.value.isPinned)
                 }
             }
             is NoteEditEvent.Save -> {
@@ -90,7 +93,7 @@ class NoteEditViewModel @Inject constructor(
                                 priority = state.value.priority,
                                 createdAt = System.currentTimeMillis(),
                                 modifiedAt = System.currentTimeMillis(),
-                                isPinned = false
+                                isPinned = state.value.isPinned
                             )
                         )
                         _eventFlow.emit(UiEvent.SaveNote)

@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
@@ -14,6 +15,7 @@ import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -42,7 +44,7 @@ fun HomeScreen(
     val secondaryColor by viewModel.secondaryColor.collectAsState()
     val lineDividerState by viewModel.lineDividerState.collectAsState()
 
-    val state by viewModel.state
+    val state = viewModel.state.value
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -123,15 +125,13 @@ fun HomeScreen(
                 exit = fadeOut() + slideOutVertically()
             ) {
                 OrderSection(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     noteOrder = state.noteOrder,
                     onOrderChange = { viewModel.onEvent(NotesEvent.Order(it)) },
-                    color = Color(secondaryColor)
+                    color = Color(accentColor)
                 )
+                Spacer(modifier = Modifier.height(16.dp))
             }
-            Spacer(modifier = Modifier.height(16.dp))
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(
                     items = state.notes,

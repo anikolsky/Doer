@@ -48,7 +48,7 @@ class HomeViewModel @Inject constructor(
     )
 
     init {
-        getNotes(NoteOrder.DateCreated(OrderType.Descending))
+        getNotes(NoteOrder.Priority(OrderType.Ascending))
     }
 
     fun onEvent(event: NotesEvent) {

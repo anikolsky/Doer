@@ -21,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -29,6 +30,9 @@ import com.omtorney.doer.core.model.NotePriorityConverter
 import com.omtorney.doer.notes.util.NotePriority
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
+import java.util.Locale.*
 
 @Composable
 fun NoteScreen(
@@ -39,7 +43,7 @@ fun NoteScreen(
     val accentColor by viewModel.accentColor.collectAsState()
     val secondaryColor by viewModel.secondaryColor.collectAsState()
 
-    val state by viewModel.state
+    val state = viewModel.state.value
 
     val radioOptions = listOf(
         NotePriority.High,
@@ -56,14 +60,10 @@ fun NoteScreen(
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 NoteEditViewModel.UiEvent.SaveNote -> {
-                    scaffoldState.snackbarHostState.showSnackbar(
-                        message = "Saved"
-                    )
+                    scaffoldState.snackbarHostState.showSnackbar(message = "Saved")
                 }
                 is NoteEditViewModel.UiEvent.ShowSnackbar -> {
-                    scaffoldState.snackbarHostState.showSnackbar(
-                        message = event.message
-                    )
+                    scaffoldState.snackbarHostState.showSnackbar(message = event.message)
                 }
             }
         }
@@ -126,22 +126,44 @@ fun NoteScreen(
                         )
                     }
                     /** App name */
-                    Text(
-                        text = stringResource(R.string.app_name),
-                        style = MaterialTheme.typography.h5.merge(
-                            TextStyle(
-                                color = contentColorFor(backgroundColor = Color(accentColor)),
-                                fontWeight = FontWeight.Bold
-                            )
-                        ),
+//                    Text(
+//                        text = stringResource(R.string.app_name),
+//                        style = MaterialTheme.typography.h5.merge(
+//                            TextStyle(
+//                                color = contentColorFor(backgroundColor = Color(accentColor)),
+//                                fontWeight = FontWeight.Bold
+//                            )
+//                        ),
+//                        modifier = Modifier.weight(1f)
+//                    )
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Start,
                         modifier = Modifier.weight(1f)
-                    )
-                    /** Pin button */
-                    IconButton(
-                        onClick = {
-                            viewModel.onEvent(NoteEditEvent.Pin(isPinned = !state.isPinned))
-                        }
                     ) {
+                        radioOptions.forEach { notePriority ->
+                            val priorityIndex = NotePriorityConverter().toInt(notePriority)
+                            RadioButton(
+                                selected = priorityIndex == state.priority,
+                                onClick = {
+                                    viewModel.onEvent(
+                                        NoteEditEvent.SetPriority(
+                                            priorityIndex
+                                        )
+                                    )
+                                },
+                                colors = RadioButtonDefaults.colors(
+                                    selectedColor = notePriority.color,
+                                    unselectedColor = notePriority.color
+                                )
+                            )
+                        }
+                    }
+
+
+                    /** Pin button */
+                    IconButton(onClick = { viewModel.onEvent(NoteEditEvent.Pin) }) {
                         Icon(
                             painter = if (state.isPinned)
                                 painterResource(R.drawable.ic_round_push_pin)
@@ -158,7 +180,6 @@ fun NoteScreen(
                             coroutineScope.launch {
                                 scaffoldState.snackbarHostState.showSnackbar(
                                     message = "Deleted",
-                                    actionLabel = "Undo",
                                     duration = SnackbarDuration.Short
                                 )
                             }
@@ -174,11 +195,14 @@ fun NoteScreen(
                 }
                 Card(
                     modifier = Modifier
-                        .fillMaxSize(0.95f)
+                        .fillMaxWidth(0.95f)
+                        .fillMaxHeight(0.87f)
                         .align(Alignment.CenterHorizontally),
                     shape = RoundedCornerShape(10.dp),
                     elevation = 16.dp
                 ) {
+                    val sdf = SimpleDateFormat("dd MMM yyyy - HH:mm:ss", getDefault())
+
                     Column(modifier = Modifier.padding(16.dp)) {
                         BasicTextField(
                             value = state.text,
@@ -198,31 +222,9 @@ fun NoteScreen(
                             thickness = 1.dp,
                             color = MaterialTheme.colors.onBackground.copy(alpha = 0.3f) // TODO add an option
                         )
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            radioOptions.forEach { notePriority ->
-                                val priorityIndex = NotePriorityConverter().toInt(notePriority)
-                                RadioButton(
-                                    selected = priorityIndex == state.priority,
-                                    onClick = {
-                                        viewModel.onEvent(
-                                            NoteEditEvent.SetPriority(
-                                                priorityIndex
-                                            )
-                                        )
-                                    },
-                                    colors = RadioButtonDefaults.colors(
-                                        selectedColor = notePriority.color,
-                                        unselectedColor = notePriority.color
-                                    )
-                                )
-                            }
-                        }
                         Text(
                             text = "Priority: ${state.priority}",
+                            color = Color.Gray.copy(alpha = 0.3f),
                             fontSize = 12.sp
                         )
                         Text(
@@ -231,12 +233,12 @@ fun NoteScreen(
                             fontSize = 12.sp
                         )
                         Text(
-                            text = "Created at ${state.createdAt}",
+                            text = "Created at ${sdf.format(state.createdAt)}",
                             color = Color.Gray.copy(alpha = 0.3f),
                             fontSize = 12.sp
                         )
                         Text(
-                            text = "Modified at ${state.modifiedAt}",
+                            text = "Modified at ${sdf.format(state.modifiedAt)}",
                             color = Color.Gray.copy(alpha = 0.3f),
                             fontSize = 12.sp
                         )

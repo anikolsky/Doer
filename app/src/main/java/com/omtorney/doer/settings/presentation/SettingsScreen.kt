@@ -35,7 +35,6 @@ fun SettingsScreen(
 ) {
     val context = LocalContext.current
     var colorMenuExpanded by remember { mutableStateOf(false) }
-//    var colorPickerMenuExpanded by remember { mutableStateOf(false) }
     val lineDividerState = viewModel.lineDividerState.collectAsState()
     val accentColor by viewModel.accentColor.collectAsState()
 
@@ -81,7 +80,7 @@ fun SettingsScreen(
                     checked = lineDividerState.value,
                     onCheckedChange = { viewModel.setLineDividerState(it) }
                 )
-                AccentColor(
+                AccentColorPicker(
                     color = accentColor,
                     expanded = colorMenuExpanded,
                     onClickColorButton = { colorMenuExpanded = true },
@@ -91,7 +90,7 @@ fun SettingsScreen(
                 SecondaryColorPicker(
                     accentColor = accentColor,
                     secondaryColor = secondaryColor.value,
-                    onSaveClick = { colorPickerOpen = true }
+                    onClickColorButton = { colorPickerOpen = true }
                 )
                 Divider(
                     modifier = Modifier.padding(vertical = 8.dp),
@@ -110,9 +109,7 @@ fun SettingsScreen(
         }
         if (colorPickerOpen) {
             ColorPickerDialog(
-                onChooseClick = {
-                    viewModel.setSecondaryColor(it)
-                },
+                onChooseClick = { viewModel.setSecondaryColor(it) },
                 onDismiss = { colorPickerOpen = false }
             )
         }
@@ -123,7 +120,7 @@ fun SettingsScreen(
 fun SecondaryColorPicker(
     accentColor: Long,
     secondaryColor: Long,
-    onSaveClick: () -> Unit
+    onClickColorButton: () -> Unit
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Canvas(
@@ -139,7 +136,7 @@ fun SecondaryColorPicker(
         ) {}
         Spacer(modifier = Modifier.weight(1f))
         Button(
-            onClick = onSaveClick,
+            onClick = onClickColorButton,
             colors = ButtonDefaults.buttonColors(Color(accentColor))
         ) {
             Text(text = "Secondary color")
@@ -196,7 +193,7 @@ fun LineDividerSwitcher(
 }
 
 @Composable
-fun AccentColor(
+fun AccentColorPicker(
     color: Long,
     expanded: Boolean,
     onClickColorButton: () -> Unit,

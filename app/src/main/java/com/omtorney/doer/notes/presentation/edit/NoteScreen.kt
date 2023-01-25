@@ -136,7 +136,7 @@ fun NoteScreen(
 //                        ),
 //                        modifier = Modifier.weight(1f)
 //                    )
-
+                    /** Priority buttons */
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Start,
@@ -160,8 +160,6 @@ fun NoteScreen(
                             )
                         }
                     }
-
-
                     /** Pin button */
                     IconButton(onClick = { viewModel.onEvent(NoteEditEvent.Pin) }) {
                         Icon(
@@ -224,22 +222,22 @@ fun NoteScreen(
                         )
                         Text(
                             text = "Priority: ${state.priority}",
-                            color = Color.Gray.copy(alpha = 0.3f),
+                            color = Color.Gray.copy(alpha = 0.5f),
                             fontSize = 12.sp
                         )
                         Text(
                             text = "Note id: ${state.id}",
-                            color = Color.Gray.copy(alpha = 0.3f),
+                            color = Color.Gray.copy(alpha = 0.5f),
                             fontSize = 12.sp
                         )
                         Text(
                             text = "Created at ${sdf.format(state.createdAt)}",
-                            color = Color.Gray.copy(alpha = 0.3f),
+                            color = Color.Gray.copy(alpha = 0.5f),
                             fontSize = 12.sp
                         )
                         Text(
                             text = "Modified at ${sdf.format(state.modifiedAt)}",
-                            color = Color.Gray.copy(alpha = 0.3f),
+                            color = Color.Gray.copy(alpha = 0.5f),
                             fontSize = 12.sp
                         )
                     }

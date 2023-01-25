@@ -124,15 +124,21 @@ fun HomeScreen(
                 enter = fadeIn() + slideInVertically(),
                 exit = fadeOut() + slideOutVertically()
             ) {
-                OrderSection(
-                    modifier = Modifier.fillMaxWidth(),
-                    noteOrder = state.noteOrder,
-                    onOrderChange = { viewModel.onEvent(NotesEvent.Order(it)) },
-                    color = Color(accentColor)
-                )
-                Spacer(modifier = Modifier.height(16.dp))
+                Column {
+                    OrderSection(
+                        noteOrder = state.noteOrder,
+                        onOrderChange = { viewModel.onEvent(NotesEvent.Order(it)) },
+                        color = Color(accentColor),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 4.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
             }
             LazyColumn(modifier = Modifier.fillMaxSize()) {
+                /** Pinned */
                 items(
                     items = state.notes,
                     key = { it.id?.plus(1000) ?: "" } // TODO get other unique id
@@ -141,16 +147,17 @@ fun HomeScreen(
                         PinnedNoteItem(
                             note = note,
                             onNoteClick = { onNoteClick(note.id!!) },
-                            onLongClick = { viewModel.onEvent(NotesEvent.Pin(note)) }
+                            onLongClick = { viewModel.onEvent(NotesEvent.Pin(note)) },
+                            modifier = Modifier
+                                .animateItemPlacement()
+                                .padding(horizontal = 4.dp)
                         )
                         if (lineDividerState) {
-                            Divider(
-                                thickness = 0.5.dp,
-                                color = MaterialTheme.colors.onBackground.copy(alpha = 0.5f) // TODO add an option
-                            )
+                            Spacer(modifier = Modifier.height(5.dp)) // TODO add an option
                         }
                     }
                 }
+                /** Unpinned */
                 items(
                     items = state.notes,
                     key = { it.id ?: "" }
@@ -176,13 +183,12 @@ fun HomeScreen(
                                     }
                                 }
                             },
-                            modifier = Modifier.animateItemPlacement()
+                            modifier = Modifier
+                                .animateItemPlacement()
+                                .padding(horizontal = 4.dp)
                         )
                         if (lineDividerState) {
-                            Divider(
-                                thickness = 0.5.dp,
-                                color = MaterialTheme.colors.onBackground.copy(alpha = 0.5f) // TODO add an option
-                            )
+                            Spacer(modifier = Modifier.height(5.dp)) // TODO add an option
                         }
                     }
                 }

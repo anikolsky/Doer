@@ -20,7 +20,7 @@ fun OrderSection(
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
-        modifier = modifier.background(color = MaterialTheme.colors.surface.copy(alpha = 0.9f))
+        modifier = modifier.background(color = MaterialTheme.colors.surface.copy(alpha = 0.7f))
     ) {
         Column {
             DefaultRadioButton(

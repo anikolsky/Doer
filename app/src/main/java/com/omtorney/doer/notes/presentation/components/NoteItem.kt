@@ -48,12 +48,11 @@ fun NoteItem(
     SwipeableActionsBox(
         startActions = listOf(pin),
         endActions = listOf(delete),
-        modifier = modifier
+        swipeThreshold = 60.dp,
+        backgroundUntilSwipeThreshold = Color.Transparent
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+        Card(
             modifier = modifier
-                .background(color = MaterialTheme.colors.surface)
                 .fillMaxWidth()
                 .height(IntrinsicSize.Max)
                 .combinedClickable(
@@ -61,30 +60,32 @@ fun NoteItem(
                     onLongClick = { onLongClick(note) }
                 )
         ) {
-            Spacer(
-                modifier = Modifier
-                    .width(4.dp)
-                    .fillMaxHeight()
-                    .background(NotePriorityConverter().fromInt(note.priority).color)
-            )
-            Column(
-                modifier = Modifier.padding(12.dp)
-            ) {
-                Text(
-                    text = note.text,
-                    style = MaterialTheme.typography.body1,
-                    color = MaterialTheme.colors.onSurface,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+            Row {
+                Spacer(
+                    modifier = Modifier
+                        .width(4.dp)
+                        .fillMaxHeight()
+                        .background(NotePriorityConverter().fromInt(note.priority).color)
                 )
-                note.text.lines().drop(1).forEach { textLine ->
+                Column(
+                    modifier = Modifier.padding(12.dp)
+                ) {
                     Text(
-                        text = textLine,
-                        style = MaterialTheme.typography.body2,
-                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.5f),
-                        maxLines = 10, // TODO add option
+                        text = note.text,
+                        style = MaterialTheme.typography.body1,
+                        color = MaterialTheme.colors.onSurface,
+                        maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
+                    note.text.lines().drop(1).forEach { textLine ->
+                        Text(
+                            text = textLine,
+                            style = MaterialTheme.typography.body2,
+                            color = MaterialTheme.colors.onSurface.copy(alpha = 0.5f),
+                            maxLines = 10, // TODO add option
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 }
             }
         }
@@ -103,8 +104,8 @@ fun PinnedNoteItem(
     onLongClick: (Note) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Surface(
-        color = MaterialTheme.colors.surface,
+    Card(
+        backgroundColor = MaterialTheme.colors.surface.copy(alpha = 0.9f),
         modifier = modifier
             .height(IntrinsicSize.Max)
             .fillMaxWidth()
@@ -150,7 +151,9 @@ fun PinnedNoteItem(
                 painter = painterResource(R.drawable.ic_round_push_pin),
                 tint = MaterialTheme.colors.onBackground.copy(alpha = 0.5f),
                 contentDescription = "Pinned",
-                modifier = Modifier.size(25.dp).padding(end = 8.dp)
+                modifier = Modifier
+                    .size(25.dp)
+                    .padding(end = 8.dp)
             )
         }
     }
@@ -168,13 +171,13 @@ fun NotePinnedItemPreview() {
         Surface {
             PinnedNoteItem(
                 Note(
-                1,
-                "Note text note text note text note text note text\nnote text note text",
-                1,
-                System.currentTimeMillis(),
-                System.currentTimeMillis(),
-                false
-            ), {}, {}
+                    1,
+                    "Note text note text note text note text note text\nnote text note text",
+                    1,
+                    System.currentTimeMillis(),
+                    System.currentTimeMillis(),
+                    false
+                ), {}, {}
             )
         }
     }
@@ -192,13 +195,13 @@ fun NoteItemPreview() {
         Surface {
             NoteItem(
                 Note(
-                1,
-                "Note text note text note text note text note text\nnote text note text",
-                1,
-                System.currentTimeMillis(),
-                System.currentTimeMillis(),
-                false
-            ), {}, {}, {}, {}
+                    1,
+                    "Note text note text note text note text note text\nnote text note text",
+                    1,
+                    System.currentTimeMillis(),
+                    System.currentTimeMillis(),
+                    false
+                ), {}, {}, {}, {}
             )
         }
     }

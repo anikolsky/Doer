@@ -91,7 +91,11 @@ class NoteEditViewModel @Inject constructor(
                                 id = currentNoteId,
                                 text = state.value.text,
                                 priority = state.value.priority,
-                                createdAt = System.currentTimeMillis(),
+                                createdAt = if (state.value.createdAt == 0L) {
+                                    System.currentTimeMillis()
+                                } else {
+                                    state.value.createdAt
+                                },
                                 modifiedAt = System.currentTimeMillis(),
                                 isPinned = state.value.isPinned
                             )

@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -18,6 +19,7 @@ import com.github.skydoves.colorpicker.compose.*
 
 @Composable
 fun ColorPickerDialog(
+    accentColor: Long,
     onChooseClick: (Color) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -70,14 +72,20 @@ fun ColorPickerDialog(
                 controller = controller,
             )
             Row {
-                Button(onClick = onDismiss) {
+                Button(
+                    onClick = onDismiss,
+                    colors = ButtonDefaults.buttonColors(Color(accentColor))
+                ) {
                     Text(text = "Dismiss")
                 }
                 Spacer(modifier = Modifier.weight(1f))
-                Button(onClick = {
-                    onChooseClick(controller.selectedColor.value)
-                    onDismiss()
-                }) {
+                Button(
+                    onClick = {
+                        onChooseClick(controller.selectedColor.value)
+                        onDismiss()
+                    },
+                    colors = ButtonDefaults.buttonColors(Color(accentColor))
+                ) {
                     Text(text = "Select")
                 }
             }

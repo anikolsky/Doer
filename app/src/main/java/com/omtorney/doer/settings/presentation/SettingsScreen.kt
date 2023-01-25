@@ -37,12 +37,12 @@ fun SettingsScreen(
     var colorMenuExpanded by remember { mutableStateOf(false) }
     val lineDividerState = viewModel.lineDividerState.collectAsState()
     val accentColor by viewModel.accentColor.collectAsState()
+    val secondaryColor = viewModel.secondaryColor.collectAsState()
+    var colorPickerOpen by remember { mutableStateOf(false) }
 
     val scaffoldState = rememberBottomSheetScaffoldState()
     val coroutineScope = rememberCoroutineScope()
 
-    var colorPickerOpen by remember { mutableStateOf(false) }
-    val secondaryColor = viewModel.secondaryColor.collectAsState()
 
     BottomSheetScaffold(
         modifier = modifier,
@@ -109,6 +109,7 @@ fun SettingsScreen(
         }
         if (colorPickerOpen) {
             ColorPickerDialog(
+                accentColor = accentColor,
                 onChooseClick = { viewModel.setSecondaryColor(it) },
                 onDismiss = { colorPickerOpen = false }
             )

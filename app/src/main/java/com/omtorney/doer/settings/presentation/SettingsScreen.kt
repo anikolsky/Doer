@@ -2,6 +2,7 @@ package com.omtorney.doer.settings.presentation
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.widget.Toast
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -25,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.omtorney.doer.R
 import com.omtorney.doer.settings.presentation.components.ColorPickerDialog
 import com.omtorney.doer.core.presentation.theme.DoerTheme
+import com.omtorney.doer.settings.presentation.components.ColorType
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -34,15 +37,14 @@ fun SettingsScreen(
     onClickClose: () -> Unit
 ) {
     val context = LocalContext.current
-    var colorMenuExpanded by remember { mutableStateOf(false) }
     val lineDividerState = viewModel.lineDividerState.collectAsState()
     val accentColor by viewModel.accentColor.collectAsState()
-    val secondaryColor = viewModel.secondaryColor.collectAsState()
+    val secondaryColor by viewModel.secondaryColor.collectAsState()
     var colorPickerOpen by remember { mutableStateOf(false) }
+    var colorType by remember { mutableStateOf<ColorType>(ColorType.Accent) }
 
     val scaffoldState = rememberBottomSheetScaffoldState()
     val coroutineScope = rememberCoroutineScope()
-
 
     BottomSheetScaffold(
         modifier = modifier,
@@ -80,17 +82,49 @@ fun SettingsScreen(
                     checked = lineDividerState.value,
                     onCheckedChange = { viewModel.setLineDividerState(it) }
                 )
-                AccentColorPicker(
-                    color = accentColor,
-                    expanded = colorMenuExpanded,
-                    onClickColorButton = { colorMenuExpanded = true },
-                    onClickDropdownMenuItem = { viewModel.setAccentColor(it) },
-                    onDismissRequest = { colorMenuExpanded = false }
+                /** Accent color */
+                SettingsMenuButton(
+                    icon = R.drawable.round_color,
+                    title = {
+                        Canvas(
+                            modifier = Modifier
+                                .size(30.dp)
+                                .clip(RoundedCornerShape(10))
+                                .border(
+                                    1.dp,
+                                    MaterialTheme.colors.onBackground.copy(alpha = 0.5f),
+                                    RoundedCornerShape(10)
+                                )
+                                .background(color = Color(accentColor))
+                        ) {}
+                    },
+                    subtitle = "Select accent color",
+                    onClick = {
+                        colorPickerOpen = true
+                        colorType = ColorType.Accent
+                    }
                 )
-                SecondaryColorPicker(
-                    accentColor = accentColor,
-                    secondaryColor = secondaryColor.value,
-                    onClickColorButton = { colorPickerOpen = true }
+                /** Secondary color */
+                SettingsMenuButton(
+                    icon = R.drawable.round_color,
+                    title = {
+                        Canvas(
+                            modifier = Modifier
+                                .size(30.dp)
+                                .clip(RoundedCornerShape(10))
+                                .border(
+                                    1.dp,
+                                    MaterialTheme.colors.onBackground.copy(alpha = 0.5f),
+                                    RoundedCornerShape(10)
+                                )
+                                .background(color = Color(secondaryColor))
+                        ) {}
+                    },
+                    subtitle = "Select secondary color",
+                    onClick = {
+                        colorPickerOpen = true
+                        colorType = ColorType.Secondary
+                    }
                 )
                 Divider(
                     modifier = Modifier.padding(vertical = 8.dp),
@@ -110,7 +144,16 @@ fun SettingsScreen(
         if (colorPickerOpen) {
             ColorPickerDialog(
                 accentColor = accentColor,
-                onChooseClick = { viewModel.setSecondaryColor(it) },
+                onChooseClick = { color ->
+                    when (colorType) {
+                        ColorType.Accent -> {
+                            viewModel.setAccentColor(color)
+                        }
+                        ColorType.Secondary -> {
+                            viewModel.setSecondaryColor(color)
+                        }
+                    }
+                },
                 onDismiss = { colorPickerOpen = false }
             )
         }
@@ -118,29 +161,34 @@ fun SettingsScreen(
 }
 
 @Composable
-fun SecondaryColorPicker(
-    accentColor: Long,
-    secondaryColor: Long,
-    onClickColorButton: () -> Unit
+fun SettingsMenuButton(
+    @DrawableRes icon: Int,
+    title: @Composable () -> Unit,
+    subtitle: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Canvas(
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+    ) {
+        Icon(
+            painter = painterResource(id = icon),
+            contentDescription = subtitle
+        )
+        Column(
             modifier = Modifier
-                .size(30.dp)
-                .clip(RoundedCornerShape(10))
-                .border(
-                    1.dp,
-                    MaterialTheme.colors.onBackground.copy(alpha = 0.5f),
-                    RoundedCornerShape(10)
-                )
-                .background(Color(secondaryColor))
-        ) {}
-        Spacer(modifier = Modifier.weight(1f))
-        Button(
-            onClick = onClickColorButton,
-            colors = ButtonDefaults.buttonColors(Color(accentColor))
+                .weight(1f)
+                .padding(horizontal = 8.dp)
         ) {
-            Text(text = "Secondary color")
+            title()
+            Text(text = subtitle, style = MaterialTheme.typography.caption)
+        }
+        Button(
+            onClick = onClick,
+            colors = ButtonDefaults.buttonColors(MaterialTheme.colors.primary)
+        ) {
+            Text(text = "Select")
         }
     }
 }
@@ -190,88 +238,6 @@ fun LineDividerSwitcher(
             onCheckedChange = { onCheckedChange(it) },
             colors = SwitchDefaults.colors(Color(color))
         )
-    }
-}
-
-@Composable
-fun AccentColorPicker(
-    color: Long,
-    expanded: Boolean,
-    onClickColorButton: () -> Unit,
-    onClickDropdownMenuItem: (Long) -> Unit,
-    onDismissRequest: () -> Unit
-) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Canvas(
-            modifier = Modifier
-                .size(30.dp)
-                .clip(RoundedCornerShape(10))
-                .border(
-                    1.dp,
-                    MaterialTheme.colors.onBackground.copy(alpha = 0.5f),
-                    RoundedCornerShape(10)
-                )
-                .background(Color(color))
-        ) {}
-        Spacer(modifier = Modifier.weight(1f))
-        Box {
-            Button(
-                onClick = onClickColorButton,
-                colors = ButtonDefaults.buttonColors(Color(color))
-            ) {
-                Text(text = "Accent color")
-            }
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = onDismissRequest
-            ) {
-                DropdownMenuItem(
-                    onClick = {
-                        onClickDropdownMenuItem(0xFF4D4D5A)
-                        onDismissRequest()
-                    },
-                    modifier = Modifier.background(Color(0xFF33333D))
-                ) {
-                    Text(text = "Grey")
-                }
-                DropdownMenuItem(
-                    onClick = {
-                        onClickDropdownMenuItem(0xFFFFCF44)
-                        onDismissRequest()
-                    },
-                    modifier = Modifier.background(Color(0xFFFFCF44))
-                ) {
-                    Text(text = "Yellow")
-                }
-                DropdownMenuItem(
-                    onClick = {
-                        onClickDropdownMenuItem(0xFFFF6859)
-                        onDismissRequest()
-                    },
-                    modifier = Modifier.background(Color(0xFFFF6859))
-                ) {
-                    Text(text = "Orange")
-                }
-                DropdownMenuItem(
-                    onClick = {
-                        onClickDropdownMenuItem(0xFF045D56)
-                        onDismissRequest()
-                    },
-                    modifier = Modifier.background(Color(0xFF045D56))
-                ) {
-                    Text(text = "Dark Green")
-                }
-                DropdownMenuItem(
-                    onClick = {
-                        onClickDropdownMenuItem(0xFF173d96)
-                        onDismissRequest()
-                    },
-                    modifier = Modifier.background(Color(0xFF173d96))
-                ) {
-                    Text(text = "Dark Blue")
-                }
-            }
-        }
     }
 }
 

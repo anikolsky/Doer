@@ -34,7 +34,7 @@ class SettingsStore @Inject constructor(private val context: Context) {
 
     val getAccentColor: Flow<Long> = context.dataStore.data
         .map { preferences ->
-            preferences[ACCENT_COLOR] ?: Constants.initialColor
+            preferences[ACCENT_COLOR] ?: Constants.INITIAL_COLOR
         }
 
     suspend fun setAccentColor(color: Long) {
@@ -45,7 +45,7 @@ class SettingsStore @Inject constructor(private val context: Context) {
 
     val getSecondaryColor: Flow<Long> = context.dataStore.data
         .map { preferences ->
-            preferences[SECONDARY_COLOR] ?: Constants.initialColor
+            preferences[SECONDARY_COLOR] ?: Constants.INITIAL_COLOR
         }
 
     suspend fun setSecondaryColor(color: Long) {

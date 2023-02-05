@@ -1,9 +1,7 @@
 package com.omtorney.doer.notes.presentation.edit
 
 import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -38,13 +36,13 @@ class NoteEditViewModel @Inject constructor(
     val accentColor = settingsUseCases.getAccentColor.invoke().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
-        initialValue = Constants.initialColor
+        initialValue = Constants.INITIAL_COLOR
     )
 
     val secondaryColor = settingsUseCases.getSecondaryColor.invoke().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
-        initialValue = Constants.initialColor
+        initialValue = Constants.INITIAL_COLOR
     )
 
     init {

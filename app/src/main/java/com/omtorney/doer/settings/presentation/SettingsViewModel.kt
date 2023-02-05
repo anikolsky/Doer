@@ -30,13 +30,13 @@ class SettingsViewModel @Inject constructor(
     val accentColor = settingsUseCases.getAccentColor.invoke().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
-        initialValue = Constants.initialColor
+        initialValue = Constants.INITIAL_COLOR
     )
 
     val secondaryColor = settingsUseCases.getSecondaryColor.invoke().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
-        initialValue = Constants.initialColor
+        initialValue = Constants.INITIAL_COLOR
     )
 
     val lineDividerState = settingsUseCases.getLineDivideState.invoke().stateIn(
@@ -49,7 +49,7 @@ class SettingsViewModel @Inject constructor(
         settingsUseCases.setLineDivideState(state)
     }
 
-    fun setAccentColor(color: Long) = viewModelScope.launch {
+    fun setAccentColor(color: Color) = viewModelScope.launch {
         settingsUseCases.setAccentColor(color)
     }
 

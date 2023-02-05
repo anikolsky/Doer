@@ -92,3 +92,8 @@ fun ColorPickerDialog(
         }
     }
 }
+
+sealed class ColorType {
+    object Accent : ColorType()
+    object Secondary : ColorType()
+}

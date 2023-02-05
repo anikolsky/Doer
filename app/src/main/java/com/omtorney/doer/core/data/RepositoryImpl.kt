@@ -30,7 +30,7 @@ class RepositoryImpl @Inject constructor(
 
     override suspend fun setAccentColor(color: Long) = settingsStore.setAccentColor(color)
 
-    override val getInitialColor = Constants.initialColor
+    override val getInitialColor = Constants.INITIAL_COLOR
 
     override suspend fun setSecondaryColor(color: Long) = settingsStore.setSecondaryColor(color)
 

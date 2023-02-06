@@ -27,6 +27,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.omtorney.doer.R
 import com.omtorney.doer.settings.presentation.components.ColorPickerDialog
 import com.omtorney.doer.core.presentation.theme.DoerTheme
+import com.omtorney.doer.notes.presentation.components.AppName
+import com.omtorney.doer.notes.presentation.components.BackButton
+import com.omtorney.doer.notes.presentation.components.TopBar
 import com.omtorney.doer.settings.presentation.components.ColorType
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -37,7 +40,7 @@ fun SettingsScreen(
     onClickClose: () -> Unit
 ) {
     val context = LocalContext.current
-    val lineDividerState = viewModel.lineDividerState.collectAsState()
+    val lineDividerState by viewModel.lineDividerState.collectAsState()
     val accentColor by viewModel.accentColor.collectAsState()
     val secondaryColor by viewModel.secondaryColor.collectAsState()
     var colorPickerOpen by remember { mutableStateOf(false) }
@@ -59,41 +62,34 @@ fun SettingsScreen(
                     .fillMaxSize()
                     .padding(8.dp)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    IconButton(onClick = onClickClose) {
-                        Icon(
-                            imageVector = Icons.Rounded.ArrowBack,
-                            contentDescription = stringResource(R.string.dismiss)
-                        )
-                    }
-                    Text(
-                        text = stringResource(R.string.app_name),
-                        style = MaterialTheme.typography.h5.merge(
-                            TextStyle(fontWeight = FontWeight.Bold)
-                        ),
-                        modifier = Modifier.weight(1f)
-                    )
+                TopBar {
+                    BackButton(onClick = onClickClose)
+                    AppName(accentColor = accentColor)
                 }
-                LineDividerSwitcher(
-                    color = accentColor,
-                    checked = lineDividerState.value,
+                /** Line divider switch */
+                SettingsMenuSwitch(
+                    title = { Text(text = "Enable divider") },
+                    subtitle = "Add divider to the task list",
+                    state = lineDividerState,
                     onCheckedChange = { viewModel.setLineDividerState(it) }
                 )
                 /** Accent color */
                 SettingsMenuButton(
-                    icon = R.drawable.round_color,
+                    icon = {
+                        Icon(
+                            painter = painterResource(R.drawable.round_color),
+                            contentDescription = null
+                        )
+                    },
                     title = {
                         Canvas(
                             modifier = Modifier
-                                .size(30.dp)
-                                .clip(RoundedCornerShape(10))
+                                .size(width = 40.dp, height = 15.dp)
+                                .clip(RoundedCornerShape(6))
                                 .border(
                                     1.dp,
                                     MaterialTheme.colors.onBackground.copy(alpha = 0.5f),
-                                    RoundedCornerShape(10)
+                                    RoundedCornerShape(6)
                                 )
                                 .background(color = Color(accentColor))
                         ) {}
@@ -106,16 +102,21 @@ fun SettingsScreen(
                 )
                 /** Secondary color */
                 SettingsMenuButton(
-                    icon = R.drawable.round_color,
+                    icon = {
+                        Icon(
+                            painter = painterResource(R.drawable.round_color),
+                            contentDescription = null
+                        )
+                    },
                     title = {
                         Canvas(
                             modifier = Modifier
-                                .size(30.dp)
-                                .clip(RoundedCornerShape(10))
+                                .size(width = 40.dp, height = 15.dp)
+                                .clip(RoundedCornerShape(6))
                                 .border(
                                     1.dp,
                                     MaterialTheme.colors.onBackground.copy(alpha = 0.5f),
-                                    RoundedCornerShape(10)
+                                    RoundedCornerShape(6)
                                 )
                                 .background(color = Color(secondaryColor))
                         ) {}
@@ -161,28 +162,61 @@ fun SettingsScreen(
 }
 
 @Composable
-fun SettingsMenuButton(
-    @DrawableRes icon: Int,
+fun SettingsMenuSwitch(
+    modifier: Modifier = Modifier,
+    icon: @Composable (() -> Unit)? = null,
     title: @Composable () -> Unit,
     subtitle: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    state: Boolean,
+    onCheckedChange: (Boolean) -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier.padding(horizontal = 8.dp, vertical = 4.dp)
     ) {
-        Icon(
-            painter = painterResource(id = icon),
-            contentDescription = subtitle
-        )
+        icon?.invoke()
         Column(
             modifier = Modifier
                 .weight(1f)
                 .padding(horizontal = 8.dp)
         ) {
             title()
-            Text(text = subtitle, style = MaterialTheme.typography.caption)
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.caption
+            )
+        }
+        Switch(
+            checked = state,
+            onCheckedChange = { onCheckedChange(it) },
+            colors = SwitchDefaults.colors(MaterialTheme.colors.primary)
+        )
+    }
+}
+
+@Composable
+fun SettingsMenuButton(
+    modifier: Modifier = Modifier,
+    icon: @Composable (() -> Unit)? = null,
+    title: @Composable () -> Unit,
+    subtitle: String,
+    onClick: () -> Unit
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+    ) {
+        icon?.invoke()
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 8.dp)
+        ) {
+            title()
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.caption
+            )
         }
         Button(
             onClick = onClick,
@@ -218,26 +252,6 @@ fun DatabaseActions(
         ) {
             Text(text = "Import")
         }
-    }
-}
-
-@Composable
-fun LineDividerSwitcher(
-    color: Long,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
-) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            text = "Divide notes",
-            modifier = Modifier.weight(1f),
-            style = MaterialTheme.typography.body1
-        )
-        Switch(
-            checked = checked,
-            onCheckedChange = { onCheckedChange(it) },
-            colors = SwitchDefaults.colors(Color(color))
-        )
     }
 }
 

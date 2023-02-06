@@ -26,9 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.omtorney.doer.R
-import com.omtorney.doer.notes.presentation.components.OrderSection
-import com.omtorney.doer.notes.presentation.components.NoteItem
-import com.omtorney.doer.notes.presentation.components.PinnedNoteItem
+import com.omtorney.doer.notes.presentation.components.*
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -86,38 +84,19 @@ fun HomeScreen(
                     )
                 )
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.app_name),
-                    style = MaterialTheme.typography.h5.merge(
-                        TextStyle(
-                            color = contentColorFor(backgroundColor = Color(accentColor)),
-                            fontWeight = FontWeight.Bold
-                        )
-                    ),
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 8.dp)
+            TopBar(modifier = Modifier.padding(8.dp)) {
+                AppName(
+                    accentColor = accentColor,
+                    modifier = Modifier.weight(1f)
                 )
-                IconButton(onClick = { viewModel.onEvent(NotesEvent.ToggleOrderSection) }) {
-                    Icon(
-                        imageVector = Icons.Rounded.MoreVert,
-                        contentDescription = stringResource(R.string.sort),
-                        tint = contentColorFor(backgroundColor = Color(accentColor))
-                    )
-                }
-                IconButton(onClick = onSettingsClick) {
-                    Icon(
-                        imageVector = Icons.Rounded.Settings,
-                        contentDescription = stringResource(R.string.settings),
-                        tint = contentColorFor(backgroundColor = Color(accentColor))
-                    )
-                }
+                MoreButton(
+                    accentColor = accentColor,
+                    onClick = { viewModel.onEvent(NotesEvent.ToggleOrderSection) }
+                )
+                SettingsButton(
+                    accentColor = accentColor,
+                    onClick = onSettingsClick
+                )
             }
             AnimatedVisibility(
                 visible = state.isOrderSectionVisible,
@@ -138,7 +117,7 @@ fun HomeScreen(
                 }
             }
             LazyColumn(modifier = Modifier.fillMaxSize()) {
-                /** Pinned */
+                /** Pinned list */
                 items(
                     items = state.notes,
                     key = { it.id?.plus(1000) ?: "" } // TODO get other unique id
@@ -157,7 +136,7 @@ fun HomeScreen(
                         }
                     }
                 }
-                /** Unpinned */
+                /** Unpinned list */
                 items(
                     items = state.notes,
                     key = { it.id ?: "" }

@@ -10,6 +10,7 @@ import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
@@ -27,6 +28,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.omtorney.doer.R
 import com.omtorney.doer.core.model.NotePriorityConverter
+import com.omtorney.doer.notes.presentation.components.AppName
+import com.omtorney.doer.notes.presentation.components.BackButton
+import com.omtorney.doer.notes.presentation.components.TopBar
 import com.omtorney.doer.notes.util.NotePriority
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -113,51 +117,35 @@ fun NoteScreen(
                 )
         ) {
             Column(modifier = Modifier.padding(8.dp)) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    /** Back button */
-                    IconButton(onClick = onClickClose) {
-                        Icon(
-                            imageVector = Icons.Rounded.ArrowBack,
-                            contentDescription = stringResource(R.string.dismiss),
-                            tint = contentColorFor(backgroundColor = Color(accentColor))
-                        )
-                    }
-                    /** App name */
-//                    Text(
-//                        text = stringResource(R.string.app_name),
-//                        style = MaterialTheme.typography.h5.merge(
-//                            TextStyle(
-//                                color = contentColorFor(backgroundColor = Color(accentColor)),
-//                                fontWeight = FontWeight.Bold
-//                            )
-//                        ),
-//                        modifier = Modifier.weight(1f)
-//                    )
+                TopBar(modifier = Modifier.padding(bottom = 8.dp)) {
+                    BackButton(onClick = onClickClose)
                     /** Priority buttons */
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Start,
+                    Surface(
+                        shape = RoundedCornerShape(10.dp),
+                        color = MaterialTheme.colors.surface.copy(alpha = 0.45f),
                         modifier = Modifier.weight(1f)
                     ) {
-                        radioOptions.forEach { notePriority ->
-                            val priorityIndex = NotePriorityConverter().toInt(notePriority)
-                            RadioButton(
-                                selected = priorityIndex == state.priority,
-                                onClick = {
-                                    viewModel.onEvent(
-                                        NoteEditEvent.SetPriority(
-                                            priorityIndex
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            radioOptions.forEach { notePriority ->
+                                val priorityIndex = NotePriorityConverter().toInt(notePriority)
+                                RadioButton(
+                                    selected = priorityIndex == state.priority,
+                                    onClick = {
+                                        viewModel.onEvent(
+                                            NoteEditEvent.SetPriority(
+                                                priorityIndex
+                                            )
                                         )
+                                    },
+                                    colors = RadioButtonDefaults.colors(
+                                        selectedColor = notePriority.color,
+                                        unselectedColor = notePriority.color
                                     )
-                                },
-                                colors = RadioButtonDefaults.colors(
-                                    selectedColor = notePriority.color,
-                                    unselectedColor = notePriority.color
                                 )
-                            )
+                            }
                         }
                     }
                     /** Pin button */

@@ -1,4 +1,4 @@
-package com.omtorney.doer.notes.presentation.components
+package com.omtorney.doer.core.presentation.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -18,7 +18,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.omtorney.doer.R
-import com.omtorney.doer.notes.presentation.home.NotesEvent
 
 @Composable
 fun TopBar(

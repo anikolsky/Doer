@@ -6,34 +6,33 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.MoreVert
-import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.omtorney.doer.R
+import com.omtorney.doer.core.presentation.components.*
 import com.omtorney.doer.notes.presentation.components.*
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
-    modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
+    navController: NavController,
     onNoteClick: (Int) -> Unit,
     onAddNoteClick: () -> Unit,
     onSettingsClick: () -> Unit
@@ -47,12 +46,17 @@ fun HomeScreen(
     val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
+        bottomBar = {
+            BottomBar(
+                navController = navController,
+                accentColor = accentColor
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {
-                    onAddNoteClick()
-                },
-                backgroundColor = Color(accentColor)
+                onClick = { onAddNoteClick() },
+                backgroundColor = Color(accentColor),
+                contentColor = contentColorFor(backgroundColor = Color(accentColor))
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Add,
@@ -61,12 +65,12 @@ fun HomeScreen(
             }
         },
         floatingActionButtonPosition = FabPosition.Center,
-        scaffoldState = scaffoldState,
-        modifier = modifier
+        isFloatingActionButtonDocked = true,
+        scaffoldState = scaffoldState
     ) { paddingValues ->
         Column(
             modifier = Modifier
-                .padding(paddingValues)
+//                .padding(paddingValues)
                 .fillMaxSize()
                 .background(
                     brush = Brush.linearGradient(

@@ -2,15 +2,12 @@ package com.omtorney.doer.settings.presentation
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.widget.Toast
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,21 +15,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.omtorney.doer.R
 import com.omtorney.doer.settings.presentation.components.ColorPickerDialog
 import com.omtorney.doer.core.presentation.theme.DoerTheme
-import com.omtorney.doer.notes.presentation.components.AppName
-import com.omtorney.doer.notes.presentation.components.BackButton
-import com.omtorney.doer.notes.presentation.components.TopBar
+import com.omtorney.doer.core.presentation.components.AppName
+import com.omtorney.doer.core.presentation.components.BackButton
+import com.omtorney.doer.core.presentation.components.TopBar
 import com.omtorney.doer.settings.presentation.components.ColorType
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SettingsScreen(
     modifier: Modifier = Modifier,
@@ -45,16 +38,11 @@ fun SettingsScreen(
     val secondaryColor by viewModel.secondaryColor.collectAsState()
     var colorPickerOpen by remember { mutableStateOf(false) }
     var colorType by remember { mutableStateOf<ColorType>(ColorType.Accent) }
+    val scaffoldState = rememberScaffoldState()
 
-    val scaffoldState = rememberBottomSheetScaffoldState()
-    val coroutineScope = rememberCoroutineScope()
-
-    BottomSheetScaffold(
+    Scaffold(
         modifier = modifier,
         scaffoldState = scaffoldState,
-        sheetContent = {
-
-        }
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
             Column(

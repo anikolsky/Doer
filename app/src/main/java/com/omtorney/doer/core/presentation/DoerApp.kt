@@ -9,6 +9,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.omtorney.doer.R
+import com.omtorney.doer.goals.presentation.GoalsScreen
 import com.omtorney.doer.notes.presentation.edit.NoteScreen
 import com.omtorney.doer.notes.presentation.home.HomeScreen
 import com.omtorney.doer.settings.presentation.SettingsScreen
@@ -25,6 +27,7 @@ fun DoerApp() {
     ) {
         composable(route = Screen.Home.route) {
             HomeScreen(
+                navController = navController,
                 onNoteClick = { noteId ->
                     navController.navigate(Screen.Note.route + "?noteId=$noteId") {
                         popUpTo(navController.graph.findStartDestination().id) { saveState = true }
@@ -58,14 +61,27 @@ fun DoerApp() {
         ) {
             NoteScreen(onClickClose = { navController.popBackStack() })
         }
+        composable(route = Screen.Goals.route) {
+            GoalsScreen(navController = navController,
+                onAddGoalClick = {},
+                onSettingsClick = {
+                    navController.navigate(Screen.Settings.route) {
+                        popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            )
+        }
         composable(route = Screen.Settings.route) {
             SettingsScreen(onClickClose = { navController.popBackStack() })
         }
     }
 }
 
-private sealed class Screen(val route: String) {
-    object Home : Screen("home_screen")
-    object Note : Screen("note_screen")
-    object Settings : Screen("settings_screen")
+sealed class Screen(val route: String, val label: String?, val icon: Int?) {
+    object Home : Screen("home_screen", "Tasks", R.drawable.ic_round_task)
+    object Note : Screen("note_screen", null, null)
+    object Goals : Screen("goals_screen", "Goals", R.drawable.ic_round_flag_circle)
+    object Settings : Screen("settings_screen", null, null)
 }

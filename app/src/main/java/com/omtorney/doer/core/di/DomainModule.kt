@@ -1,7 +1,7 @@
 package com.omtorney.doer.core.di
 
 import com.omtorney.doer.core.domain.Repository
-import com.omtorney.doer.core.domain.usecase.*
+import com.omtorney.doer.notes.domain.usecase.*
 import com.omtorney.doer.settings.domain.usecase.*
 import dagger.Module
 import dagger.Provides

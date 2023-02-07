@@ -1,4 +1,4 @@
-package com.omtorney.doer.core.domain.usecase
+package com.omtorney.doer.notes.domain.usecase
 
 data class NoteUseCases(
     val getNotes: GetNotes,

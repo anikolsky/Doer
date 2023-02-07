@@ -15,8 +15,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.omtorney.doer.R
-import com.omtorney.doer.core.model.Note
-import com.omtorney.doer.core.model.NotePriorityConverter
+import com.omtorney.doer.notes.domain.model.Note
+import com.omtorney.doer.notes.domain.model.NotePriorityConverter
 import com.omtorney.doer.core.presentation.theme.DoerTheme
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox

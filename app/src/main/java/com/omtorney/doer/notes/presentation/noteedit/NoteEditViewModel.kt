@@ -1,13 +1,13 @@
-package com.omtorney.doer.notes.presentation.edit
+package com.omtorney.doer.notes.presentation.noteedit
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.omtorney.doer.core.domain.usecase.NoteUseCases
-import com.omtorney.doer.core.model.InvalidNoteException
-import com.omtorney.doer.core.model.Note
+import com.omtorney.doer.notes.domain.usecase.NoteUseCases
+import com.omtorney.doer.notes.domain.model.InvalidNoteException
+import com.omtorney.doer.notes.domain.model.Note
 import com.omtorney.doer.core.util.Constants
 import com.omtorney.doer.settings.domain.usecase.SettingsUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +25,7 @@ class NoteEditViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private var currentNoteId: Int? = null
+    private var currentNoteId: Long? = null
 
     private val _state = mutableStateOf(NoteEditState())
     val state: State<NoteEditState> = _state
@@ -46,8 +46,8 @@ class NoteEditViewModel @Inject constructor(
     )
 
     init {
-        savedStateHandle.get<Int>("noteId")?.let { noteId ->
-            if (noteId != -1) {
+        savedStateHandle.get<Long>("noteId")?.let { noteId ->
+            if (noteId != -1L) {
                 viewModelScope.launch {
                     noteUseCases.getNote(noteId)?.also { note ->
                         currentNoteId = note.id

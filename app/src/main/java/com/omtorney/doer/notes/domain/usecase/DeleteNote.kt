@@ -1,7 +1,7 @@
-package com.omtorney.doer.core.domain.usecase
+package com.omtorney.doer.notes.domain.usecase
 
 import com.omtorney.doer.core.domain.Repository
-import com.omtorney.doer.core.model.Note
+import com.omtorney.doer.notes.domain.model.Note
 
 class DeleteNote(
     private val repository: Repository

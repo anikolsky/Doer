@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.omtorney.doer.core.data.RepositoryImpl
 import com.omtorney.doer.settings.data.SettingsStore
 import com.omtorney.doer.core.data.database.AppDatabase
+import com.omtorney.doer.core.data.database.GoalDao
 import com.omtorney.doer.core.data.database.NoteDao
 import com.omtorney.doer.core.domain.Repository
 import dagger.Module
@@ -24,7 +25,7 @@ object DataModule {
         return Room.databaseBuilder(
             appContext,
             AppDatabase::class.java,
-            "doer_notes_db"
+            "doer_db"
         ).build()
     }
 
@@ -32,6 +33,12 @@ object DataModule {
     @Singleton
     fun provideNoteDao(appDatabase: AppDatabase): NoteDao {
         return appDatabase.noteDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideGoalDao(appDatabase: AppDatabase): GoalDao {
+        return appDatabase.goalDao()
     }
 
     @Provides

@@ -1,7 +1,7 @@
-package com.omtorney.doer.notes.presentation.edit
+package com.omtorney.doer.notes.presentation.noteedit
 
 data class NoteEditState(
-    val id: Int? = null,
+    val id: Long? = null,
     val text: String = "",
     val priority: Int = 4,
     val isPinned: Boolean = false,

@@ -1,7 +1,7 @@
-package com.omtorney.doer.core.domain.usecase
+package com.omtorney.doer.notes.domain.usecase
 
 import com.omtorney.doer.core.domain.Repository
-import com.omtorney.doer.core.model.Note
+import com.omtorney.doer.notes.domain.model.Note
 import com.omtorney.doer.notes.util.NoteOrder
 import com.omtorney.doer.notes.util.OrderType
 import kotlinx.coroutines.flow.Flow

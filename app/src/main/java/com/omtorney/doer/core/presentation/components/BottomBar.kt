@@ -20,7 +20,7 @@ fun BottomBar(
     navController: NavController
 ) {
     val navItems = arrayOf(
-        Screen.Home,
+        Screen.Notes,
         Screen.Goals
     )
     val navBackStackEntry by navController.currentBackStackEntryAsState()

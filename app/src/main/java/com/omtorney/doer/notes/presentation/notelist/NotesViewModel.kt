@@ -1,12 +1,12 @@
-package com.omtorney.doer.notes.presentation.home
+package com.omtorney.doer.notes.presentation.notelist
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.omtorney.doer.core.domain.usecase.NoteUseCases
+import com.omtorney.doer.notes.domain.usecase.NoteUseCases
 import com.omtorney.doer.settings.domain.usecase.SettingsUseCases
-import com.omtorney.doer.core.model.Note
+import com.omtorney.doer.notes.domain.model.Note
 import com.omtorney.doer.core.util.Constants
 import com.omtorney.doer.notes.util.NoteOrder
 import com.omtorney.doer.notes.util.OrderType
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class NotesViewModel @Inject constructor(
     private val noteUseCases: NoteUseCases,
     private val settingsUseCases: SettingsUseCases
 ) : ViewModel() {

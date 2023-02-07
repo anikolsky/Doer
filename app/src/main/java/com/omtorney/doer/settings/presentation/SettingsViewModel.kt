@@ -1,14 +1,16 @@
 package com.omtorney.doer.settings.presentation
 
+import android.Manifest
 import android.os.Environment
 import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.GsonBuilder
-import com.omtorney.doer.core.domain.usecase.NoteUseCases
+import com.omtorney.doer.notes.domain.usecase.NoteUseCases
 import com.omtorney.doer.settings.domain.usecase.SettingsUseCases
 import com.omtorney.doer.core.util.Constants
+import com.omtorney.doer.core.util.RequestPermissions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn

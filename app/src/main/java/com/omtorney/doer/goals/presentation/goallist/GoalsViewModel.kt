@@ -1,4 +1,4 @@
-package com.omtorney.doer.goals.presentation
+package com.omtorney.doer.goals.presentation.goallist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

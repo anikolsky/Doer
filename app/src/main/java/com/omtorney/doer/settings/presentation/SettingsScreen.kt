@@ -1,5 +1,6 @@
 package com.omtorney.doer.settings.presentation
 
+import android.Manifest
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.widget.Toast
 import androidx.compose.foundation.Canvas
@@ -24,6 +25,7 @@ import com.omtorney.doer.core.presentation.theme.DoerTheme
 import com.omtorney.doer.core.presentation.components.AppName
 import com.omtorney.doer.core.presentation.components.BackButton
 import com.omtorney.doer.core.presentation.components.TopBar
+import com.omtorney.doer.core.util.RequestPermissions
 import com.omtorney.doer.settings.presentation.components.ColorType
 
 @Composable
@@ -38,6 +40,7 @@ fun SettingsScreen(
     val secondaryColor by viewModel.secondaryColor.collectAsState()
     var colorPickerOpen by remember { mutableStateOf(false) }
     var colorType by remember { mutableStateOf<ColorType>(ColorType.Accent) }
+    var showPermissionRequest by remember { mutableStateOf(false) }
     val scaffoldState = rememberScaffoldState()
 
     Scaffold(
@@ -123,6 +126,7 @@ fun SettingsScreen(
                 DatabaseActions(
                     color = accentColor,
                     onExportClick = {
+                        showPermissionRequest = true
                         viewModel.backupDatabase()
                         Toast.makeText(context, "Exported", Toast.LENGTH_SHORT).show()
                     },
@@ -144,6 +148,12 @@ fun SettingsScreen(
                     }
                 },
                 onDismiss = { colorPickerOpen = false }
+            )
+        }
+        if (showPermissionRequest) {
+            RequestPermissions(
+                permission = Manifest.permission.MANAGE_EXTERNAL_STORAGE,
+                onDismiss = { showPermissionRequest = false }
             )
         }
     }
@@ -171,7 +181,8 @@ fun SettingsMenuSwitch(
             title()
             Text(
                 text = subtitle,
-                style = MaterialTheme.typography.caption
+                style = MaterialTheme.typography.caption,
+                color = MaterialTheme.colors.onBackground.copy(alpha = 0.5f)
             )
         }
         Switch(
@@ -203,7 +214,8 @@ fun SettingsMenuButton(
             title()
             Text(
                 text = subtitle,
-                style = MaterialTheme.typography.caption
+                style = MaterialTheme.typography.caption,
+                color = MaterialTheme.colors.onBackground.copy(alpha = 0.5f)
             )
         }
         Button(

@@ -10,9 +10,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.omtorney.doer.R
-import com.omtorney.doer.goals.presentation.GoalsScreen
-import com.omtorney.doer.notes.presentation.edit.NoteScreen
-import com.omtorney.doer.notes.presentation.home.HomeScreen
+import com.omtorney.doer.goals.presentation.goallist.GoalsScreen
+import com.omtorney.doer.notes.presentation.noteedit.NoteScreen
+import com.omtorney.doer.notes.presentation.notelist.HomeScreen
 import com.omtorney.doer.settings.presentation.SettingsScreen
 
 @Composable
@@ -23,9 +23,9 @@ fun DoerApp() {
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route,
+        startDestination = Screen.Notes.route,
     ) {
-        composable(route = Screen.Home.route) {
+        composable(route = Screen.Notes.route) {
             HomeScreen(
                 navController = navController,
                 onNoteClick = { noteId ->
@@ -55,8 +55,8 @@ fun DoerApp() {
         composable(
             route = Screen.Note.route + "?noteId={noteId}",
             arguments = listOf(navArgument(name = "noteId") {
-                type = NavType.IntType
-                defaultValue = -1
+                type = NavType.LongType
+                defaultValue = -1L
             })
         ) {
             NoteScreen(onClickClose = { navController.popBackStack() })
@@ -80,7 +80,7 @@ fun DoerApp() {
 }
 
 sealed class Screen(val route: String, val label: String?, val icon: Int?) {
-    object Home : Screen("home_screen", "Tasks", R.drawable.ic_round_task)
+    object Notes : Screen("notes_screen", "Notes", R.drawable.ic_round_task)
     object Note : Screen("note_screen", null, null)
     object Goals : Screen("goals_screen", "Goals", R.drawable.ic_round_flag_circle)
     object Settings : Screen("settings_screen", null, null)

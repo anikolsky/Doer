@@ -7,7 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import com.omtorney.doer.core.data.database.AppDatabase
 import com.omtorney.doer.core.data.database.NoteDao
-import com.omtorney.doer.core.model.Note
+import com.omtorney.doer.notes.domain.model.Note
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -16,7 +16,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
 import java.time.LocalDateTime
-import java.time.Month
 import java.util.*
 
 @RunWith(AndroidJUnit4::class)

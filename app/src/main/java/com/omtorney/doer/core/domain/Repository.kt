@@ -1,13 +1,13 @@
 package com.omtorney.doer.core.domain
 
-import com.omtorney.doer.core.model.Note
+import com.omtorney.doer.notes.domain.model.Note
 import kotlinx.coroutines.flow.Flow
 
 interface Repository {
 
     fun getNotes(): Flow<List<Note>>
 
-    suspend fun getNoteById(id: Int): Note?
+    suspend fun getNoteById(id: Long): Note?
 
     suspend fun insertNote(note: Note)
 

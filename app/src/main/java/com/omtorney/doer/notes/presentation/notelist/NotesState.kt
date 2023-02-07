@@ -1,6 +1,6 @@
-package com.omtorney.doer.notes.presentation.home
+package com.omtorney.doer.notes.presentation.notelist
 
-import com.omtorney.doer.core.model.Note
+import com.omtorney.doer.notes.domain.model.Note
 import com.omtorney.doer.notes.util.NoteOrder
 import com.omtorney.doer.notes.util.OrderType
 

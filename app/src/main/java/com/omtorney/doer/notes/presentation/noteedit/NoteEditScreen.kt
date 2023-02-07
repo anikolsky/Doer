@@ -1,10 +1,12 @@
-package com.omtorney.doer.notes.presentation.edit
+package com.omtorney.doer.notes.presentation.noteedit
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.omtorney.doer.R
-import com.omtorney.doer.core.model.NotePriorityConverter
+import com.omtorney.doer.notes.domain.model.NotePriorityConverter
 import com.omtorney.doer.core.presentation.components.BackButton
 import com.omtorney.doer.core.presentation.components.TopBar
 import com.omtorney.doer.notes.util.NotePriority
@@ -37,6 +39,7 @@ fun NoteScreen(
     val accentColor by viewModel.accentColor.collectAsState()
     val secondaryColor by viewModel.secondaryColor.collectAsState()
     val state = viewModel.state.value
+    var noteInfoExpanded by remember { mutableStateOf(false) }
     val radioOptions = listOf(
         NotePriority.High,
         NotePriority.Medium,
@@ -175,8 +178,6 @@ fun NoteScreen(
                     shape = RoundedCornerShape(10.dp),
                     elevation = 16.dp
                 ) {
-                    val sdf = SimpleDateFormat("dd MMM yyyy - HH:mm:ss", getDefault())
-
                     Column(modifier = Modifier.padding(16.dp)) {
                         BasicTextField(
                             value = state.text,
@@ -191,34 +192,53 @@ fun NoteScreen(
                                 .fillMaxSize()
 //                                .focusRequester(focusRequester)
                         )
-                        Divider(
-                            modifier = Modifier.padding(vertical = 8.dp),
-                            thickness = 1.dp,
-                            color = MaterialTheme.colors.onBackground.copy(alpha = 0.3f) // TODO add an option
-                        )
-                        Text(
-                            text = "Priority: ${state.priority}",
-                            color = Color.Gray.copy(alpha = 0.5f),
-                            fontSize = 12.sp
-                        )
-                        Text(
-                            text = "Note id: ${state.id}",
-                            color = Color.Gray.copy(alpha = 0.5f),
-                            fontSize = 12.sp
-                        )
-                        Text(
-                            text = "Created at ${sdf.format(state.createdAt)}",
-                            color = Color.Gray.copy(alpha = 0.5f),
-                            fontSize = 12.sp
-                        )
-                        Text(
-                            text = "Modified at ${sdf.format(state.modifiedAt)}",
-                            color = Color.Gray.copy(alpha = 0.5f),
-                            fontSize = 12.sp
-                        )
+                        Box(modifier = Modifier.align(Alignment.End)) {
+                            IconButton(onClick = { noteInfoExpanded = true }) {
+                                Icon(
+                                    imageVector = Icons.Rounded.MoreVert,
+                                    contentDescription = "Note info"
+                                )
+                            }
+                            NoteInfoMenu(
+                                state = state,
+                                expanded = noteInfoExpanded,
+                                onDismissRequest = { noteInfoExpanded = false },
+                                modifier = Modifier.padding(horizontal = 12.dp)
+                            )
+                        }
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun NoteInfoMenu(
+    state: NoteEditState,
+    expanded: Boolean,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val sdf = SimpleDateFormat("dd MMM yyyy - HH:mm:ss", getDefault())
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = onDismissRequest,
+        modifier = modifier
+    ) {
+        Column {
+            Text(
+                text = """
+                    Priority: ${state.priority}
+                    Note id: ${state.id}
+                    Created at:
+                    ${sdf.format(state.createdAt)}
+                    Modified at:
+                    ${sdf.format(state.modifiedAt)}
+                """.trimIndent(),
+                color = Color.Gray.copy(alpha = 0.5f),
+                fontSize = 12.sp
+            )
         }
     }
 }

@@ -3,7 +3,7 @@ package com.omtorney.doer.core.data
 import com.omtorney.doer.core.data.database.NoteDao
 import com.omtorney.doer.settings.data.SettingsStore
 import com.omtorney.doer.core.domain.Repository
-import com.omtorney.doer.core.model.Note
+import com.omtorney.doer.notes.domain.model.Note
 import com.omtorney.doer.core.util.Constants
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -15,7 +15,7 @@ class RepositoryImpl @Inject constructor(
 
     override fun getNotes(): Flow<List<Note>> = noteDao.getNotes()
 
-    override suspend fun getNoteById(id: Int): Note? = noteDao.getNoteById(id)
+    override suspend fun getNoteById(id: Long): Note? = noteDao.getNoteById(id)
 
     override suspend fun insertNote(note: Note) = noteDao.insert(note)
 

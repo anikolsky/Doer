@@ -1,6 +1,5 @@
 package com.omtorney.doer.settings.presentation
 
-import android.Manifest
 import android.os.Environment
 import android.util.Log
 import androidx.compose.ui.graphics.Color
@@ -10,11 +9,12 @@ import com.google.gson.GsonBuilder
 import com.omtorney.doer.notes.domain.usecase.NoteUseCases
 import com.omtorney.doer.settings.domain.usecase.SettingsUseCases
 import com.omtorney.doer.core.util.Constants
-import com.omtorney.doer.core.util.RequestPermissions
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.File
 import javax.inject.Inject
 
@@ -59,17 +59,19 @@ class SettingsViewModel @Inject constructor(
         settingsUseCases.setSecondaryColor(color)
     }
 
-    fun backupDatabase() {
+    fun backupDatabase() { // FIXME
         val gson = GsonBuilder().setPrettyPrinting().create()
-        val notes = noteUseCases.getNotes
-        Log.d("TESTLOG", "notes: $notes")
-        val jsonData = gson.toJson(notes)
-        Log.d("TESTLOG", "jsonData: $jsonData")
-        try {
-            backupFile.writeText(jsonData)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Log.d("TESTLOG", "e: ${e.message}")
+        viewModelScope.launch {
+            val notes = noteUseCases.getNotes().toList().first()
+            Log.d("TESTLOG", "notes: $notes")
+            val jsonData = gson.toJson(notes)
+            Log.d("TESTLOG", "jsonData: $jsonData")
+            try {
+                backupFile.writeText(jsonData)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d("TESTLOG", "error: ${e.message}")
+            }
         }
     }
 

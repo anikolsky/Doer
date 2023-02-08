@@ -1,7 +1,7 @@
 package com.omtorney.doer.settings.presentation
 
 import android.Manifest
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.content.pm.PackageManager
 import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -16,21 +16,22 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.omtorney.doer.R
+import com.omtorney.doer.core.presentation.Screen
 import com.omtorney.doer.settings.presentation.components.ColorPickerDialog
-import com.omtorney.doer.core.presentation.theme.DoerTheme
 import com.omtorney.doer.core.presentation.components.AppName
 import com.omtorney.doer.core.presentation.components.BackButton
 import com.omtorney.doer.core.presentation.components.TopBar
-import com.omtorney.doer.core.util.RequestPermissions
 import com.omtorney.doer.settings.presentation.components.ColorType
 
 @Composable
 fun SettingsScreen(
     modifier: Modifier = Modifier,
+    navController: NavController,
     viewModel: SettingsViewModel = hiltViewModel(),
     onClickClose: () -> Unit
 ) {
@@ -40,7 +41,6 @@ fun SettingsScreen(
     val secondaryColor by viewModel.secondaryColor.collectAsState()
     var colorPickerOpen by remember { mutableStateOf(false) }
     var colorType by remember { mutableStateOf<ColorType>(ColorType.Accent) }
-    var showPermissionRequest by remember { mutableStateOf(false) }
     val scaffoldState = rememberScaffoldState()
 
     Scaffold(
@@ -126,9 +126,15 @@ fun SettingsScreen(
                 DatabaseActions(
                     color = accentColor,
                     onExportClick = {
-                        showPermissionRequest = true
-                        viewModel.backupDatabase()
-                        Toast.makeText(context, "Exported", Toast.LENGTH_SHORT).show()
+                        if (ContextCompat.checkSelfPermission(
+                                context, Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            ) == PackageManager.PERMISSION_GRANTED
+                        ) {
+                            viewModel.backupDatabase()
+                            Toast.makeText(context, "Exported", Toast.LENGTH_SHORT).show()
+                        } else {
+                            navController.navigate(Screen.PermissionsRequest.route)
+                        }
                     },
                     onImportClick = { viewModel.restoreDatabase() }
                 )
@@ -148,12 +154,6 @@ fun SettingsScreen(
                     }
                 },
                 onDismiss = { colorPickerOpen = false }
-            )
-        }
-        if (showPermissionRequest) {
-            RequestPermissions(
-                permission = Manifest.permission.MANAGE_EXTERNAL_STORAGE,
-                onDismiss = { showPermissionRequest = false }
             )
         }
     }
@@ -252,13 +252,5 @@ fun DatabaseActions(
         ) {
             Text(text = "Import")
         }
-    }
-}
-
-@Preview(showBackground = true, widthDp = 320, uiMode = UI_MODE_NIGHT_YES)
-@Composable
-fun SettingsScreenPreview() {
-    DoerTheme {
-        SettingsScreen(Modifier, hiltViewModel(), {})
     }
 }

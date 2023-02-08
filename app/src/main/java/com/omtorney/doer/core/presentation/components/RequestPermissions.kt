@@ -1,4 +1,4 @@
-package com.omtorney.doer.core.util
+package com.omtorney.doer.core.presentation.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.AlertDialog
@@ -19,7 +19,7 @@ import com.google.accompanist.permissions.*
 fun RequestPermissions(
     permission: String,
     deniedMessage: String = "Grant permission here to use app, or do it manually in system settings",
-    rationaleMessage: String = "Permissions needed to use app properly",
+    rationaleMessage: String = "Permissions are needed to use app properly",
     onDismiss: () -> Unit
 ) {
     val permissionState = rememberPermissionState(permission = permission)
@@ -36,8 +36,9 @@ fun RequestPermissions(
         },
         content = {
             Content(
-                text = "Permissions granted!",
-                showButton = false,
+                message = "Permissions granted!",
+                buttonText = "Back",
+                showButton = true,
                 onClick = onDismiss
             )
         }
@@ -63,7 +64,8 @@ fun HandleRequest(
 
 @Composable
 fun Content(
-    text: String,
+    message: String,
+    buttonText: String,
     showButton: Boolean = true,
     onClick: () -> Unit
 ) {
@@ -75,13 +77,13 @@ fun Content(
             .padding(50.dp)
     ) {
         Text(
-            text = text,
+            text = message,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(12.dp))
         if (showButton) {
             Button(onClick = onClick) {
-                Text(text = "Request")
+                Text(text = buttonText)
             }
         }
     }
@@ -115,7 +117,8 @@ fun PermissionDeniedContent(
         )
     } else {
         Content(
-            text = deniedMessage,
+            message = deniedMessage,
+            buttonText = "Request",
             onClick = onRequestPermission
         )
     }

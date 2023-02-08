@@ -1,5 +1,6 @@
 package com.omtorney.doer.core.presentation
 
+import android.Manifest
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -10,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.omtorney.doer.R
+import com.omtorney.doer.core.presentation.components.RequestPermissions
 import com.omtorney.doer.goals.presentation.goallist.GoalsScreen
 import com.omtorney.doer.notes.presentation.noteedit.NoteScreen
 import com.omtorney.doer.notes.presentation.notelist.HomeScreen
@@ -74,7 +76,16 @@ fun DoerApp() {
             )
         }
         composable(route = Screen.Settings.route) {
-            SettingsScreen(onClickClose = { navController.popBackStack() })
+            SettingsScreen(
+                onClickClose = { navController.popBackStack() },
+                navController = navController
+            )
+        }
+        composable(route = Screen.PermissionsRequest.route) {
+            RequestPermissions(
+                permission = Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                onDismiss = { navController.popBackStack() }
+            )
         }
     }
 }
@@ -84,4 +95,5 @@ sealed class Screen(val route: String, val label: String?, val icon: Int?) {
     object Note : Screen("note_screen", null, null)
     object Goals : Screen("goals_screen", "Goals", R.drawable.ic_round_flag_circle)
     object Settings : Screen("settings_screen", null, null)
+    object PermissionsRequest : Screen("permissions_screen", null, null)
 }

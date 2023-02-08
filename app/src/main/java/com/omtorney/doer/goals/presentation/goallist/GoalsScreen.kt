@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
@@ -24,17 +26,21 @@ import com.omtorney.doer.core.presentation.components.AppName
 import com.omtorney.doer.core.presentation.components.BottomBar
 import com.omtorney.doer.core.presentation.components.SettingsButton
 import com.omtorney.doer.core.presentation.components.TopBar
+import com.omtorney.doer.goals.presentation.components.GoalItem
 
 @Composable
 fun GoalsScreen(
     navController: NavController,
     viewModel: GoalsViewModel = hiltViewModel(),
+    onGoalClick: (Long) -> Unit,
     onAddGoalClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
     val accentColor by viewModel.accentColor.collectAsState()
     val secondaryColor by viewModel.secondaryColor.collectAsState()
     val scaffoldState = rememberScaffoldState()
+
+    val state = viewModel.state.value
 
     Scaffold(
         bottomBar = {
@@ -88,6 +94,15 @@ fun GoalsScreen(
                     accentColor = accentColor,
                     onClick = onSettingsClick
                 )
+            }
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(items = state.goals) { goal ->
+                    GoalItem(
+                        goal = goal,
+                        onGoalClick = { onGoalClick(goal.id!!) },
+                        onLongClick = {}
+                    )
+                }
             }
         }
     }

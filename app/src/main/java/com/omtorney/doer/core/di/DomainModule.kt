@@ -1,6 +1,7 @@
 package com.omtorney.doer.core.di
 
 import com.omtorney.doer.core.domain.Repository
+import com.omtorney.doer.goals.domain.usecase.*
 import com.omtorney.doer.notes.domain.usecase.*
 import com.omtorney.doer.settings.domain.usecase.*
 import dagger.Module
@@ -17,11 +18,22 @@ object DomainModule {
     @Singleton
     fun provideNoteUseCases(repository: Repository): NoteUseCases {
         return NoteUseCases(
-            getNotes = GetNotes(repository),
-            getNote = GetNote(repository),
             addNote = AddNote(repository),
             deleteNote = DeleteNote(repository),
+            getNote = GetNote(repository),
+            getNotes = GetNotes(repository),
             pinNote = PinNote(repository)
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideGoalUseCases(repository: Repository): GoalUseCases {
+        return GoalUseCases(
+            addGoal = AddGoal(repository),
+            deleteGoal = DeleteGoal(repository),
+            getGoal = GetGoal(repository),
+            getGoals = GetGoals(repository)
         )
     }
 

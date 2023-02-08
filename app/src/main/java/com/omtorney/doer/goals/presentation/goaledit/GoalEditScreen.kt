@@ -1,4 +1,4 @@
-package com.omtorney.doer.notes.presentation.noteedit
+package com.omtorney.doer.goals.presentation.goaledit
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.omtorney.doer.R
+import com.omtorney.doer.core.presentation.components.AppName
 import com.omtorney.doer.notes.domain.model.NotePriorityConverter
 import com.omtorney.doer.core.presentation.components.BackButton
 import com.omtorney.doer.core.presentation.components.TopBar
@@ -32,21 +33,16 @@ import java.text.SimpleDateFormat
 import java.util.Locale.*
 
 @Composable
-fun NoteEditScreen(
+fun GoalEditScreen(
     modifier: Modifier = Modifier,
-    viewModel: NoteEditViewModel = hiltViewModel(),
+    viewModel: GoalEditViewModel = hiltViewModel(),
     onClickClose: () -> Unit
 ) {
     val accentColor by viewModel.accentColor.collectAsState()
     val secondaryColor by viewModel.secondaryColor.collectAsState()
     val state = viewModel.state.value
-    var noteInfoExpanded by remember { mutableStateOf(false) }
-    val radioOptions = listOf(
-        NotePriority.High,
-        NotePriority.Medium,
-        NotePriority.Low,
-        NotePriority.No
-    )
+    var goalInfoExpanded by remember { mutableStateOf(false) }
+
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -73,7 +69,7 @@ fun NoteEditScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    viewModel.onEvent(NoteEditEvent.Save)
+                    viewModel.onEvent(GoalEditEvent.Save)
                     onClickClose()
                 },
                 backgroundColor = Color(accentColor)
@@ -111,50 +107,13 @@ fun NoteEditScreen(
             Column(modifier = Modifier.padding(8.dp)) {
                 TopBar(modifier = Modifier.padding(bottom = 8.dp)) {
                     BackButton(onClick = onClickClose)
-                    /** Priority buttons */
-                    Surface(
-                        shape = RoundedCornerShape(10.dp),
-                        color = MaterialTheme.colors.surface.copy(alpha = 0.45f),
+                    AppName(
+                        accentColor = accentColor,
                         modifier = Modifier.weight(1f)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            radioOptions.forEach { notePriority ->
-                                val priorityIndex = NotePriorityConverter().toInt(notePriority)
-                                RadioButton(
-                                    selected = priorityIndex == state.priority,
-                                    onClick = {
-                                        viewModel.onEvent(
-                                            NoteEditEvent.SetPriority(
-                                                priorityIndex
-                                            )
-                                        )
-                                    },
-                                    colors = RadioButtonDefaults.colors(
-                                        selectedColor = notePriority.color,
-                                        unselectedColor = notePriority.color
-                                    )
-                                )
-                            }
-                        }
-                    }
-                    /** Pin button */
-                    IconButton(onClick = { viewModel.onEvent(NoteEditEvent.Pin) }) {
-                        Icon(
-                            painter = if (state.isPinned)
-                                painterResource(R.drawable.ic_round_push_pin)
-                            else
-                                painterResource(R.drawable.ic_outline_push_pin),
-                            contentDescription = stringResource(R.string.pin),
-                            tint = contentColorFor(backgroundColor = Color(accentColor))
-                        )
-                    }
-                    /** Delete button */
+                    )
                     IconButton(
                         onClick = {
-                            viewModel.onEvent(NoteEditEvent.Delete(state.id!!))
+                            viewModel.onEvent(GoalEditEvent.Delete(state.id!!))
                             coroutineScope.launch {
                                 scaffoldState.snackbarHostState.showSnackbar(
                                     message = "Deleted",
@@ -180,9 +139,10 @@ fun NoteEditScreen(
                     elevation = 16.dp
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
+                        // TODO from here
                         BasicTextField(
                             value = state.text,
-                            onValueChange = { viewModel.onEvent(NoteEditEvent.EnteredText(it)) },
+                            onValueChange = { viewModel.onEvent(GoalEditEvent.EnteredText(it)) },
                             textStyle = MaterialTheme.typography.body1.copy(
                                 color = MaterialTheme.colors.onBackground
                             ),
@@ -193,17 +153,18 @@ fun NoteEditScreen(
                                 .fillMaxSize()
 //                                .focusRequester(focusRequester)
                         )
+                        // TODO to here
                         Box(modifier = Modifier.align(Alignment.End)) {
-                            IconButton(onClick = { noteInfoExpanded = true }) {
+                            IconButton(onClick = { goalInfoExpanded = true }) {
                                 Icon(
                                     imageVector = Icons.Rounded.MoreVert,
-                                    contentDescription = "Note info"
+                                    contentDescription = "Goal info"
                                 )
                             }
                             NoteInfoMenu(
                                 state = state,
-                                expanded = noteInfoExpanded,
-                                onDismissRequest = { noteInfoExpanded = false },
+                                expanded = goalInfoExpanded,
+                                onDismissRequest = { goalInfoExpanded = false },
                                 modifier = Modifier.padding(horizontal = 12.dp)
                             )
                         }
@@ -216,7 +177,7 @@ fun NoteEditScreen(
 
 @Composable
 fun NoteInfoMenu(
-    state: NoteEditState,
+    state: GoalEditState,
     expanded: Boolean,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier
@@ -230,8 +191,7 @@ fun NoteInfoMenu(
         Column {
             Text(
                 text = """
-                    Priority: ${state.priority}
-                    Note id: ${state.id}
+                    Goal id: ${state.id}
                     Created at:
                     ${sdf.format(state.createdAt)}
                     Modified at:

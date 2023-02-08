@@ -6,8 +6,9 @@ import com.omtorney.doer.notes.util.NoteOrder
 import com.omtorney.doer.notes.util.OrderType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class GetNotes(
+class GetNotes @Inject constructor(
     private val repository: Repository
 ) {
 

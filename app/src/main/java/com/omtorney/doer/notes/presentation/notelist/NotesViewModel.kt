@@ -51,6 +51,18 @@ class NotesViewModel @Inject constructor(
         getNotes(NoteOrder.Priority(OrderType.Ascending))
     }
 
+    private fun getNotes(noteOrder: NoteOrder) {
+        getNotesJob?.cancel()
+        getNotesJob = noteUseCases.getNotes(noteOrder)
+            .onEach { notes ->
+                _state.value = state.value.copy(
+                    notes = notes,
+                    noteOrder = noteOrder
+                )
+            }
+            .launchIn(viewModelScope)
+    }
+
     fun onEvent(event: NotesEvent) {
         when (event) {
             is NotesEvent.Order -> {
@@ -85,17 +97,5 @@ class NotesViewModel @Inject constructor(
                 )
             }
         }
-    }
-
-    private fun getNotes(noteOrder: NoteOrder) {
-        getNotesJob?.cancel()
-        getNotesJob = noteUseCases.getNotes(noteOrder)
-            .onEach { notes ->
-                _state.value = state.value.copy(
-                    notes = notes,
-                    noteOrder = noteOrder
-                )
-            }
-            .launchIn(viewModelScope)
     }
 }

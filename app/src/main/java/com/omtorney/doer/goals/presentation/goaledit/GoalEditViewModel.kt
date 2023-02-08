@@ -1,4 +1,4 @@
-package com.omtorney.doer.notes.presentation.noteedit
+package com.omtorney.doer.goals.presentation.goaledit
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -10,6 +10,9 @@ import com.omtorney.doer.notes.domain.usecase.NoteUseCases
 import com.omtorney.doer.notes.domain.model.InvalidNoteException
 import com.omtorney.doer.notes.domain.model.Note
 import com.omtorney.doer.core.util.Constants
+import com.omtorney.doer.goals.domain.model.Goal
+import com.omtorney.doer.goals.domain.model.InvalidGoalException
+import com.omtorney.doer.goals.domain.usecase.GoalUseCases
 import com.omtorney.doer.settings.domain.usecase.SettingsUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -20,16 +23,16 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class NoteEditViewModel @Inject constructor(
-    private val noteUseCases: NoteUseCases,
+class GoalEditViewModel @Inject constructor(
+    private val goalUseCases: GoalUseCases,
     private val settingsUseCases: SettingsUseCases,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private var currentNoteId: Long? = null
+    private var currentGoalId: Long? = null
 
-    private val _state = mutableStateOf(NoteEditState())
-    val state: State<NoteEditState> = _state
+    private val _state = mutableStateOf(GoalEditState())
+    val state: State<GoalEditState> = _state
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
@@ -47,18 +50,17 @@ class NoteEditViewModel @Inject constructor(
     )
 
     init {
-        savedStateHandle.get<Long>("noteId")?.let { noteId ->
-            if (noteId != -1L) {
+        savedStateHandle.get<Long>("goalId")?.let { goalId ->
+            if (goalId != -1L) {
                 viewModelScope.launch {
-                    noteUseCases.getNote(noteId)?.also { note ->
-                        currentNoteId = note.id
+                    goalUseCases.getGoal(goalId)?.also { goal ->
+                        currentGoalId = goal.id
                         _state.value = state.value.copy(
-                            id = note.id,
-                            text = note.text,
-                            priority = note.priority,
-                            isPinned = note.isPinned,
-                            createdAt = note.createdAt,
-                            modifiedAt = note.modifiedAt,
+                            id = goal.id,
+                            title = goal.title,
+                            steps = goal.steps,
+                            createdAt = goal.createdAt,
+                            modifiedAt = goal.modifiedAt,
                         )
                     }
                 }
@@ -66,52 +68,41 @@ class NoteEditViewModel @Inject constructor(
         }
     }
 
-    fun onEvent(event: NoteEditEvent) {
+    fun onEvent(event: GoalEditEvent) {
         when (event) {
-            is NoteEditEvent.EnteredText -> {
-                _state.value = state.value.copy(text = event.text)
+            is GoalEditEvent.EnteredTitle -> {
+                _state.value = state.value.copy(title = event.title)
             }
-            is NoteEditEvent.Delete -> {
+            is GoalEditEvent.Delete -> {
                 viewModelScope.launch {
-                    val note: Note? = noteUseCases.getNote(event.id)
-                    note?.let { noteUseCases.deleteNote(it) }
+                    val goal: Goal? = goalUseCases.getGoal(event.id)
+                    goal?.let { goalUseCases.deleteGoal(it) }
                 }
             }
-            is NoteEditEvent.Pin -> {
-                viewModelScope.launch {
-                    _state.value = state.value.copy(isPinned = !state.value.isPinned)
-                }
-            }
-            is NoteEditEvent.Save -> {
+            is GoalEditEvent.Save -> {
                 viewModelScope.launch {
                     try {
-                        noteUseCases.addNote(
-                            Note(
-                                id = currentNoteId,
-                                text = state.value.text,
-                                priority = state.value.priority,
+                        goalUseCases.addGoal(
+                            Goal(
+                                id = currentGoalId,
+                                title = state.value.title,
+                                steps = state.value.steps,
                                 createdAt = if (state.value.createdAt == 0L) {
                                     System.currentTimeMillis()
                                 } else {
                                     state.value.createdAt
                                 },
-                                modifiedAt = System.currentTimeMillis(),
-                                isPinned = state.value.isPinned
+                                modifiedAt = System.currentTimeMillis()
                             )
                         )
                         _eventFlow.emit(UiEvent.Save)
-                    } catch (e: InvalidNoteException) {
+                    } catch (e: InvalidGoalException) {
                         _eventFlow.emit(
                             UiEvent.ShowSnackbar(
-                                message = e.message ?: "Couldn't save note"
+                                message = e.message ?: "Couldn't save goal"
                             )
                         )
                     }
-                }
-            }
-            is NoteEditEvent.SetPriority -> {
-                viewModelScope.launch {
-                    _state.value = state.value.copy(priority = event.priority)
                 }
             }
         }

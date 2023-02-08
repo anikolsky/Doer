@@ -38,3 +38,5 @@ class GoalStepsConverter {
         return Gson().fromJson(json, Steps::class.java)
     }
 }
+
+class InvalidGoalException(message: String) : Exception(message)

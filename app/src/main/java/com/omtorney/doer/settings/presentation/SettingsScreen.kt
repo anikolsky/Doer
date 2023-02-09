@@ -68,7 +68,7 @@ fun SettingsScreen(
                 SettingsMenuButton(
                     icon = {
                         Icon(
-                            painter = painterResource(R.drawable.round_color),
+                            painter = painterResource(R.drawable.ic_round_color),
                             contentDescription = null
                         )
                     },
@@ -95,7 +95,7 @@ fun SettingsScreen(
                 SettingsMenuButton(
                     icon = {
                         Icon(
-                            painter = painterResource(R.drawable.round_color),
+                            painter = painterResource(R.drawable.ic_round_color),
                             contentDescription = null
                         )
                     },

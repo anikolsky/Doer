@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 @Entity(tableName = "goals")
 data class Goal(
@@ -14,7 +15,7 @@ data class Goal(
 
     val title: String,
 
-    val steps: Steps,
+    val steps: List<Step>,
 
     @ColumnInfo(name = "created_at")
     val createdAt: Long,
@@ -23,19 +24,20 @@ data class Goal(
     val modifiedAt: Long,
 )
 
-data class Steps(
-    val items: List<String>
+data class Step(
+    var id: Int? = null,
+    var text: String = ""
 )
 
 class GoalStepsConverter {
     @TypeConverter
-    fun fromListToJson(steps: Steps): String {
+    fun fromListToJson(steps: List<Step>): String {
         return Gson().toJson(steps)
     }
 
     @TypeConverter
-    fun fromJsonToList(json: String): Steps {
-        return Gson().fromJson(json, Steps::class.java)
+    fun fromJsonToList(json: String): List<Step> {
+        return Gson().fromJson(json, object : TypeToken<List<Step>>() {}.type)
     }
 }
 

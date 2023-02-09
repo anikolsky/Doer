@@ -6,12 +6,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omtorney.doer.core.presentation.components.UiEvent
-import com.omtorney.doer.notes.domain.usecase.NoteUseCases
-import com.omtorney.doer.notes.domain.model.InvalidNoteException
-import com.omtorney.doer.notes.domain.model.Note
 import com.omtorney.doer.core.util.Constants
 import com.omtorney.doer.goals.domain.model.Goal
 import com.omtorney.doer.goals.domain.model.InvalidGoalException
+import com.omtorney.doer.goals.domain.model.Step
 import com.omtorney.doer.goals.domain.usecase.GoalUseCases
 import com.omtorney.doer.settings.domain.usecase.SettingsUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -70,16 +68,28 @@ class GoalEditViewModel @Inject constructor(
 
     fun onEvent(event: GoalEditEvent) {
         when (event) {
-            is GoalEditEvent.EnteredTitle -> {
+            is GoalEditEvent.EnterTitle -> {
                 _state.value = state.value.copy(title = event.title)
             }
-            is GoalEditEvent.Delete -> {
+            is GoalEditEvent.AddStep -> {
+                _state.value = state.value.copy(steps = state.value.steps.plus(Step(id = event.id + 1)))
+            }
+            is GoalEditEvent.EditStep -> {
+                _state.value = state.value.copy(steps = // TODO updated list)
+            }
+            is GoalEditEvent.AchieveStep -> {
+
+            }
+            is GoalEditEvent.DeleteStep -> {
+
+            }
+            is GoalEditEvent.DeleteGoal -> {
                 viewModelScope.launch {
                     val goal: Goal? = goalUseCases.getGoal(event.id)
                     goal?.let { goalUseCases.deleteGoal(it) }
                 }
             }
-            is GoalEditEvent.Save -> {
+            is GoalEditEvent.SaveGoal -> {
                 viewModelScope.launch {
                     try {
                         goalUseCases.addGoal(

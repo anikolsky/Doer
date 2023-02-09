@@ -68,14 +68,14 @@ fun DoerApp() {
                 navController = navController,
                 onGoalClick = { goalId ->
                     navController.navigate(Screen.Goal.route + "?goalId=$goalId") {
-                        popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                        popUpTo(Screen.Goals.route) { saveState = true }
                         launchSingleTop = true
                         restoreState = true
                     }
                 },
                 onAddGoalClick = {
                     navController.navigate(Screen.Goal.route) {
-                        popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                        popUpTo(Screen.Goals.route) { saveState = true }
                         launchSingleTop = true
                         restoreState = true
                     }

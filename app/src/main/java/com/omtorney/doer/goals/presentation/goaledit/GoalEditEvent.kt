@@ -1,9 +1,11 @@
 package com.omtorney.doer.goals.presentation.goaledit
 
 sealed class GoalEditEvent {
-    data class EnteredTitle(val title: String) : GoalEditEvent()
-    data class Delete(val id: Long) : GoalEditEvent()
-//    data class SetPriority(val priority: Int) : GoalEditEvent()
-//    object Pin : GoalEditEvent()
-    object Save : GoalEditEvent()
+    data class EnterTitle(val title: String) : GoalEditEvent()
+    data class AddStep(val id: Int) : GoalEditEvent()
+    data class EditStep(val id: Int, val text: String) : GoalEditEvent()
+    data class AchieveStep(val id: Int) : GoalEditEvent()
+    data class DeleteStep(val id: Int) : GoalEditEvent()
+    data class DeleteGoal(val id: Long) : GoalEditEvent()
+    object SaveGoal : GoalEditEvent()
 }

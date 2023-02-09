@@ -50,6 +50,21 @@ fun AppName(
 }
 
 @Composable
+fun ScreenName(
+    modifier: Modifier = Modifier,
+    title: String,
+    accentColor: Long
+) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.h6.merge(
+            TextStyle(color = contentColorFor(backgroundColor = Color(accentColor)))
+        ),
+        modifier = modifier
+    )
+}
+
+@Composable
 fun MoreButton(
     accentColor: Long,
     onClick: () -> Unit

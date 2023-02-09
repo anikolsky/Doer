@@ -2,7 +2,8 @@ package com.omtorney.doer.goals.presentation.goaledit
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -22,11 +23,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.omtorney.doer.R
 import com.omtorney.doer.core.presentation.components.AppName
-import com.omtorney.doer.notes.domain.model.NotePriorityConverter
 import com.omtorney.doer.core.presentation.components.BackButton
 import com.omtorney.doer.core.presentation.components.TopBar
 import com.omtorney.doer.core.presentation.components.UiEvent
-import com.omtorney.doer.notes.util.NotePriority
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -69,7 +68,7 @@ fun GoalEditScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    viewModel.onEvent(GoalEditEvent.Save)
+                    viewModel.onEvent(GoalEditEvent.SaveGoal)
                     onClickClose()
                 },
                 backgroundColor = Color(accentColor)
@@ -113,7 +112,7 @@ fun GoalEditScreen(
                     )
                     IconButton(
                         onClick = {
-                            viewModel.onEvent(GoalEditEvent.Delete(state.id!!))
+                            viewModel.onEvent(GoalEditEvent.DeleteGoal(state.id!!))
                             coroutineScope.launch {
                                 scaffoldState.snackbarHostState.showSnackbar(
                                     message = "Deleted",
@@ -130,19 +129,12 @@ fun GoalEditScreen(
                         )
                     }
                 }
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth(0.95f)
-                        .fillMaxHeight(0.87f)
-                        .align(Alignment.CenterHorizontally),
-                    shape = RoundedCornerShape(10.dp),
-                    elevation = 16.dp
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        // TODO from here
+                LazyColumn(modifier = Modifier.padding(16.dp)) {
+                    /** Title */
+                    item {
                         BasicTextField(
-                            value = state.text,
-                            onValueChange = { viewModel.onEvent(GoalEditEvent.EnteredText(it)) },
+                            value = state.title,
+                            onValueChange = { viewModel.onEvent(GoalEditEvent.EnterTitle(it)) },
                             textStyle = MaterialTheme.typography.body1.copy(
                                 color = MaterialTheme.colors.onBackground
                             ),
@@ -153,22 +145,45 @@ fun GoalEditScreen(
                                 .fillMaxSize()
 //                                .focusRequester(focusRequester)
                         )
-                        // TODO to here
-                        Box(modifier = Modifier.align(Alignment.End)) {
-                            IconButton(onClick = { goalInfoExpanded = true }) {
-                                Icon(
-                                    imageVector = Icons.Rounded.MoreVert,
-                                    contentDescription = "Goal info"
-                                )
-                            }
-                            NoteInfoMenu(
-                                state = state,
-                                expanded = goalInfoExpanded,
-                                onDismissRequest = { goalInfoExpanded = false },
-                                modifier = Modifier.padding(horizontal = 12.dp)
+                    }
+                    /** Existing steps */
+                    items(state.steps) { step ->
+                        Card(modifier = Modifier.padding(vertical = 8.dp)) {
+                            BasicTextField(
+                                value = state.steps[step.id!!].text,
+                                onValueChange = { viewModel.onEvent(GoalEditEvent.EditStep(id = step.id!!, text = it)) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(4.dp)
                             )
                         }
                     }
+                    /** Add step button */
+                    item {
+                        Button(
+                            onClick = { viewModel.onEvent(GoalEditEvent.AddStep(id = state.steps.lastIndex)) },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_round_add_circle_outline),
+                                contentDescription = "Add step"
+                            )
+                        }
+                    }
+                }
+                Box(modifier = Modifier.align(Alignment.End)) {
+                    IconButton(onClick = { goalInfoExpanded = true }) {
+                        Icon(
+                            imageVector = Icons.Rounded.MoreVert,
+                            contentDescription = "Goal info"
+                        )
+                    }
+                    NoteInfoMenu(
+                        state = state,
+                        expanded = goalInfoExpanded,
+                        onDismissRequest = { goalInfoExpanded = false },
+                        modifier = Modifier.padding(horizontal = 12.dp)
+                    )
                 }
             }
         }

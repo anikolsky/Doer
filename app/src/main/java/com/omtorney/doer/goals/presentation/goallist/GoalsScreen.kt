@@ -22,10 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.omtorney.doer.R
-import com.omtorney.doer.core.presentation.components.AppName
-import com.omtorney.doer.core.presentation.components.BottomBar
-import com.omtorney.doer.core.presentation.components.SettingsButton
-import com.omtorney.doer.core.presentation.components.TopBar
+import com.omtorney.doer.core.presentation.Screen
+import com.omtorney.doer.core.presentation.components.*
 import com.omtorney.doer.goals.presentation.components.GoalItem
 
 @Composable
@@ -75,10 +73,7 @@ fun GoalsScreen(
                             Color(accentColor),
                             Color(secondaryColor)
                         ),
-                        start = Offset(
-                            0f,
-                            0f
-                        ),
+                        start = Offset(x = 0f, y = 0f),
                         end = Offset(
                             with(LocalDensity.current) { 600.dp.toPx() },
                             with(LocalDensity.current) { 600.dp.toPx() })
@@ -90,6 +85,11 @@ fun GoalsScreen(
                     accentColor = accentColor,
                     modifier = Modifier.weight(1f)
                 )
+                ScreenName(
+                    title = Screen.Goals.label!!,
+                    accentColor = accentColor,
+                    modifier = Modifier // TODO center
+                )
                 SettingsButton(
                     accentColor = accentColor,
                     onClick = onSettingsClick
@@ -100,7 +100,8 @@ fun GoalsScreen(
                     GoalItem(
                         goal = goal,
                         onGoalClick = { onGoalClick(goal.id!!) },
-                        onLongClick = {}
+                        onLongClick = {},
+                        modifier = Modifier.padding(horizontal = 4.dp)
                     )
                 }
             }

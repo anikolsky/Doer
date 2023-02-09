@@ -11,6 +11,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.omtorney.doer.R
+import com.omtorney.doer.core.presentation.Screen
 import com.omtorney.doer.core.presentation.components.*
 import com.omtorney.doer.notes.presentation.components.*
 import kotlinx.coroutines.launch
@@ -76,10 +78,7 @@ fun HomeScreen(
                             Color(accentColor),
                             Color(secondaryColor)
                         ),
-                        start = Offset(
-                            0f,
-                            0f
-                        ),
+                        start = Offset(x = 0f, y = 0f),
                         end = Offset(
                             with(LocalDensity.current) { 600.dp.toPx() },
                             with(LocalDensity.current) { 600.dp.toPx() })
@@ -90,6 +89,11 @@ fun HomeScreen(
                 AppName(
                     accentColor = accentColor,
                     modifier = Modifier.weight(1f)
+                )
+                ScreenName(
+                    title = Screen.Notes.label!!,
+                    accentColor = accentColor,
+                    modifier = Modifier // TODO center
                 )
                 MoreButton(
                     accentColor = accentColor,

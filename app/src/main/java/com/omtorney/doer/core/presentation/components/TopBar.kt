@@ -1,9 +1,6 @@
 package com.omtorney.doer.core.presentation.components
 
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
@@ -22,10 +19,11 @@ import com.omtorney.doer.R
 @Composable
 fun TopBar(
     modifier: Modifier = Modifier,
-    content: @Composable (RowScope.() -> Unit)
+    content: @Composable (RowScope.() -> Unit),
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier.fillMaxWidth()
     ) {
         content()

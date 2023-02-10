@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,14 +23,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.omtorney.doer.R
-import com.omtorney.doer.core.presentation.components.AppName
+import com.omtorney.doer.core.presentation.Screen
 import com.omtorney.doer.core.presentation.components.BackButton
+import com.omtorney.doer.core.presentation.components.ScreenName
 import com.omtorney.doer.core.presentation.components.TopBar
 import com.omtorney.doer.core.presentation.components.UiEvent
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.util.Locale.*
+import java.util.Locale.getDefault
 
 @Composable
 fun GoalEditScreen(
@@ -106,9 +108,10 @@ fun GoalEditScreen(
             Column(modifier = Modifier.padding(8.dp)) {
                 TopBar(modifier = Modifier.padding(bottom = 8.dp)) {
                     BackButton(onClick = onClickClose)
-                    AppName(
+                    ScreenName(
+                        title = Screen.Goal.label,
                         accentColor = accentColor,
-                        modifier = Modifier.weight(1f)
+//                        modifier = Modifier.weight(1f)
                     )
                     IconButton(
                         onClick = {
@@ -129,39 +132,94 @@ fun GoalEditScreen(
                         )
                     }
                 }
-                LazyColumn(modifier = Modifier.padding(16.dp)) {
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(12.dp)
+                        .weight(1f)
+                ) {
                     /** Title */
                     item {
-                        BasicTextField(
-                            value = state.title,
-                            onValueChange = { viewModel.onEvent(GoalEditEvent.EnterTitle(it)) },
-                            textStyle = MaterialTheme.typography.body1.copy(
-                                color = MaterialTheme.colors.onBackground
-                            ),
-                            cursorBrush = SolidColor(MaterialTheme.colors.onBackground),
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(8.dp)
-                                .fillMaxSize()
+                        Card(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            BasicTextField(
+                                value = state.title,
+                                onValueChange = { viewModel.onEvent(GoalEditEvent.EnterTitle(it)) },
+                                textStyle = MaterialTheme.typography.body1.copy(
+                                    color = MaterialTheme.colors.onBackground
+                                ),
+                                cursorBrush = SolidColor(MaterialTheme.colors.onBackground),
+                                modifier = Modifier
+                                    .padding(12.dp)
+                                    .fillMaxWidth()
 //                                .focusRequester(focusRequester)
+                            )
+                        }
+                    }
+                    item {
+                        Text(
+                            text = "Steps",
+                            modifier = Modifier.padding(top = 12.dp)
                         )
                     }
                     /** Existing steps */
                     items(state.steps) { step ->
-                        Card(modifier = Modifier.padding(vertical = 8.dp)) {
-                            BasicTextField(
-                                value = state.steps[step.id!!].text,
-                                onValueChange = { viewModel.onEvent(GoalEditEvent.EditStep(id = step.id!!, text = it)) },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(4.dp)
-                            )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+//                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 12.dp)
+                        ) {
+                            /** Achieve button */
+                            Button(
+                                onClick = { viewModel.onEvent(GoalEditEvent.AchieveStep(step.id!!)) },
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = if (step.isAchieved) Color(secondaryColor)
+                                    else Color(accentColor)
+                                )
+                            ) {
+                                Text(text = "Step ${step.id!!.plus(1)}")
+                            }
+                            /** Step text */
+                            Card(modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                            ) {
+                                BasicTextField(
+                                    value = state.steps[step.id!!].text,
+                                    onValueChange = {
+                                        viewModel.onEvent(
+                                            GoalEditEvent.EditStep(
+                                                id = step.id!!,
+                                                text = it
+                                            )
+                                        )
+                                    },
+                                    textStyle = MaterialTheme.typography.body1.copy(
+                                        color = MaterialTheme.colors.onBackground
+                                    ),
+                                    cursorBrush = SolidColor(MaterialTheme.colors.onBackground),
+                                    modifier = Modifier.padding(12.dp)
+                                )
+                            }
+                            /** Delete step button */
+                            IconButton(onClick = { viewModel.onEvent(GoalEditEvent.DeleteStep(step.id!!)) }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_round_remove_circle_outline),
+                                    contentDescription = stringResource(R.string.delete)
+                                )
+                            }
                         }
                     }
                     /** Add step button */
                     item {
                         Button(
                             onClick = { viewModel.onEvent(GoalEditEvent.AddStep(id = state.steps.lastIndex)) },
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = Color(accentColor),
+                                contentColor = contentColorFor(backgroundColor = Color(accentColor))
+                            ),
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Icon(

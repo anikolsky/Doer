@@ -88,21 +88,23 @@ fun HomeScreen(
             TopBar(modifier = Modifier.padding(8.dp)) {
                 AppName(
                     accentColor = accentColor,
-                    modifier = Modifier.weight(1f)
+//                    modifier = Modifier.weight(1f)
                 )
                 ScreenName(
-                    title = Screen.Notes.label!!,
+                    title = Screen.Notes.label,
                     accentColor = accentColor,
                     modifier = Modifier // TODO center
                 )
-                MoreButton(
-                    accentColor = accentColor,
-                    onClick = { viewModel.onEvent(NotesEvent.ToggleOrderSection) }
-                )
-                SettingsButton(
-                    accentColor = accentColor,
-                    onClick = onSettingsClick
-                )
+                Row {
+                    MoreButton(
+                        accentColor = accentColor,
+                        onClick = { viewModel.onEvent(NotesEvent.ToggleOrderSection) }
+                    )
+                    SettingsButton(
+                        accentColor = accentColor,
+                        onClick = onSettingsClick
+                    )
+                }
             }
             AnimatedVisibility(
                 visible = state.isOrderSectionVisible,

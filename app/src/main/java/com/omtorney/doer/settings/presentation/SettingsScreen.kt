@@ -25,6 +25,7 @@ import com.omtorney.doer.core.presentation.Screen
 import com.omtorney.doer.settings.presentation.components.ColorPickerDialog
 import com.omtorney.doer.core.presentation.components.AppName
 import com.omtorney.doer.core.presentation.components.BackButton
+import com.omtorney.doer.core.presentation.components.ScreenName
 import com.omtorney.doer.core.presentation.components.TopBar
 import com.omtorney.doer.settings.presentation.components.ColorType
 
@@ -55,7 +56,11 @@ fun SettingsScreen(
             ) {
                 TopBar {
                     BackButton(onClick = onClickClose)
-                    AppName(accentColor = accentColor)
+                    ScreenName(
+                        title = Screen.Settings.label,
+                        accentColor = accentColor
+                    )
+                    Spacer(modifier = Modifier)
                 }
                 /** Line divider switch */
                 SettingsMenuSwitch(

@@ -72,16 +72,32 @@ class GoalEditViewModel @Inject constructor(
                 _state.value = state.value.copy(title = event.title)
             }
             is GoalEditEvent.AddStep -> {
-                _state.value = state.value.copy(steps = state.value.steps.plus(Step(id = event.id + 1)))
+                _state.value =
+                    state.value.copy(steps = state.value.steps.plus(Step(id = event.id + 1)))
             }
             is GoalEditEvent.EditStep -> {
-                _state.value = state.value.copy(steps = // TODO updated list)
+                val updatedSteps = state.value.steps.map { step ->
+                    if (step.id == event.id) {
+                        step.copy(text = event.text)
+                    } else {
+                        step
+                    }
+                }
+                _state.value = state.value.copy(steps = updatedSteps)
             }
             is GoalEditEvent.AchieveStep -> {
-
+                val updatedSteps = state.value.steps.map { step ->
+                    if (step.id == event.id) {
+                        step.copy(isAchieved = !step.isAchieved)
+                    } else {
+                        step
+                    }
+                }
+                _state.value = state.value.copy(steps = updatedSteps)
             }
             is GoalEditEvent.DeleteStep -> {
-
+                val updatedSteps = state.value.steps.filter { step -> step.id != event.id }
+                _state.value = state.value.copy(steps = updatedSteps)
             }
             is GoalEditEvent.DeleteGoal -> {
                 viewModelScope.launch {

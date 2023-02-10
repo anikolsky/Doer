@@ -83,10 +83,10 @@ fun GoalsScreen(
             TopBar(modifier = Modifier.padding(8.dp)) {
                 AppName(
                     accentColor = accentColor,
-                    modifier = Modifier.weight(1f)
+//                    modifier = Modifier.weight(1f)
                 )
                 ScreenName(
-                    title = Screen.Goals.label!!,
+                    title = Screen.Goals.label,
                     accentColor = accentColor,
                     modifier = Modifier // TODO center
                 )

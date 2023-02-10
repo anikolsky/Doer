@@ -109,7 +109,8 @@ fun NoteEditScreen(
                 )
         ) {
             Column(modifier = Modifier.padding(8.dp)) {
-                TopBar(modifier = Modifier.padding(bottom = 8.dp)) {
+                TopBar(modifier = Modifier.padding(bottom = 8.dp)
+                ) {
                     BackButton(onClick = onClickClose)
                     /** Priority buttons */
                     Surface(

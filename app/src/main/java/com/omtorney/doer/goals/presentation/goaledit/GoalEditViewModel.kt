@@ -13,10 +13,7 @@ import com.omtorney.doer.goals.domain.model.Step
 import com.omtorney.doer.goals.domain.usecase.GoalUseCases
 import com.omtorney.doer.settings.domain.usecase.SettingsUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -57,6 +54,7 @@ class GoalEditViewModel @Inject constructor(
                             id = goal.id,
                             title = goal.title,
                             steps = goal.steps,
+                            progress = calculateProgress(goal.steps),
                             createdAt = goal.createdAt,
                             modifiedAt = goal.modifiedAt,
                         )
@@ -93,7 +91,10 @@ class GoalEditViewModel @Inject constructor(
                         step
                     }
                 }
-                _state.value = state.value.copy(steps = updatedSteps)
+                _state.value = state.value.copy(
+                    steps = updatedSteps,
+                    progress = calculateProgress(updatedSteps)
+                )
             }
             is GoalEditEvent.DeleteStep -> {
                 val updatedSteps = state.value.steps.filter { step -> step.id != event.id }
@@ -132,5 +133,9 @@ class GoalEditViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun calculateProgress(steps: List<Step>): Float {
+        return (steps.count { it.isAchieved }.toFloat() / steps.size)
     }
 }

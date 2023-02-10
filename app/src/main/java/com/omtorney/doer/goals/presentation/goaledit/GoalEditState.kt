@@ -6,6 +6,7 @@ data class GoalEditState(
     val id: Long? = null,
     val title: String = "",
     val steps: List<Step> = emptyList(),
+    val progress: Float = 0.0f,
     val createdAt: Long = 0L,
     val modifiedAt: Long = 0L
 )

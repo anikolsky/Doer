@@ -124,7 +124,9 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(modifier = Modifier
+                .padding(horizontal = 8.dp)
+                .fillMaxSize()) {
                 /** Pinned list */
                 items(
                     items = state.notes,
@@ -135,9 +137,7 @@ fun HomeScreen(
                             note = note,
                             onNoteClick = { onNoteClick(note.id!!) },
                             onLongClick = { viewModel.onEvent(NotesEvent.Pin(note)) },
-                            modifier = Modifier
-                                .animateItemPlacement()
-                                .padding(horizontal = 4.dp)
+                            modifier = Modifier.animateItemPlacement()
                         )
                         if (lineDividerState) {
                             Spacer(modifier = Modifier.height(5.dp)) // TODO add an option
@@ -170,9 +170,7 @@ fun HomeScreen(
                                     }
                                 }
                             },
-                            modifier = Modifier
-                                .animateItemPlacement()
-                                .padding(horizontal = 4.dp)
+                            modifier = Modifier.animateItemPlacement()
                         )
                         if (lineDividerState) {
                             Spacer(modifier = Modifier.height(5.dp)) // TODO add an option

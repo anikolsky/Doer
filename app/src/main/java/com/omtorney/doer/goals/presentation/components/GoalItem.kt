@@ -6,7 +6,9 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.omtorney.doer.goals.domain.model.Goal
@@ -18,6 +20,8 @@ import java.util.*
 @Composable
 fun GoalItem(
     goal: Goal,
+    progress: Float,
+    color: Long,
     onGoalClick: () -> Unit,
     onLongClick: (Goal) -> Unit,
     modifier: Modifier = Modifier
@@ -30,7 +34,8 @@ fun GoalItem(
                 onLongClick = { onLongClick(goal) }
             )
     ) {
-        Column(
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(12.dp)
         ) {
             Text(
@@ -38,7 +43,14 @@ fun GoalItem(
                 style = MaterialTheme.typography.body1,
                 color = MaterialTheme.colors.onSurface,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f)
+            )
+            CircularProgressIndicator(
+                progress = progress,
+                color = Color(color),
+                strokeWidth = 4.dp,
+                modifier = Modifier.size(20.dp)
             )
         }
     }

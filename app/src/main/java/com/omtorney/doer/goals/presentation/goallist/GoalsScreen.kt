@@ -1,9 +1,7 @@
 package com.omtorney.doer.goals.presentation.goallist
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
@@ -95,14 +93,20 @@ fun GoalsScreen(
                     onClick = onSettingsClick
                 )
             }
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 8.dp)
+            ) {
                 items(items = state.goals) { goal ->
                     GoalItem(
                         goal = goal,
+                        progress = goal.steps.count { it.isAchieved }.toFloat() / goal.steps.size,
+                        color = secondaryColor,
                         onGoalClick = { onGoalClick(goal.id!!) },
-                        onLongClick = {},
-                        modifier = Modifier.padding(horizontal = 4.dp)
+                        onLongClick = {}
                     )
+                    Spacer(modifier = Modifier.height(5.dp))
                 }
             }
         }

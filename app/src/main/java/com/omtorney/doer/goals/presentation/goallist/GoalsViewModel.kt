@@ -27,13 +27,13 @@ class GoalsViewModel @Inject constructor(
     val accentColor = settingsUseCases.getAccentColor.invoke().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
-        initialValue = Constants.INITIAL_COLOR
+        initialValue = Constants.INITIAL_ACCENT_COLOR
     )
 
     val secondaryColor = settingsUseCases.getSecondaryColor.invoke().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
-        initialValue = Constants.INITIAL_COLOR
+        initialValue = Constants.INITIAL_SECONDARY_COLOR
     )
 
     init {

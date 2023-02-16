@@ -22,5 +22,4 @@ interface Repository {
     suspend fun setAccentColor(color: Long)
     val getSecondaryColor: Flow<Long>
     suspend fun setSecondaryColor(color: Long)
-    val getInitialColor: Long
 }

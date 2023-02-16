@@ -1,5 +1,6 @@
 package com.omtorney.doer.goals.presentation.goaledit
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -35,7 +36,6 @@ import java.util.Locale.getDefault
 
 @Composable
 fun GoalEditScreen(
-    modifier: Modifier = Modifier,
     viewModel: GoalEditViewModel = hiltViewModel(),
     onClickClose: () -> Unit
 ) {
@@ -48,6 +48,11 @@ fun GoalEditScreen(
     val coroutineScope = rememberCoroutineScope()
 
 //    val focusRequester = remember { FocusRequester() }
+
+    val animatedProgress = animateFloatAsState(
+        targetValue = state.progress,
+        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
+    ).value
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -66,25 +71,7 @@ fun GoalEditScreen(
 //        focusRequester.requestFocus()
 //    }
 
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    viewModel.onEvent(GoalEditEvent.SaveGoal)
-                    onClickClose()
-                },
-                backgroundColor = Color(accentColor)
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_round_save_alt),
-                    contentDescription = stringResource(R.string.save)
-                )
-            }
-        },
-        floatingActionButtonPosition = FabPosition.Center,
-        scaffoldState = scaffoldState,
-        modifier = modifier
-    ) { paddingValues ->
+    Scaffold(scaffoldState = scaffoldState) { paddingValues ->
         Box(
             modifier = Modifier
                 .padding(paddingValues)
@@ -149,7 +136,7 @@ fun GoalEditScreen(
                 }
                 /** Progress */
                 CircularProgressIndicator(
-                    progress = state.progress,
+                    progress = animatedProgress,
                     color = Color(secondaryColor),
                     strokeWidth = 8.dp,
                     modifier = Modifier
@@ -157,11 +144,34 @@ fun GoalEditScreen(
                         .align(Alignment.CenterHorizontally)
                         .size(80.dp)
                 )
-                /** Steps */
-                Text(
-                    text = "Steps",
-                    modifier = Modifier.padding(bottom = 12.dp)
-                )
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(12.dp)
+                        .fillMaxWidth()
+                ) {
+                    /** Steps */
+                    Text(
+                        text = "Steps",
+                        style = MaterialTheme.typography.h6
+                    )
+                    Box {
+                        /** Info button */
+                        IconButton(onClick = { goalInfoExpanded = true }) {
+                            Icon(
+                                imageVector = Icons.Rounded.MoreVert,
+                                contentDescription = "Goal info"
+                            )
+                        }
+                        NoteInfoMenu(
+                            state = state,
+                            expanded = goalInfoExpanded,
+                            onDismissRequest = { goalInfoExpanded = false },
+                            modifier = Modifier.padding(horizontal = 12.dp)
+                        )
+                    }
+                }
                 LazyColumn(
                     modifier = Modifier
                         .padding(0.dp)
@@ -180,14 +190,16 @@ fun GoalEditScreen(
                                 colors = ButtonDefaults.buttonColors(
                                     backgroundColor = if (step.isAchieved) Color(secondaryColor)
                                     else Color(accentColor)
-                                )
+                                ),
+                                modifier = Modifier.height(37.dp)
                             ) {
                                 Text(text = "Step ${step.id!!.plus(1)}")
                             }
                             /** Step text */
-                            Card(modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f)
                             ) {
                                 BasicTextField(
                                     value = state.steps[step.id!!].text,
@@ -207,7 +219,11 @@ fun GoalEditScreen(
                                 )
                             }
                             /** Delete step button */
-                            IconButton(onClick = { viewModel.onEvent(GoalEditEvent.DeleteStep(step.id!!)) }) {
+                            Button(
+                                onClick = { viewModel.onEvent(GoalEditEvent.DeleteStep(step.id!!)) },
+                                colors = ButtonDefaults.buttonColors(Color(accentColor)),
+                                modifier = Modifier.height(37.dp)
+                            ) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_round_remove_circle_outline),
                                     contentDescription = stringResource(R.string.delete)
@@ -215,35 +231,36 @@ fun GoalEditScreen(
                             }
                         }
                     }
-                    /** Add step button */
-                    item {
-                        Button(
-                            onClick = { viewModel.onEvent(GoalEditEvent.AddStep(id = state.steps.lastIndex)) },
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = Color(accentColor),
-                                contentColor = contentColorFor(backgroundColor = Color(accentColor))
-                            ),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_round_add_circle_outline),
-                                contentDescription = "Add step"
-                            )
-                        }
-                    }
                 }
-                Box(modifier = Modifier.align(Alignment.End)) {
-                    IconButton(onClick = { goalInfoExpanded = true }) {
-                        Icon(
-                            imageVector = Icons.Rounded.MoreVert,
-                            contentDescription = "Goal info"
-                        )
-                    }
-                    NoteInfoMenu(
-                        state = state,
-                        expanded = goalInfoExpanded,
-                        onDismissRequest = { goalInfoExpanded = false },
-                        modifier = Modifier.padding(horizontal = 12.dp)
+                /** Add step button */
+                Button(
+                    onClick = { viewModel.onEvent(GoalEditEvent.AddStep(id = state.steps.lastIndex)) },
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color(accentColor),
+                        contentColor = contentColorFor(backgroundColor = Color(accentColor))
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_round_add_circle_outline),
+                        contentDescription = "Add step"
+                    )
+                }
+                /** Save goal button */
+                Button(
+                    onClick = {
+                        viewModel.onEvent(GoalEditEvent.SaveGoal)
+                        onClickClose()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color(accentColor),
+                        contentColor = contentColorFor(backgroundColor = Color(accentColor))
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_round_save_alt),
+                        contentDescription = "Save goal"
                     )
                 }
             }

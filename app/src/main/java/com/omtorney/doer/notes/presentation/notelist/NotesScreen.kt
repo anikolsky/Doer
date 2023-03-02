@@ -124,9 +124,11 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
-            LazyColumn(modifier = Modifier
-                .padding(horizontal = 8.dp)
-                .fillMaxSize()) {
+            LazyColumn(
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+                    .fillMaxSize()
+            ) {
                 /** Pinned list */
                 items(
                     items = state.notes,
@@ -176,6 +178,9 @@ fun HomeScreen(
                             Spacer(modifier = Modifier.height(5.dp)) // TODO add an option
                         }
                     }
+                }
+                item {
+                    Spacer(modifier = Modifier.height(55.dp))
                 }
             }
         }

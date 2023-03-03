@@ -108,27 +108,31 @@ class GoalEditViewModel @Inject constructor(
             }
             is GoalEditEvent.SaveGoal -> {
                 viewModelScope.launch {
-                    try {
-                        goalUseCases.addGoal(
-                            Goal(
-                                id = currentGoalId,
-                                title = state.value.title,
-                                steps = state.value.steps,
-                                createdAt = if (state.value.createdAt == 0L) {
-                                    System.currentTimeMillis()
-                                } else {
-                                    state.value.createdAt
-                                },
-                                modifiedAt = System.currentTimeMillis()
+                    if (state.value.title.isEmpty()) {
+                        _eventFlow.emit(UiEvent.ShowSnackbar(message = "Enter goal title"))
+                    } else {
+                        try {
+                            goalUseCases.addGoal(
+                                Goal(
+                                    id = currentGoalId,
+                                    title = state.value.title,
+                                    steps = state.value.steps,
+                                    createdAt = if (state.value.createdAt == 0L) {
+                                        System.currentTimeMillis()
+                                    } else {
+                                        state.value.createdAt
+                                    },
+                                    modifiedAt = System.currentTimeMillis()
+                                )
                             )
-                        )
-                        _eventFlow.emit(UiEvent.Save)
-                    } catch (e: InvalidGoalException) {
-                        _eventFlow.emit(
-                            UiEvent.ShowSnackbar(
-                                message = e.message ?: "Couldn't save goal"
+                            _eventFlow.emit(UiEvent.Save)
+                        } catch (e: InvalidGoalException) {
+                            _eventFlow.emit(
+                                UiEvent.ShowSnackbar(
+                                    message = e.message ?: "Couldn't save goal"
+                                )
                             )
-                        )
+                        }
                     }
                 }
             }

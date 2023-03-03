@@ -2,6 +2,7 @@ package com.omtorney.doer.goals.presentation.goaledit
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,10 +17,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -117,38 +118,36 @@ fun GoalEditScreen(
                         )
                     }
                 }
-                /** Title */
-                Card(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    BasicTextField(
-                        value = state.title,
-                        onValueChange = { viewModel.onEvent(GoalEditEvent.EnterTitle(it)) },
-                        textStyle = MaterialTheme.typography.body1.copy(
-                            color = MaterialTheme.colors.onBackground
-                        ),
-                        cursorBrush = SolidColor(MaterialTheme.colors.onBackground),
-                        modifier = Modifier
-                            .padding(12.dp)
-                            .fillMaxWidth()
-//                                .focusRequester(focusRequester)
-                    )
+                /** Goal description */
+                Card {
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        /** Progress */
+                        LinearProgressIndicator(
+                            progress = animatedProgress,
+                            color = Color(secondaryColor),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.BottomCenter)
+                        )
+                        BasicTextField(
+                            value = state.title,
+                            onValueChange = { viewModel.onEvent(GoalEditEvent.EnterTitle(it)) },
+                            textStyle = MaterialTheme.typography.body1.copy(
+                                color = MaterialTheme.colors.onBackground
+                            ),
+                            cursorBrush = SolidColor(MaterialTheme.colors.onSurface),
+                            modifier = Modifier
+                                .padding(12.dp)
+                                .fillMaxWidth()
+//                            .focusRequester(focusRequester)
+                        )
+                    }
                 }
-                /** Progress */
-                CircularProgressIndicator(
-                    progress = animatedProgress,
-                    color = Color(secondaryColor),
-                    strokeWidth = 8.dp,
-                    modifier = Modifier
-                        .padding(vertical = 16.dp)
-                        .align(Alignment.CenterHorizontally)
-                        .size(80.dp)
-                )
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                        .padding(12.dp)
+                        .padding(4.dp)
                         .fillMaxWidth()
                 ) {
                     /** Steps */
@@ -156,8 +155,8 @@ fun GoalEditScreen(
                         text = "Steps",
                         style = MaterialTheme.typography.h6
                     )
+                    /** Info button */
                     Box {
-                        /** Info button */
                         IconButton(onClick = { goalInfoExpanded = true }) {
                             Icon(
                                 imageVector = Icons.Rounded.MoreVert,
@@ -178,29 +177,33 @@ fun GoalEditScreen(
                         .weight(1f)
                 ) {
                     items(items = state.steps) { step ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 12.dp)
-                        ) {
-                            /** Achieve button */
-                            Button(
-                                onClick = { viewModel.onEvent(GoalEditEvent.AchieveStep(step.id!!)) },
-                                colors = ButtonDefaults.buttonColors(
-                                    backgroundColor = if (step.isAchieved) Color(secondaryColor)
-                                    else Color(accentColor)
-                                ),
-                                modifier = Modifier.height(37.dp)
-                            ) {
-                                Text(text = "Step ${step.id!!.plus(1)}")
-                            }
-                            /** Step text */
-                            Card(
+                        Card {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .weight(1f)
+                                    .fillMaxSize()
+                                    .height(IntrinsicSize.Min)
                             ) {
+                                /** Achieve button */
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .background(
+                                            color = if (step.isAchieved) Color(secondaryColor)
+                                            else Color(accentColor)
+                                        )
+                                        .clickable {
+                                            viewModel.onEvent(GoalEditEvent.AchieveStep(step.id!!))
+                                        },
+                                ) {
+                                    Text(
+                                        text = "Step ${step.id!!.plus(1)}",
+                                        modifier = Modifier
+                                            .padding(8.dp)
+                                            .align(Alignment.Center)
+                                    )
+                                }
+                                /** Step description */
                                 BasicTextField(
                                     value = state.steps[step.id!!].text,
                                     onValueChange = {
@@ -212,24 +215,35 @@ fun GoalEditScreen(
                                         )
                                     },
                                     textStyle = MaterialTheme.typography.body1.copy(
-                                        color = MaterialTheme.colors.onBackground
+                                        color = if (step.isAchieved) Color.Gray
+                                        else MaterialTheme.colors.onBackground,
+                                        textDecoration = if (step.isAchieved) TextDecoration.LineThrough
+                                        else TextDecoration.None
                                     ),
-                                    cursorBrush = SolidColor(MaterialTheme.colors.onBackground),
-                                    modifier = Modifier.padding(8.dp)
+                                    modifier = Modifier
+                                        .padding(8.dp)
+                                        .weight(1f)
                                 )
-                            }
-                            /** Delete step button */
-                            Button(
-                                onClick = { viewModel.onEvent(GoalEditEvent.DeleteStep(step.id!!)) },
-                                colors = ButtonDefaults.buttonColors(Color(accentColor)),
-                                modifier = Modifier.height(37.dp)
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_round_remove_circle_outline),
-                                    contentDescription = stringResource(R.string.delete)
-                                )
+                                /** Delete step button */
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .background(color = Color(accentColor))
+                                        .clickable {
+                                            viewModel.onEvent(GoalEditEvent.DeleteStep(step.id!!))
+                                        },
+                                ) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_round_remove_circle_outline),
+                                        contentDescription = stringResource(R.string.delete),
+                                        modifier = Modifier
+                                            .padding(8.dp)
+                                            .align(Alignment.Center)
+                                    )
+                                }
                             }
                         }
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
                 /** Add step button */

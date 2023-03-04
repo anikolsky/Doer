@@ -3,7 +3,6 @@ package com.omtorney.doer.data.database
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import com.omtorney.doer.core.data.database.AppDatabase
 import com.omtorney.doer.core.data.database.NoteDao
@@ -14,18 +13,14 @@ import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import java.io.IOException
-import java.time.LocalDateTime
 import java.util.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
-@RunWith(AndroidJUnit4::class)
 class NoteDaoTest {
 
     private lateinit var noteDao: NoteDao
     private lateinit var db: AppDatabase
-    private lateinit var date: LocalDateTime
+//    private lateinit var date: LocalDateTime
     private lateinit var note: Note
 
     @Before
@@ -41,7 +36,6 @@ class NoteDaoTest {
     }
 
     @After
-    @Throws(IOException::class)
     fun closeDb() {
         db.close()
     }

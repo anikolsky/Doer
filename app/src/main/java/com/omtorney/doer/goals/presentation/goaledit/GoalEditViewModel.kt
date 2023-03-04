@@ -70,8 +70,9 @@ class GoalEditViewModel @Inject constructor(
                 _state.value = state.value.copy(title = event.title)
             }
             is GoalEditEvent.AddStep -> {
-                _state.value =
-                    state.value.copy(steps = state.value.steps.plus(Step(id = event.id + 1)))
+                _state.value = state.value.copy(steps = state.value.steps.toMutableList().apply {
+                    add(Step(id = event.id + 1))
+                })
             }
             is GoalEditEvent.EditStep -> {
                 val updatedSteps = state.value.steps.map { step ->
@@ -80,7 +81,7 @@ class GoalEditViewModel @Inject constructor(
                     } else {
                         step
                     }
-                }
+                }.toMutableList()
                 _state.value = state.value.copy(steps = updatedSteps)
             }
             is GoalEditEvent.AchieveStep -> {
@@ -90,14 +91,14 @@ class GoalEditViewModel @Inject constructor(
                     } else {
                         step
                     }
-                }
+                }.toMutableList()
                 _state.value = state.value.copy(
                     steps = updatedSteps,
                     progress = calculateProgress(updatedSteps)
                 )
             }
             is GoalEditEvent.DeleteStep -> {
-                val updatedSteps = state.value.steps.filter { step -> step.id != event.id }
+                val updatedSteps = state.value.steps.filter { step -> step.id != event.id }.toMutableList()
                 _state.value = state.value.copy(steps = updatedSteps)
             }
             is GoalEditEvent.DeleteGoal -> {
@@ -139,7 +140,7 @@ class GoalEditViewModel @Inject constructor(
         }
     }
 
-    private fun calculateProgress(steps: List<Step>): Float {
+    private fun calculateProgress(steps: MutableList<Step>): Float {
         return (steps.count { it.isAchieved }.toFloat() / steps.size)
     }
 }

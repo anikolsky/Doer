@@ -13,7 +13,7 @@ data class Goal(
     @PrimaryKey(autoGenerate = true)
     val id: Long? = null,
     val title: String,
-    val steps: List<Step>,
+    val steps: MutableList<Step>,
     @ColumnInfo(name = "created_at")
     val createdAt: Long,
     @ColumnInfo(name = "modified_at")

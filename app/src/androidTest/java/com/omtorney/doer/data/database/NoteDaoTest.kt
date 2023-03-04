@@ -8,8 +8,9 @@ import com.google.common.truth.Truth.assertThat
 import com.omtorney.doer.core.data.database.AppDatabase
 import com.omtorney.doer.core.data.database.NoteDao
 import com.omtorney.doer.notes.domain.model.Note
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -18,6 +19,7 @@ import java.io.IOException
 import java.time.LocalDateTime
 import java.util.*
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class NoteDaoTest {
 
@@ -50,20 +52,23 @@ class NoteDaoTest {
 //    }
 
     @Test
-    @Throws(Exception::class)
-    fun writeNoteAndReadInList() = runBlocking {
-        val note = note
-
+    fun addNote_And_ReadInList() = runTest {
         noteDao.insert(note)
         val notes = noteDao.getNotes().first()
 
-        assertThat(notes.first()).isEqualTo(note)
+        assertThat(notes).contains(note)
     }
 
     @Test
-    @Throws(Exception::class)
-    fun updateNoteAndReadInList() = runBlocking {
-        val note = note
+    fun addNote_And_ReadInListById() = runTest {
+        noteDao.insert(note)
+        val notes = noteDao.getNotes().first()
+
+        assertThat(notes.find { it.id == 1L }).isEqualTo(note)
+    }
+
+    @Test
+    fun updateNote_And_ReadInList() = runTest {
         val newText = "test note 2"
 
         noteDao.insert(note)
@@ -75,15 +80,11 @@ class NoteDaoTest {
     }
 
     @Test
-    @Throws(Exception::class)
-    fun deleteNoteFromList() = runBlocking {
-        val note = note
-
+    fun deleteNoteFromList() = runTest {
         noteDao.insert(note)
-        val notes = noteDao.getNotes().first()
-        noteDao.delete(notes.first())
+        noteDao.delete(note)
         val newNotes = noteDao.getNotes().first()
 
-        assertThat(newNotes).isEmpty()
+        assertThat(newNotes).doesNotContain(note)
     }
 }

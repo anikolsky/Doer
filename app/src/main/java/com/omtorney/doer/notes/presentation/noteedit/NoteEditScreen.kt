@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -48,18 +49,23 @@ fun NoteEditScreen(
         NotePriority.No
     )
     val scaffoldState = rememberScaffoldState()
-    val coroutineScope = rememberCoroutineScope()
+    val snackbarCoroutineScope = rememberCoroutineScope()
 
 //    val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(key1 = true) {
-        viewModel.eventFlow.collectLatest { event ->
-            when (event) {
-                UiEvent.Save -> {
-                    scaffoldState.snackbarHostState.showSnackbar(message = "Saved")
-                }
-                is UiEvent.ShowSnackbar -> {
-                    scaffoldState.snackbarHostState.showSnackbar(message = event.message)
+        snackbarCoroutineScope.launch {
+            viewModel.eventFlow.collectLatest { event ->
+                when (event) {
+                    is UiEvent.ShowSnackbar -> {
+                        scaffoldState.snackbarHostState.showSnackbar(message = event.message)
+                    }
+                    UiEvent.Save -> {
+                        scaffoldState.snackbarHostState.showSnackbar(message = "Saved")
+                    }
+                    UiEvent.HideSnackbar -> {
+                        scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+                    }
                 }
             }
         }
@@ -156,7 +162,7 @@ fun NoteEditScreen(
                     IconButton(
                         onClick = {
                             viewModel.onEvent(NoteEditEvent.Delete(state.id!!))
-                            coroutineScope.launch {
+                            snackbarCoroutineScope.launch {
                                 scaffoldState.snackbarHostState.showSnackbar(
                                     message = "Deleted",
                                     duration = SnackbarDuration.Short
@@ -192,6 +198,7 @@ fun NoteEditScreen(
                                 .weight(1f)
                                 .padding(8.dp)
                                 .fillMaxSize()
+                                .testTag("NOTE_EDIT_TEXT_FIELD")
 //                                .focusRequester(focusRequester)
                         )
                         Box(modifier = Modifier.align(Alignment.End)) {

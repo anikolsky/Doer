@@ -1,11 +1,9 @@
-package com.omtorney.doer.data.database
+package com.omtorney.doer.core.data.database
 
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
-import com.omtorney.doer.core.data.database.AppDatabase
-import com.omtorney.doer.core.data.database.NoteDao
 import com.omtorney.doer.notes.domain.model.Note
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first

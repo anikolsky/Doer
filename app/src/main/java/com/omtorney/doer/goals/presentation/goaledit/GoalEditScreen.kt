@@ -46,7 +46,7 @@ fun GoalEditScreen(
     var goalInfoExpanded by remember { mutableStateOf(false) }
 
     val scaffoldState = rememberScaffoldState()
-    val coroutineScope = rememberCoroutineScope()
+    val snackbarCoroutineScope = rememberCoroutineScope()
 
 //    val focusRequester = remember { FocusRequester() }
 
@@ -56,13 +56,18 @@ fun GoalEditScreen(
     ).value
 
     LaunchedEffect(key1 = true) {
-        viewModel.eventFlow.collectLatest { event ->
-            when (event) {
-                UiEvent.Save -> {
-                    scaffoldState.snackbarHostState.showSnackbar(message = "Saved")
-                }
-                is UiEvent.ShowSnackbar -> {
-                    scaffoldState.snackbarHostState.showSnackbar(message = event.message)
+        snackbarCoroutineScope.launch {
+            viewModel.eventFlow.collect { event ->
+                when (event) {
+                    is UiEvent.ShowSnackbar -> {
+                        scaffoldState.snackbarHostState.showSnackbar(message = event.message)
+                    }
+                    UiEvent.Save -> {
+                        scaffoldState.snackbarHostState.showSnackbar(message = "Saved")
+                    }
+                    UiEvent.HideSnackbar -> {
+                        scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+                    }
                 }
             }
         }
@@ -102,7 +107,7 @@ fun GoalEditScreen(
                     IconButton(
                         onClick = {
                             viewModel.onEvent(GoalEditEvent.DeleteGoal(state.id!!))
-                            coroutineScope.launch {
+                            snackbarCoroutineScope.launch {
                                 scaffoldState.snackbarHostState.showSnackbar(
                                     message = "Deleted",
                                     duration = SnackbarDuration.Short

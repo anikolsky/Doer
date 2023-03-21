@@ -23,6 +23,7 @@ import com.omtorney.doer.R
 import com.omtorney.doer.core.presentation.Screen
 import com.omtorney.doer.core.presentation.components.*
 import com.omtorney.doer.goals.presentation.components.GoalItem
+import com.omtorney.doer.goals.presentation.components.calculateProgress
 
 @Composable
 fun GoalsScreen(
@@ -101,7 +102,7 @@ fun GoalsScreen(
                 items(items = state.goals) { goal ->
                     GoalItem(
                         goal = goal,
-                        progress = goal.steps.count { it.isAchieved }.toFloat() / goal.steps.size,
+                        progress = calculateProgress(goal.steps),
                         color = secondaryColor,
                         onGoalClick = { onGoalClick(goal.id!!) },
                         onLongClick = {}

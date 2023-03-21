@@ -75,7 +75,8 @@ fun NoteItem(
                         style = MaterialTheme.typography.body1,
                         color = MaterialTheme.colors.onSurface,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+//                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.fillMaxWidth()
                     )
                     note.text.lines().drop(1).forEach { textLine ->
                         Text(
@@ -83,7 +84,8 @@ fun NoteItem(
                             style = MaterialTheme.typography.body2,
                             color = MaterialTheme.colors.onSurface.copy(alpha = 0.5f),
                             maxLines = 10, // TODO add option
-                            overflow = TextOverflow.Ellipsis
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
                 }
@@ -135,7 +137,8 @@ fun PinnedNoteItem(
                     style = MaterialTheme.typography.body1,
                     color = MaterialTheme.colors.onSurface,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+//                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.fillMaxWidth()
                 )
                 note.text.lines().drop(1).forEach { textLine ->
                     Text(
@@ -143,7 +146,8 @@ fun PinnedNoteItem(
                         style = MaterialTheme.typography.body2,
                         color = MaterialTheme.colors.onSurface.copy(alpha = 0.5f),
                         maxLines = 10, // TODO add an option
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
             }
@@ -152,7 +156,7 @@ fun PinnedNoteItem(
                 tint = MaterialTheme.colors.onBackground.copy(alpha = 0.5f),
                 contentDescription = "Pinned",
                 modifier = Modifier
-                    .size(25.dp)
+                    .size(30.dp)
                     .padding(end = 8.dp)
             )
         }
@@ -172,7 +176,7 @@ fun NotePinnedItemPreview() {
             PinnedNoteItem(
                 Note(
                     1,
-                    "Note text note text note text note text note text\nnote text note text",
+                    "Note text note text\nnote text note text",
                     1,
                     System.currentTimeMillis(),
                     System.currentTimeMillis(),
@@ -196,7 +200,7 @@ fun NoteItemPreview() {
             NoteItem(
                 Note(
                     1,
-                    "Note text note text note text note text note text\nnote text note text",
+                    "Note text note text\nnote text note text",
                     1,
                     System.currentTimeMillis(),
                     System.currentTimeMillis(),

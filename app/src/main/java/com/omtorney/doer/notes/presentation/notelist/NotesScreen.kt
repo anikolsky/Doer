@@ -11,13 +11,13 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HomeScreen(
+fun NotesScreen(
     viewModel: NotesViewModel = hiltViewModel(),
     navController: NavController,
     onNoteClick: (Long) -> Unit,
@@ -128,6 +128,7 @@ fun HomeScreen(
                 modifier = Modifier
                     .padding(horizontal = 8.dp)
                     .fillMaxSize()
+                    .testTag("NOTES_SCREEN_LAZY_COLUMN")
             ) {
                 /** Pinned list */
                 items(
@@ -172,7 +173,9 @@ fun HomeScreen(
                                     }
                                 }
                             },
-                            modifier = Modifier.animateItemPlacement()
+                            modifier = Modifier
+                                .animateItemPlacement()
+                                .testTag("NOTE_ITEM")
                         )
                         if (lineDividerState) {
                             Spacer(modifier = Modifier.height(5.dp)) // TODO add an option

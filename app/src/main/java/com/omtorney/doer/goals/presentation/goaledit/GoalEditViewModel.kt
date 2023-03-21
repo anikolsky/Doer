@@ -11,6 +11,7 @@ import com.omtorney.doer.goals.domain.model.Goal
 import com.omtorney.doer.goals.domain.model.InvalidGoalException
 import com.omtorney.doer.goals.domain.model.Step
 import com.omtorney.doer.goals.domain.usecase.GoalUseCases
+import com.omtorney.doer.goals.presentation.components.calculateProgress
 import com.omtorney.doer.settings.domain.usecase.SettingsUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -111,6 +112,8 @@ class GoalEditViewModel @Inject constructor(
                 viewModelScope.launch {
                     if (state.value.title.isEmpty()) {
                         _eventFlow.emit(UiEvent.ShowSnackbar(message = "Enter goal title"))
+                    } else if (state.value.steps.isEmpty()) {
+                        _eventFlow.emit(UiEvent.ShowSnackbar(message = "Enter at least one step"))
                     } else {
                         try {
                             goalUseCases.addGoal(
@@ -138,9 +141,5 @@ class GoalEditViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    private fun calculateProgress(steps: MutableList<Step>): Float {
-        return (steps.count { it.isAchieved }.toFloat() / steps.size)
     }
 }

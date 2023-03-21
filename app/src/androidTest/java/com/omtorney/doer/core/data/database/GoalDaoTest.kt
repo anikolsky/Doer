@@ -1,11 +1,9 @@
-package com.omtorney.doer.data.database
+package com.omtorney.doer.core.data.database
 
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
-import com.omtorney.doer.core.data.database.AppDatabase
-import com.omtorney.doer.core.data.database.GoalDao
 import com.omtorney.doer.goals.domain.model.Goal
 import com.omtorney.doer.goals.domain.model.Step
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,7 +20,7 @@ class GoalDaoTest {
     private lateinit var goalDao: GoalDao
     private lateinit var db: AppDatabase
 
-    //    private lateinit var date: LocalDateTime
+//    private lateinit var date: LocalDateTime
     private lateinit var goal: Goal
     private lateinit var step: Step
 

@@ -10,12 +10,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.omtorney.doer.R
 import com.omtorney.doer.core.presentation.components.RequestPermissions
 import com.omtorney.doer.goals.presentation.goaledit.GoalEditScreen
 import com.omtorney.doer.goals.presentation.goallist.GoalsScreen
 import com.omtorney.doer.notes.presentation.noteedit.NoteEditScreen
-import com.omtorney.doer.notes.presentation.notelist.HomeScreen
+import com.omtorney.doer.notes.presentation.notelist.NotesScreen
 import com.omtorney.doer.settings.presentation.SettingsScreen
 
 @Composable
@@ -29,7 +28,7 @@ fun DoerApp() {
         startDestination = Screen.Notes.route,
     ) {
         composable(route = Screen.Notes.route) {
-            HomeScreen(
+            NotesScreen(
                 navController = navController,
                 onNoteClick = { noteId ->
                     navController.navigate(Screen.Note.route + "?noteId=$noteId") {

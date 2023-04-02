@@ -4,6 +4,7 @@ import com.omtorney.doer.notes.util.NotePriority
 
 object Constants {
 
+    const val DATA_STORE_NAME = "Doer_Preferences_DataStore"
     const val INITIAL_ACCENT_COLOR = 0xFF323232
     const val INITIAL_SECONDARY_COLOR = 0xFFDB8408
     const val HIGH_PRIORITY_COLOR = 0xFFB31C1C

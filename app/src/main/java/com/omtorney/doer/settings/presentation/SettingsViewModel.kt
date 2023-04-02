@@ -3,25 +3,23 @@ package com.omtorney.doer.settings.presentation
 import android.os.Environment
 import android.util.Log
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.GsonBuilder
 import com.omtorney.doer.notes.domain.usecase.NoteUseCases
-import com.omtorney.doer.settings.domain.usecase.SettingsUseCases
 import com.omtorney.doer.core.util.Constants
+import com.omtorney.doer.settings.data.SettingsStore
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val noteUseCases: NoteUseCases,
-    private val settingsUseCases: SettingsUseCases
+    private val settingsDataStore: SettingsStore
 ) : ViewModel() {
 
     private val backupFile = File(
@@ -29,34 +27,34 @@ class SettingsViewModel @Inject constructor(
         "backup.json"
     )
 
-    val accentColor = settingsUseCases.getAccentColor.invoke().stateIn(
+    val accentColor: StateFlow<Long> = settingsDataStore.getAccentColor.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
         initialValue = Constants.INITIAL_ACCENT_COLOR
     )
 
-    val secondaryColor = settingsUseCases.getSecondaryColor.invoke().stateIn(
+    val secondaryColor: StateFlow<Long> = settingsDataStore.getSecondaryColor.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
         initialValue = Constants.INITIAL_SECONDARY_COLOR
     )
 
-    val lineDividerState = settingsUseCases.getLineDivideState.invoke().stateIn(
+    val lineSeparatorState = settingsDataStore.getLineSeparatorState.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
         initialValue = true
     )
 
-    fun setLineDividerState(state: Boolean) = viewModelScope.launch {
-        settingsUseCases.setLineDivideState(state)
+    fun setLineSeparatorState(state: Boolean) = viewModelScope.launch {
+        settingsDataStore.setLineSeparatorState(state)
     }
 
     fun setAccentColor(color: Color) = viewModelScope.launch {
-        settingsUseCases.setAccentColor(color)
+        settingsDataStore.setAccentColor(color.toArgb().toLong())
     }
 
     fun setSecondaryColor(color: Color) = viewModelScope.launch {
-        settingsUseCases.setSecondaryColor(color)
+        settingsDataStore.setSecondaryColor(color.toArgb().toLong())
     }
 
     fun backupDatabase() { // FIXME

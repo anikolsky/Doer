@@ -24,13 +24,13 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.omtorney.doer.R
 import com.omtorney.doer.core.presentation.Screen
 import com.omtorney.doer.core.presentation.components.BackButton
 import com.omtorney.doer.core.presentation.components.ScreenName
 import com.omtorney.doer.core.presentation.components.TopBar
 import com.omtorney.doer.core.presentation.components.UiEvent
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale.getDefault
@@ -40,8 +40,9 @@ fun GoalEditScreen(
     viewModel: GoalEditViewModel = hiltViewModel(),
     onClickClose: () -> Unit
 ) {
-    val accentColor by viewModel.accentColor.collectAsState()
-    val secondaryColor by viewModel.secondaryColor.collectAsState()
+    val accentColor by viewModel.accentColor.collectAsStateWithLifecycle()
+    val secondaryColor by viewModel.secondaryColor.collectAsStateWithLifecycle()
+
     val state = viewModel.state.value
     var goalInfoExpanded by remember { mutableStateOf(false) }
 

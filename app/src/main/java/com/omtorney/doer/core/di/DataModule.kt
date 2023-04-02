@@ -1,6 +1,10 @@
 package com.omtorney.doer.core.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import com.omtorney.doer.core.data.RepositoryImpl
 import com.omtorney.doer.settings.data.SettingsStore
@@ -8,6 +12,7 @@ import com.omtorney.doer.core.data.database.AppDatabase
 import com.omtorney.doer.core.data.database.GoalDao
 import com.omtorney.doer.core.data.database.NoteDao
 import com.omtorney.doer.core.domain.Repository
+import com.omtorney.doer.core.util.Constants.DATA_STORE_NAME
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -43,8 +48,10 @@ object DataModule {
 
     @Provides
     @Singleton
-    fun provideSettingsStore(@ApplicationContext appContext: Context): SettingsStore {
-        return SettingsStore(appContext)
+    fun provideSettingsStore(@ApplicationContext appContext: Context): DataStore<Preferences> {
+        return PreferenceDataStoreFactory.create {
+            appContext.preferencesDataStoreFile(DATA_STORE_NAME)
+        }
     }
 
     @Provides

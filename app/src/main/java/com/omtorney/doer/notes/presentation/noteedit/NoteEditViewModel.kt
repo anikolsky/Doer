@@ -10,19 +10,16 @@ import com.omtorney.doer.notes.domain.usecase.NoteUseCases
 import com.omtorney.doer.notes.domain.model.InvalidNoteException
 import com.omtorney.doer.notes.domain.model.Note
 import com.omtorney.doer.core.util.Constants
-import com.omtorney.doer.settings.domain.usecase.SettingsUseCases
+import com.omtorney.doer.settings.data.SettingsStore
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class NoteEditViewModel @Inject constructor(
     private val noteUseCases: NoteUseCases,
-    private val settingsUseCases: SettingsUseCases,
+    settingsDataStore: SettingsStore,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -34,13 +31,13 @@ class NoteEditViewModel @Inject constructor(
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
-    val accentColor = settingsUseCases.getAccentColor.invoke().stateIn(
+    val accentColor: StateFlow<Long> = settingsDataStore.getAccentColor.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
         initialValue = Constants.INITIAL_ACCENT_COLOR
     )
 
-    val secondaryColor = settingsUseCases.getSecondaryColor.invoke().stateIn(
+    val secondaryColor: StateFlow<Long> = settingsDataStore.getSecondaryColor.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
         initialValue = Constants.INITIAL_SECONDARY_COLOR

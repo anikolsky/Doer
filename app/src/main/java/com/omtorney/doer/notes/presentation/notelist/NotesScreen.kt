@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.omtorney.doer.R
 import com.omtorney.doer.core.presentation.Screen
@@ -31,15 +32,15 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NotesScreen(
-    viewModel: NotesViewModel = hiltViewModel(),
+    viewModel: NotesViewModel = hiltViewModel(), // TODO move to NavHost
     navController: NavController,
     onNoteClick: (Long) -> Unit,
     onAddNoteClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
-    val accentColor by viewModel.accentColor.collectAsState()
-    val secondaryColor by viewModel.secondaryColor.collectAsState()
-    val lineDividerState by viewModel.lineDividerState.collectAsState()
+    val accentColor by viewModel.accentColor.collectAsStateWithLifecycle()
+    val secondaryColor by viewModel.secondaryColor.collectAsStateWithLifecycle()
+    val lineSeparatorState by viewModel.lineSeparatorState.collectAsStateWithLifecycle()
 
     val state = viewModel.state.value
     val scaffoldState = rememberScaffoldState()
@@ -142,7 +143,7 @@ fun NotesScreen(
                             onLongClick = { viewModel.onEvent(NotesEvent.Pin(note)) },
                             modifier = Modifier.animateItemPlacement()
                         )
-                        if (lineDividerState) {
+                        if (lineSeparatorState) {
                             Spacer(modifier = Modifier.height(5.dp)) // TODO add an option
                         }
                     }
@@ -177,7 +178,7 @@ fun NotesScreen(
                                 .animateItemPlacement()
                                 .testTag("NOTE_ITEM")
                         )
-                        if (lineDividerState) {
+                        if (lineSeparatorState) {
                             Spacer(modifier = Modifier.height(5.dp)) // TODO add an option
                         }
                     }

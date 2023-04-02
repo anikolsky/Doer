@@ -3,6 +3,7 @@ package com.omtorney.doer.core.presentation
 import android.Manifest
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -15,6 +16,7 @@ import com.omtorney.doer.goals.presentation.goaledit.GoalEditScreen
 import com.omtorney.doer.goals.presentation.goallist.GoalsScreen
 import com.omtorney.doer.notes.presentation.noteedit.NoteEditScreen
 import com.omtorney.doer.notes.presentation.notelist.NotesScreen
+import com.omtorney.doer.notes.presentation.notelist.NotesViewModel
 import com.omtorney.doer.settings.presentation.SettingsScreen
 
 @Composable
@@ -28,6 +30,7 @@ fun DoerApp() {
         startDestination = Screen.Notes.route,
     ) {
         composable(route = Screen.Notes.route) {
+            // TODO val viewModel = viewModel<NotesViewModel>()
             NotesScreen(
                 navController = navController,
                 onNoteClick = { noteId ->

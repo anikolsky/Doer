@@ -19,11 +19,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.omtorney.doer.R
 import com.omtorney.doer.core.presentation.Screen
 import com.omtorney.doer.settings.presentation.components.ColorPickerDialog
-import com.omtorney.doer.core.presentation.components.AppName
 import com.omtorney.doer.core.presentation.components.BackButton
 import com.omtorney.doer.core.presentation.components.ScreenName
 import com.omtorney.doer.core.presentation.components.TopBar
@@ -37,9 +37,11 @@ fun SettingsScreen(
     onClickClose: () -> Unit
 ) {
     val context = LocalContext.current
-    val lineDividerState by viewModel.lineDividerState.collectAsState()
-    val accentColor by viewModel.accentColor.collectAsState()
-    val secondaryColor by viewModel.secondaryColor.collectAsState()
+
+    val accentColor by viewModel.accentColor.collectAsStateWithLifecycle()
+    val secondaryColor by viewModel.secondaryColor.collectAsStateWithLifecycle()
+    val lineDividerState by viewModel.lineSeparatorState.collectAsStateWithLifecycle()
+
     var colorPickerOpen by remember { mutableStateOf(false) }
     var colorType by remember { mutableStateOf<ColorType>(ColorType.Accent) }
     val scaffoldState = rememberScaffoldState()
@@ -67,7 +69,7 @@ fun SettingsScreen(
                     title = { Text(text = "Enable divider") },
                     subtitle = "Add divider to the task list",
                     state = lineDividerState,
-                    onCheckedChange = { viewModel.setLineDividerState(it) }
+                    onCheckedChange = { viewModel.setLineSeparatorState(it) }
                 )
                 /** Accent color */
                 SettingsMenuButton(

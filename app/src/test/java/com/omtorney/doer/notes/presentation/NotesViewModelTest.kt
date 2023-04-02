@@ -7,6 +7,7 @@ import com.omtorney.doer.notes.domain.usecase.NoteUseCases
 import com.omtorney.doer.notes.presentation.noteedit.NoteEditEvent
 import com.omtorney.doer.notes.presentation.noteedit.NoteEditViewModel
 import com.omtorney.doer.notes.presentation.notelist.NotesViewModel
+import com.omtorney.doer.settings.data.SettingsStore
 import com.omtorney.doer.settings.domain.usecase.SettingsUseCases
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
@@ -32,7 +33,7 @@ class NotesViewModelTest {
     private lateinit var notesViewModel: NotesViewModel
     private lateinit var noteEditViewModel: NoteEditViewModel
     private lateinit var noteUseCases: NoteUseCases
-    private lateinit var settingsUseCases: SettingsUseCases
+    private lateinit var settingsDataStore: SettingsStore
     private lateinit var savedStateHandle: SavedStateHandle
     @MockK lateinit var repository: RepositoryImpl
     private val dispatcher = StandardTestDispatcher()
@@ -42,8 +43,8 @@ class NotesViewModelTest {
         Dispatchers.setMain(dispatcher)
         note = Note(1, "test note 1", 1, 0L, 0L)
         savedStateHandle = SavedStateHandle()
-        notesViewModel = NotesViewModel(noteUseCases, settingsUseCases)
-        noteEditViewModel = NoteEditViewModel(noteUseCases, settingsUseCases, savedStateHandle)
+        notesViewModel = NotesViewModel(noteUseCases, settingsDataStore)
+        noteEditViewModel = NoteEditViewModel(noteUseCases, settingsDataStore, savedStateHandle)
 
 //        coEvery {
 //            noteUseCases.addNote(note)

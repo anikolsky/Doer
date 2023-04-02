@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.omtorney.doer.R
 import com.omtorney.doer.notes.domain.model.NotePriorityConverter
 import com.omtorney.doer.core.presentation.components.BackButton
@@ -35,11 +36,12 @@ import java.util.Locale.*
 @Composable
 fun NoteEditScreen(
     modifier: Modifier = Modifier,
-    viewModel: NoteEditViewModel = hiltViewModel(),
+    viewModel: NoteEditViewModel = hiltViewModel(), // TODO move to NavHost
     onClickClose: () -> Unit
 ) {
-    val accentColor by viewModel.accentColor.collectAsState()
-    val secondaryColor by viewModel.secondaryColor.collectAsState()
+    val accentColor by viewModel.accentColor.collectAsStateWithLifecycle()
+    val secondaryColor by viewModel.secondaryColor.collectAsStateWithLifecycle()
+
     val state = viewModel.state.value
     var noteInfoExpanded by remember { mutableStateOf(false) }
     val radioOptions = listOf(

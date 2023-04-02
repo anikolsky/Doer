@@ -3,7 +3,6 @@ package com.omtorney.doer.core.di
 import com.omtorney.doer.core.domain.Repository
 import com.omtorney.doer.goals.domain.usecase.*
 import com.omtorney.doer.notes.domain.usecase.*
-import com.omtorney.doer.settings.domain.usecase.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,19 +33,6 @@ object DomainModule {
             deleteGoal = DeleteGoal(repository),
             getGoal = GetGoal(repository),
             getGoals = GetGoals(repository)
-        )
-    }
-
-    @Provides
-    @Singleton
-    fun provideSettingsUseCases(repository: Repository): SettingsUseCases {
-        return SettingsUseCases(
-            getAccentColor = GetAccentColor(repository),
-            setAccentColor = SetAccentColor(repository),
-            getLineDivideState = GetLineDivideState(repository),
-            setLineDivideState = SetLineDivideState(repository),
-            getSecondaryColor = GetSecondaryColor(repository),
-            setSecondaryColor = SetSecondaryColor(repository)
         )
     }
 }

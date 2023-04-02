@@ -6,31 +6,28 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omtorney.doer.core.util.Constants
 import com.omtorney.doer.goals.domain.usecase.GoalUseCases
-import com.omtorney.doer.settings.domain.usecase.SettingsUseCases
+import com.omtorney.doer.settings.data.SettingsStore
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class GoalsViewModel @Inject constructor(
     private val goalUseCases: GoalUseCases,
-    private val settingsUseCases: SettingsUseCases
+    settingsDataStore: SettingsStore
 ) : ViewModel() {
 
     private val _state = mutableStateOf(GoalState())
     val state: State<GoalState> = _state
 
-    val accentColor = settingsUseCases.getAccentColor.invoke().stateIn(
+    val accentColor: StateFlow<Long> = settingsDataStore.getAccentColor.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
         initialValue = Constants.INITIAL_ACCENT_COLOR
     )
 
-    val secondaryColor = settingsUseCases.getSecondaryColor.invoke().stateIn(
+    val secondaryColor: StateFlow<Long> = settingsDataStore.getSecondaryColor.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
         initialValue = Constants.INITIAL_SECONDARY_COLOR

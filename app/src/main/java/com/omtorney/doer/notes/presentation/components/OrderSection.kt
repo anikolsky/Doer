@@ -8,8 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.omtorney.doer.core.presentation.theme.DoerTheme
-import com.omtorney.doer.notes.util.NoteOrder
-import com.omtorney.doer.notes.util.OrderType
+import com.omtorney.doer.notes.domain.model.NoteOrder
+import com.omtorney.doer.notes.domain.model.OrderType
 
 @Composable
 fun OrderSection(
@@ -20,7 +20,7 @@ fun OrderSection(
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
-        modifier = modifier.background(color = MaterialTheme.colors.surface.copy(alpha = 0.7f))
+        modifier = modifier.background(color = MaterialTheme.colors.surface.copy(alpha = 0.6f))
     ) {
         Column {
             DefaultRadioButton(

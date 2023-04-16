@@ -1,4 +1,4 @@
-package com.omtorney.doer.notes.util
+package com.omtorney.doer.notes.domain.model
 
 sealed class OrderType {
     object Ascending : OrderType()

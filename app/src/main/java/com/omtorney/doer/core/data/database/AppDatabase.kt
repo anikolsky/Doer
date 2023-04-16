@@ -13,7 +13,8 @@ import com.omtorney.doer.notes.domain.model.NoteConverters
         Note::class,
         Goal::class
     ],
-    version = 1
+    version = 1,
+    exportSchema = false
 )
 @TypeConverters(
     value = [
@@ -22,8 +23,6 @@ import com.omtorney.doer.notes.domain.model.NoteConverters
     ]
 )
 abstract class AppDatabase : RoomDatabase() {
-
     abstract fun noteDao(): NoteDao
-
     abstract fun goalDao(): GoalDao
 }

@@ -27,8 +27,9 @@ fun BottomBar(
     val currentRoute = navBackStackEntry?.destination?.route
 
     BottomAppBar(
-        backgroundColor = Color(accentColor),
+//        backgroundColor = Color(accentColor),
         cutoutShape = MaterialTheme.shapes.small.copy(CornerSize(percent = 50)),
+        elevation = 1.dp,
         modifier = Modifier.graphicsLayer {
             shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
             clip = true

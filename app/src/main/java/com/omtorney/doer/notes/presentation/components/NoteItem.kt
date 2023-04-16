@@ -18,6 +18,7 @@ import com.omtorney.doer.R
 import com.omtorney.doer.notes.domain.model.Note
 import com.omtorney.doer.notes.domain.model.NoteConverters
 import com.omtorney.doer.core.presentation.theme.DoerTheme
+import com.omtorney.doer.notes.domain.model.NoteStatus
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
 import java.util.*
@@ -52,6 +53,7 @@ fun NoteItem(
         backgroundUntilSwipeThreshold = Color.Transparent
     ) {
         Card(
+            elevation = 1.dp,
             modifier = modifier
                 .fillMaxWidth()
                 .height(IntrinsicSize.Max)
@@ -63,31 +65,30 @@ fun NoteItem(
             Row {
                 Spacer(
                     modifier = Modifier
-                        .width(4.dp)
+                        .width(3.dp)
                         .fillMaxHeight()
                         .background(NoteConverters().priorityFromInt(note.priority).color)
                 )
-                Column(
-                    modifier = Modifier.padding(12.dp)
-                ) {
-                    Text(
-                        text = note.text[0],
-                        style = MaterialTheme.typography.body1,
-                        color = MaterialTheme.colors.onSurface,
-                        maxLines = 2,
-//                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    note.text.drop(1).forEach { textLine ->
+                Column(modifier = Modifier.padding(16.dp)) {
+                    if (note.title.isNotEmpty()) {
                         Text(
-                            text = textLine,
-                            style = MaterialTheme.typography.body2,
+                            text = note.title,
+                            style = MaterialTheme.typography.body1,
                             color = MaterialTheme.colors.onSurface.copy(alpha = 0.5f),
-                            maxLines = 10, // TODO add option
-                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 2,
+//                        overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.fillMaxWidth()
                         )
+                        Spacer(modifier = Modifier.height(4.dp))
                     }
+                    Text(
+                        text = note.content,
+                        style = MaterialTheme.typography.body1,
+                        color = MaterialTheme.colors.onSurface,
+                        maxLines = 10, // TODO add option
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
             }
         }
@@ -118,38 +119,39 @@ fun PinnedNoteItem(
                 .background(color = Color.Red.copy(alpha = 0.1f))
                 .combinedClickable(
                     onClick = { onNoteClick() },
-                    onLongClick = { /* onLongClick(note) */ }
+                    onLongClick = { onLongClick(note) }
                 )
         ) {
             Spacer(
                 modifier = Modifier
-                    .width(4.dp)
+                    .width(3.dp)
                     .fillMaxHeight()
                     .background(NoteConverters().priorityFromInt(note.priority).color)
             )
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(12.dp)
+                    .padding(16.dp)
             ) {
-                Text(
-                    text = note.text[0],
-                    style = MaterialTheme.typography.body1,
-                    color = MaterialTheme.colors.onSurface,
-                    maxLines = 2,
-//                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                note.text.drop(1).forEach { textLine ->
+                if (note.title.isNotEmpty()) {
                     Text(
-                        text = textLine,
-                        style = MaterialTheme.typography.body2,
+                        text = note.title,
+                        style = MaterialTheme.typography.body1,
                         color = MaterialTheme.colors.onSurface.copy(alpha = 0.5f),
-                        maxLines = 10, // TODO add an option
-                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 2,
+//                    overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.fillMaxWidth()
                     )
+                    Spacer(modifier = Modifier.height(4.dp))
                 }
+                Text(
+                    text = note.content,
+                    style = MaterialTheme.typography.body1,
+                    color = MaterialTheme.colors.onSurface,
+                    maxLines = 10, // TODO add an option
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
             Icon(
                 painter = painterResource(R.drawable.ic_round_push_pin),
@@ -176,8 +178,10 @@ fun NotePinnedItemPreview() {
             PinnedNoteItem(
                 Note(
                     1,
-                    listOf("Note text note text\nnote text note text"),
+                    "Title",
+                    "Note text note text\nnote text note text",
                     1,
+                    NoteStatus.ToDo,
                     System.currentTimeMillis(),
                     System.currentTimeMillis(),
                     false
@@ -200,8 +204,10 @@ fun NoteItemPreview() {
             NoteItem(
                 Note(
                     1,
-                    listOf("Note text note text\nnote text note text"),
+                    "Title",
+                    "Note text note text\nnote text note text",
                     1,
+                    NoteStatus.ToDo,
                     System.currentTimeMillis(),
                     System.currentTimeMillis(),
                     false

@@ -1,4 +1,4 @@
-package com.omtorney.doer.notes.util
+package com.omtorney.doer.notes.domain.model
 
 sealed class NoteOrder(val orderType: OrderType) {
     class Priority(orderType: OrderType) : NoteOrder(orderType)

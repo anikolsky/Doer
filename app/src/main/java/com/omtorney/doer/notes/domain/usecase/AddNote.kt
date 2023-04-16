@@ -7,11 +7,10 @@ import com.omtorney.doer.notes.domain.model.Note
 class AddNote(
     private val repository: Repository
 ) {
-
     @Throws(InvalidNoteException::class)
     suspend operator fun invoke(note: Note) {
-        if (note.text.isEmpty()) {
-            throw InvalidNoteException("Note can't be empty")
+        if (note.content.isEmpty()) {
+            throw InvalidNoteException("Note content can't be empty")
         }
         repository.insertNote(note)
     }

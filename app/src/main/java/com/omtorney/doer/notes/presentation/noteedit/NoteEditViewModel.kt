@@ -37,11 +37,13 @@ class NoteEditViewModel @Inject constructor(
                         currentNoteId = note.id
                         _state.value = state.value.copy(
                             id = note.id,
-                            text = note.text,
+                            title = note.title,
+                            content = note.content,
                             priority = note.priority,
-                            isPinned = note.isPinned,
+                            status = note.status,
                             createdAt = note.createdAt,
                             modifiedAt = note.modifiedAt,
+                            isPinned = note.isPinned
                         )
                     }
                 }
@@ -51,8 +53,11 @@ class NoteEditViewModel @Inject constructor(
 
     fun onEvent(event: NoteEditEvent) {
         when (event) {
-            is NoteEditEvent.EnteredText -> {
-                _state.value = state.value.copy(text = event.text)
+            is NoteEditEvent.EnteredTitle -> {
+                _state.value = state.value.copy(title = event.title)
+            }
+            is NoteEditEvent.EnteredContent -> {
+                _state.value = state.value.copy(content = event.content)
             }
             is NoteEditEvent.Delete -> {
                 viewModelScope.launch {
@@ -71,8 +76,10 @@ class NoteEditViewModel @Inject constructor(
                         noteUseCases.addNote(
                             Note(
                                 id = currentNoteId,
-                                text = state.value.text,
+                                title = state.value.title,
+                                content = state.value.content,
                                 priority = state.value.priority,
+                                status = state.value.status,
                                 createdAt = if (state.value.createdAt == 0L) {
                                     System.currentTimeMillis()
                                 } else {

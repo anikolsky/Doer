@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omtorney.doer.notes.domain.model.Note
 import com.omtorney.doer.notes.domain.usecase.NoteUseCases
-import com.omtorney.doer.notes.util.NoteOrder
-import com.omtorney.doer.notes.util.OrderType
+import com.omtorney.doer.notes.domain.model.NoteOrder
+import com.omtorney.doer.notes.domain.model.OrderType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn

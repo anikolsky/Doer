@@ -26,7 +26,7 @@ import com.omtorney.doer.core.presentation.components.BackButton
 import com.omtorney.doer.core.presentation.components.TopBar
 import com.omtorney.doer.core.presentation.components.UiEvent
 import com.omtorney.doer.notes.domain.model.NoteConverters
-import com.omtorney.doer.notes.util.NotePriority
+import com.omtorney.doer.notes.domain.model.NotePriority
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -40,7 +40,7 @@ fun NoteEditScreen(
     secondaryColor: Long,
     onClickClose: () -> Unit
 ) {
-    val state = viewModel.state.value
+    val state by viewModel.state
     var noteInfoExpanded by remember { mutableStateOf(false) }
     val radioOptions = listOf(
         NotePriority.High,
@@ -51,18 +51,18 @@ fun NoteEditScreen(
     val scaffoldState = rememberScaffoldState()
     val snackbarCoroutineScope = rememberCoroutineScope()
 
-//    val focusRequester = remember { FocusRequester() }
-
     LaunchedEffect(key1 = true) {
         snackbarCoroutineScope.launch {
-            viewModel.eventFlow.collectLatest { event ->
-                when (event) {
+            viewModel.eventFlow.collectLatest { uiEvent ->
+                when (uiEvent) {
                     is UiEvent.ShowSnackbar -> {
-                        scaffoldState.snackbarHostState.showSnackbar(message = event.message)
+                        scaffoldState.snackbarHostState.showSnackbar(message = uiEvent.message)
                     }
+
                     UiEvent.Save -> {
                         scaffoldState.snackbarHostState.showSnackbar(message = "Saved")
                     }
+
                     UiEvent.HideSnackbar -> {
                         scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
                     }
@@ -70,10 +70,6 @@ fun NoteEditScreen(
             }
         }
     }
-
-//    LaunchedEffect(Unit) {
-//        focusRequester.requestFocus()
-//    }
 
     Scaffold(
         floatingActionButton = {
@@ -115,13 +111,12 @@ fun NoteEditScreen(
                 )
         ) {
             Column(modifier = Modifier.padding(8.dp)) {
-                TopBar(modifier = Modifier.padding(bottom = 8.dp)
-                ) {
+                TopBar(modifier = Modifier.padding(bottom = 8.dp)) {
                     BackButton(onClick = onClickClose)
                     /** Priority buttons */
                     Surface(
                         shape = RoundedCornerShape(10.dp),
-                        color = MaterialTheme.colors.surface.copy(alpha = 0.45f),
+                        color = MaterialTheme.colors.surface.copy(alpha = 0.65f),
                         modifier = Modifier.weight(1f)
                     ) {
                         Row(
@@ -179,17 +174,29 @@ fun NoteEditScreen(
                     }
                 }
                 Card(
+                    shape = RoundedCornerShape(10.dp),
+                    elevation = 1.dp,
                     modifier = Modifier
                         .fillMaxWidth(0.95f)
-                        .fillMaxHeight(0.87f)
-                        .align(Alignment.CenterHorizontally),
-                    shape = RoundedCornerShape(10.dp),
-                    elevation = 16.dp
+                        .fillMaxHeight(0.88f)
+                        .align(Alignment.CenterHorizontally)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         BasicTextField(
-                            value = "text",
-                            onValueChange = { viewModel.onEvent(NoteEditEvent.EnteredText(listOf(it))) },
+                            value = state.title,
+                            onValueChange = { viewModel.onEvent(NoteEditEvent.EnteredTitle(it)) },
+                            textStyle = MaterialTheme.typography.h6.copy(
+                                color = MaterialTheme.colors.onBackground
+                            ),
+                            cursorBrush = SolidColor(MaterialTheme.colors.onBackground),
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .fillMaxWidth()
+                        )
+                        Divider()
+                        BasicTextField(
+                            value = state.content,
+                            onValueChange = { viewModel.onEvent(NoteEditEvent.EnteredContent(it)) },
                             textStyle = MaterialTheme.typography.body1.copy(
                                 color = MaterialTheme.colors.onBackground
                             ),
@@ -199,7 +206,6 @@ fun NoteEditScreen(
                                 .padding(8.dp)
                                 .fillMaxSize()
                                 .testTag("NOTE_EDIT_TEXT_FIELD")
-//                                .focusRequester(focusRequester)
                         )
                         Box(modifier = Modifier.align(Alignment.End)) {
                             IconButton(onClick = { noteInfoExpanded = true }) {
@@ -240,12 +246,10 @@ fun NoteInfoMenu(
                 text = """
                     Priority: ${state.priority}
                     Note id: ${state.id}
-                    Created at:
-                    ${sdf.format(state.createdAt)}
-                    Modified at:
-                    ${sdf.format(state.modifiedAt)}
+                    Created at: ${sdf.format(state.createdAt)}
+                    Modified at: ${sdf.format(state.modifiedAt)}
                 """.trimIndent(),
-                color = Color.Gray.copy(alpha = 0.5f),
+                color = Color.Gray.copy(alpha = 0.8f),
                 fontSize = 12.sp
             )
         }

@@ -1,4 +1,4 @@
-package com.omtorney.doer.notes.util
+package com.omtorney.doer.notes.domain.model
 
 import androidx.compose.ui.graphics.Color
 import com.omtorney.doer.core.util.Constants

@@ -55,10 +55,10 @@ fun ScreenName(
 ) {
     Text(
         text = title,
-        style = MaterialTheme.typography.h6.merge(
+        style = MaterialTheme.typography.h5.merge(
             TextStyle(color = contentColorFor(backgroundColor = Color(accentColor)))
         ),
-        modifier = modifier
+        modifier = modifier.padding(10.dp)
     )
 }
 

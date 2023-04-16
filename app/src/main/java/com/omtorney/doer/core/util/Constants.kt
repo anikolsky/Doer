@@ -1,6 +1,6 @@
 package com.omtorney.doer.core.util
 
-import com.omtorney.doer.notes.util.NotePriority
+import com.omtorney.doer.notes.domain.model.NotePriority
 
 object Constants {
 

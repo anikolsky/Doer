@@ -85,10 +85,6 @@ fun NotesScreen(
                 )
         ) {
             TopBar(modifier = Modifier.padding(8.dp)) {
-                AppName(
-                    accentColor = accentColor,
-//                    modifier = Modifier.weight(1f)
-                )
                 ScreenName(
                     title = Screen.Notes.label,
                     accentColor = accentColor,
@@ -114,18 +110,18 @@ fun NotesScreen(
                     OrderSection(
                         noteOrder = state.noteOrder,
                         onOrderChange = { viewModel.onEvent(NotesEvent.Order(it)) },
-                        color = Color(accentColor),
+                        color = Color(secondaryColor),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 4.dp)
+                            .padding(horizontal = 10.dp)
                             .clip(RoundedCornerShape(4.dp))
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
                 }
             }
             LazyColumn(
                 modifier = Modifier
-                    .padding(horizontal = 8.dp)
+                    .padding(horizontal = 10.dp)
                     .fillMaxSize()
                     .testTag("NOTES_SCREEN_LAZY_COLUMN")
             ) {
@@ -142,7 +138,7 @@ fun NotesScreen(
                             modifier = Modifier.animateItemPlacement()
                         )
                         if (lineSeparatorState) {
-                            Spacer(modifier = Modifier.height(5.dp)) // TODO add an option
+                            Spacer(modifier = Modifier.height(10.dp)) // TODO add an option
                         }
                     }
                 }
@@ -177,7 +173,7 @@ fun NotesScreen(
                                 .testTag("NOTE_ITEM")
                         )
                         if (lineSeparatorState) {
-                            Spacer(modifier = Modifier.height(5.dp)) // TODO add an option
+                            Spacer(modifier = Modifier.height(10.dp)) // TODO add an option
                         }
                     }
                 }

@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.omtorney.doer.R
 import com.omtorney.doer.notes.domain.model.Note
-import com.omtorney.doer.notes.domain.model.NotePriorityConverter
+import com.omtorney.doer.notes.domain.model.NoteConverters
 import com.omtorney.doer.core.presentation.theme.DoerTheme
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
@@ -65,20 +65,20 @@ fun NoteItem(
                     modifier = Modifier
                         .width(4.dp)
                         .fillMaxHeight()
-                        .background(NotePriorityConverter().fromInt(note.priority).color)
+                        .background(NoteConverters().priorityFromInt(note.priority).color)
                 )
                 Column(
                     modifier = Modifier.padding(12.dp)
                 ) {
                     Text(
-                        text = note.text,
+                        text = note.text[0],
                         style = MaterialTheme.typography.body1,
                         color = MaterialTheme.colors.onSurface,
-                        maxLines = 1,
+                        maxLines = 2,
 //                        overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.fillMaxWidth()
                     )
-                    note.text.lines().drop(1).forEach { textLine ->
+                    note.text.drop(1).forEach { textLine ->
                         Text(
                             text = textLine,
                             style = MaterialTheme.typography.body2,
@@ -125,7 +125,7 @@ fun PinnedNoteItem(
                 modifier = Modifier
                     .width(4.dp)
                     .fillMaxHeight()
-                    .background(NotePriorityConverter().fromInt(note.priority).color)
+                    .background(NoteConverters().priorityFromInt(note.priority).color)
             )
             Column(
                 modifier = Modifier
@@ -133,14 +133,14 @@ fun PinnedNoteItem(
                     .padding(12.dp)
             ) {
                 Text(
-                    text = note.text,
+                    text = note.text[0],
                     style = MaterialTheme.typography.body1,
                     color = MaterialTheme.colors.onSurface,
-                    maxLines = 1,
+                    maxLines = 2,
 //                    overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.fillMaxWidth()
                 )
-                note.text.lines().drop(1).forEach { textLine ->
+                note.text.drop(1).forEach { textLine ->
                     Text(
                         text = textLine,
                         style = MaterialTheme.typography.body2,
@@ -176,7 +176,7 @@ fun NotePinnedItemPreview() {
             PinnedNoteItem(
                 Note(
                     1,
-                    "Note text note text\nnote text note text",
+                    listOf("Note text note text\nnote text note text"),
                     1,
                     System.currentTimeMillis(),
                     System.currentTimeMillis(),
@@ -200,7 +200,7 @@ fun NoteItemPreview() {
             NoteItem(
                 Note(
                     1,
-                    "Note text note text\nnote text note text",
+                    listOf("Note text note text\nnote text note text"),
                     1,
                     System.currentTimeMillis(),
                     System.currentTimeMillis(),

@@ -58,9 +58,8 @@ object DataModule {
     @Singleton
     fun provideRepository(
         noteDao: NoteDao,
-        goalDao: GoalDao,
-        settingsStore: SettingsStore
+        goalDao: GoalDao
     ): Repository {
-        return RepositoryImpl(noteDao, goalDao, settingsStore)
+        return RepositoryImpl(noteDao, goalDao)
     }
 }

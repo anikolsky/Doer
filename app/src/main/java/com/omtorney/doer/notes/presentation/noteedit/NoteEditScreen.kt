@@ -21,27 +21,25 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.omtorney.doer.R
-import com.omtorney.doer.notes.domain.model.NotePriorityConverter
 import com.omtorney.doer.core.presentation.components.BackButton
 import com.omtorney.doer.core.presentation.components.TopBar
 import com.omtorney.doer.core.presentation.components.UiEvent
+import com.omtorney.doer.notes.domain.model.NoteConverters
 import com.omtorney.doer.notes.util.NotePriority
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.util.Locale.*
+import java.util.Locale.getDefault
 
 @Composable
 fun NoteEditScreen(
     modifier: Modifier = Modifier,
     viewModel: NoteEditViewModel = hiltViewModel(), // TODO move to NavHost
+    accentColor: Long,
+    secondaryColor: Long,
     onClickClose: () -> Unit
 ) {
-    val accentColor by viewModel.accentColor.collectAsStateWithLifecycle()
-    val secondaryColor by viewModel.secondaryColor.collectAsStateWithLifecycle()
-
     val state = viewModel.state.value
     var noteInfoExpanded by remember { mutableStateOf(false) }
     val radioOptions = listOf(
@@ -131,7 +129,7 @@ fun NoteEditScreen(
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
                             radioOptions.forEach { notePriority ->
-                                val priorityIndex = NotePriorityConverter().toInt(notePriority)
+                                val priorityIndex = NoteConverters().priorityToInt(notePriority)
                                 RadioButton(
                                     selected = priorityIndex == state.priority,
                                     onClick = {
@@ -190,8 +188,8 @@ fun NoteEditScreen(
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         BasicTextField(
-                            value = state.text,
-                            onValueChange = { viewModel.onEvent(NoteEditEvent.EnteredText(it)) },
+                            value = "text",
+                            onValueChange = { viewModel.onEvent(NoteEditEvent.EnteredText(listOf(it))) },
                             textStyle = MaterialTheme.typography.body1.copy(
                                 color = MaterialTheme.colors.onBackground
                             ),

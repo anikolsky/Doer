@@ -3,6 +3,9 @@ package com.omtorney.doer.core.presentation
 import android.Manifest
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
@@ -21,9 +24,14 @@ import com.omtorney.doer.settings.presentation.SettingsScreen
 
 @Composable
 fun DoerApp() {
+    val mainViewModel: MainViewModel = hiltViewModel()
     val navController = rememberNavController()
     val systemUiController = rememberSystemUiController()
     systemUiController.setStatusBarColor(MaterialTheme.colors.background)
+
+    val accentColor by mainViewModel.accentColor.collectAsStateWithLifecycle()
+    val secondaryColor by mainViewModel.secondaryColor.collectAsStateWithLifecycle()
+    val lineSeparatorState by mainViewModel.lineSeparatorState.collectAsStateWithLifecycle()
 
     NavHost(
         navController = navController,
@@ -33,6 +41,9 @@ fun DoerApp() {
             // TODO val viewModel = viewModel<NotesViewModel>()
             NotesScreen(
                 navController = navController,
+                accentColor = accentColor,
+                secondaryColor = secondaryColor,
+                lineSeparatorState = lineSeparatorState,
                 onNoteClick = { noteId ->
                     navController.navigate(Screen.Note.route + "?noteId=$noteId") {
                         popUpTo(navController.graph.findStartDestination().id) { saveState = true }
@@ -63,11 +74,17 @@ fun DoerApp() {
                 defaultValue = -1L
             })
         ) {
-            NoteEditScreen(onClickClose = { navController.popBackStack() })
+            NoteEditScreen(
+                accentColor = accentColor,
+                secondaryColor = secondaryColor,
+                onClickClose = { navController.popBackStack() }
+            )
         }
         composable(route = Screen.Goals.route) {
             GoalsScreen(
                 navController = navController,
+                accentColor = accentColor,
+                secondaryColor = secondaryColor,
                 onGoalClick = { goalId ->
                     navController.navigate(Screen.Goal.route + "?goalId=$goalId") {
                         popUpTo(Screen.Goals.route) { saveState = true }
@@ -98,12 +115,19 @@ fun DoerApp() {
                 defaultValue = -1L
             })
         ) {
-            GoalEditScreen(onClickClose = { navController.popBackStack() })
+            GoalEditScreen(
+                accentColor = accentColor,
+                secondaryColor = secondaryColor,
+                onClickClose = { navController.popBackStack() }
+            )
         }
         composable(route = Screen.Settings.route) {
             SettingsScreen(
-                onClickClose = { navController.popBackStack() },
-                navController = navController
+                navController = navController,
+                accentColor = accentColor,
+                secondaryColor = secondaryColor,
+                lineSeparatorState = lineSeparatorState,
+                onClickClose = { navController.popBackStack() }
             )
         }
         composable(route = Screen.PermissionsRequest.route) {

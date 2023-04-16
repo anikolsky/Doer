@@ -16,10 +16,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.omtorney.doer.R
 import com.omtorney.doer.core.presentation.Screen
@@ -33,15 +33,13 @@ import com.omtorney.doer.settings.presentation.components.ColorType
 fun SettingsScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
+    accentColor: Long,
+    secondaryColor: Long,
+    lineSeparatorState: Boolean,
     viewModel: SettingsViewModel = hiltViewModel(),
     onClickClose: () -> Unit
 ) {
     val context = LocalContext.current
-
-    val accentColor by viewModel.accentColor.collectAsStateWithLifecycle()
-    val secondaryColor by viewModel.secondaryColor.collectAsStateWithLifecycle()
-    val lineDividerState by viewModel.lineSeparatorState.collectAsStateWithLifecycle()
-
     var colorPickerOpen by remember { mutableStateOf(false) }
     var colorType by remember { mutableStateOf<ColorType>(ColorType.Accent) }
     val scaffoldState = rememberScaffoldState()
@@ -68,7 +66,7 @@ fun SettingsScreen(
                 SettingsMenuSwitch(
                     title = { Text(text = "Enable divider") },
                     subtitle = "Add divider to the task list",
-                    state = lineDividerState,
+                    state = lineSeparatorState,
                     onCheckedChange = { viewModel.setLineSeparatorState(it) }
                 )
                 /** Accent color */
@@ -260,4 +258,15 @@ fun DatabaseActions(
             Text(text = "Import")
         }
     }
+}
+
+@Preview
+@Composable
+fun SettingsMenuButtonPreview() {
+    SettingsMenuButton(
+        icon = {},
+        title = { /*TODO*/ },
+        subtitle = "",
+        onClick = {}
+    )
 }

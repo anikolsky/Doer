@@ -10,7 +10,7 @@ data class Step(
     var isAchieved: Boolean = false
 )
 
-class GoalStepsConverter {
+class GoalStepConverters {
     @TypeConverter
     fun fromListToJson(steps: MutableList<Step>): String {
         return Gson().toJson(steps)

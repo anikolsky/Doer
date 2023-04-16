@@ -15,11 +15,4 @@ interface Repository {
     suspend fun getGoalById(id: Long): Goal?
     suspend fun insertGoal(goal: Goal)
     suspend fun deleteGoal(goal: Goal)
-
-    val getLineSeparatorState: Flow<Boolean>
-    suspend fun setLineSeparatorState(enabled: Boolean)
-    val getAccentColor: Flow<Long>
-    suspend fun setAccentColor(color: Long)
-    val getSecondaryColor: Flow<Long>
-    suspend fun setSecondaryColor(color: Long)
 }

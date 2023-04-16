@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.GsonBuilder
 import com.omtorney.doer.notes.domain.usecase.NoteUseCases
-import com.omtorney.doer.core.util.Constants
 import com.omtorney.doer.settings.data.SettingsStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -25,24 +24,6 @@ class SettingsViewModel @Inject constructor(
     private val backupFile = File(
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
         "backup.json"
-    )
-
-    val accentColor: StateFlow<Long> = settingsDataStore.getAccentColor.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = Constants.INITIAL_ACCENT_COLOR
-    )
-
-    val secondaryColor: StateFlow<Long> = settingsDataStore.getSecondaryColor.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = Constants.INITIAL_SECONDARY_COLOR
-    )
-
-    val lineSeparatorState = settingsDataStore.getLineSeparatorState.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = true
     )
 
     fun setLineSeparatorState(state: Boolean) = viewModelScope.launch {

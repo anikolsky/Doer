@@ -24,7 +24,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.omtorney.doer.R
 import com.omtorney.doer.core.presentation.Screen
 import com.omtorney.doer.core.presentation.components.BackButton
@@ -38,11 +37,10 @@ import java.util.Locale.getDefault
 @Composable
 fun GoalEditScreen(
     viewModel: GoalEditViewModel = hiltViewModel(),
+    accentColor: Long,
+    secondaryColor: Long,
     onClickClose: () -> Unit
 ) {
-    val accentColor by viewModel.accentColor.collectAsStateWithLifecycle()
-    val secondaryColor by viewModel.secondaryColor.collectAsStateWithLifecycle()
-
     val state = viewModel.state.value
     var goalInfoExpanded by remember { mutableStateOf(false) }
 

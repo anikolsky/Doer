@@ -1,7 +1,6 @@
 package com.omtorney.doer.goals.presentation.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -13,7 +12,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.omtorney.doer.goals.domain.model.Goal
 import com.omtorney.doer.notes.domain.model.Note
-import com.omtorney.doer.notes.domain.model.NotePriorityConverter
+import com.omtorney.doer.notes.domain.model.NoteConverters
 import java.util.*
 
 @OptIn(ExperimentalFoundationApi::class)

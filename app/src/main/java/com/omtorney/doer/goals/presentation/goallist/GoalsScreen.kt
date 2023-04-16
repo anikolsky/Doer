@@ -8,7 +8,6 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -17,7 +16,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.omtorney.doer.R
 import com.omtorney.doer.core.presentation.Screen
@@ -29,15 +27,13 @@ import com.omtorney.doer.goals.presentation.components.calculateProgress
 fun GoalsScreen(
     navController: NavController,
     viewModel: GoalsViewModel = hiltViewModel(),
+    accentColor: Long,
+    secondaryColor: Long,
     onGoalClick: (Long) -> Unit,
     onAddGoalClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
-    val accentColor by viewModel.accentColor.collectAsStateWithLifecycle()
-    val secondaryColor by viewModel.secondaryColor.collectAsStateWithLifecycle()
-
     val scaffoldState = rememberScaffoldState()
-
     val state = viewModel.state.value
 
     Scaffold(

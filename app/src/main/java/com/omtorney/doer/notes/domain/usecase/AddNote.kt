@@ -10,7 +10,7 @@ class AddNote(
 
     @Throws(InvalidNoteException::class)
     suspend operator fun invoke(note: Note) {
-        if (note.text.isBlank()) {
+        if (note.text.isEmpty()) {
             throw InvalidNoteException("Note can't be empty")
         }
         repository.insertNote(note)

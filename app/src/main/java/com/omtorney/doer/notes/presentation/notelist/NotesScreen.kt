@@ -21,7 +21,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.omtorney.doer.R
 import com.omtorney.doer.core.presentation.Screen
@@ -34,14 +33,13 @@ import kotlinx.coroutines.launch
 fun NotesScreen(
     viewModel: NotesViewModel = hiltViewModel(), // TODO move to NavHost
     navController: NavController,
+    accentColor: Long,
+    secondaryColor: Long,
+    lineSeparatorState: Boolean,
     onNoteClick: (Long) -> Unit,
     onAddNoteClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
-    val accentColor by viewModel.accentColor.collectAsStateWithLifecycle()
-    val secondaryColor by viewModel.secondaryColor.collectAsStateWithLifecycle()
-    val lineSeparatorState by viewModel.lineSeparatorState.collectAsStateWithLifecycle()
-
     val state = viewModel.state.value
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()

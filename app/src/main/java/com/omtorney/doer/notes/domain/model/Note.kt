@@ -1,6 +1,8 @@
 package com.omtorney.doer.notes.domain.model
 
 import androidx.room.*
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.omtorney.doer.notes.util.NotePriority
 import java.util.*
 
@@ -10,9 +12,10 @@ data class Note(
     @PrimaryKey(autoGenerate = true)
     val id: Long? = null,
 
-    val text: String,
+    @TypeConverters(NoteConverters::class)
+    val text: List<String>,
 
-    @TypeConverters(NotePriorityConverter::class)
+    @TypeConverters(NoteConverters::class)
     val priority: Int,
 
     @ColumnInfo(name = "created_at")
@@ -25,9 +28,10 @@ data class Note(
     var isPinned: Boolean = false
 )
 
-class NotePriorityConverter {
+class NoteConverters {
+
     @TypeConverter
-    fun fromInt(value: Int): NotePriority {
+    fun priorityFromInt(value: Int): NotePriority {
         return when (value) {
             1 -> NotePriority.High
             2 -> NotePriority.Medium
@@ -38,8 +42,18 @@ class NotePriorityConverter {
     }
 
     @TypeConverter
-    fun toInt(priority: NotePriority): Int {
+    fun priorityToInt(priority: NotePriority): Int {
         return priority.index
+    }
+
+    @TypeConverter
+    fun textFromList(list: List<String>): String {
+        return Gson().toJson(list)
+    }
+
+    @TypeConverter
+    fun textToList(text: String): List<String> {
+        return Gson().fromJson(text, object : TypeToken<MutableList<String>>() {}.type)
     }
 }
 

@@ -171,7 +171,7 @@ fun ElementFrame(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+        modifier = modifier.padding(8.dp)
     ) {
         icon?.invoke()
         Column(

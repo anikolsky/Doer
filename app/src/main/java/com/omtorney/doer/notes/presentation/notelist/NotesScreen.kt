@@ -34,7 +34,8 @@ fun NotesScreen(
     navController: NavController,
     accentColor: Long,
     secondaryColor: Long,
-    lineSeparatorState: Boolean,
+    noteSeparatorState: Boolean,
+    noteSeparatorSize: Int,
     onNoteClick: (Long) -> Unit,
     onAddNoteClick: () -> Unit,
     onSettingsClick: () -> Unit
@@ -119,10 +120,11 @@ fun NotesScreen(
             }
             LazyColumn(
                 modifier = Modifier
-                    .padding(start = 10.dp, end = 10.dp, top = 10.dp, bottom = 0.dp)
+                    .padding(horizontal = 10.dp)
                     .fillMaxSize()
                     .testTag("NOTES_SCREEN_LAZY_COLUMN")
             ) {
+                item { Spacer(modifier = Modifier.height(noteSeparatorSize.dp)) }
                 /** Pinned list */
                 items(
                     items = state.notes,
@@ -135,8 +137,8 @@ fun NotesScreen(
                             onLongClick = { viewModel.onEvent(NotesEvent.Pin(note)) },
                             modifier = Modifier.animateItemPlacement()
                         )
-                        if (lineSeparatorState) {
-                            Spacer(modifier = Modifier.height(8.dp)) // TODO add an option
+                        if (noteSeparatorState) {
+                            Spacer(modifier = Modifier.height(noteSeparatorSize.dp))
                         }
                     }
                 }
@@ -170,8 +172,8 @@ fun NotesScreen(
                                 .animateItemPlacement()
                                 .testTag("NOTE_ITEM")
                         )
-                        if (lineSeparatorState) {
-                            Spacer(modifier = Modifier.height(8.dp)) // TODO add an option
+                        if (noteSeparatorState) {
+                            Spacer(modifier = Modifier.height(noteSeparatorSize.dp))
                         }
                     }
                 }

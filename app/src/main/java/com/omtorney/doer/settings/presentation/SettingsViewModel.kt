@@ -9,8 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.GsonBuilder
 import com.omtorney.doer.notes.domain.usecase.NoteUseCases
 import com.omtorney.doer.settings.data.SettingsStore
-import com.omtorney.doer.settings.presentation.signin.SignInResult
-import com.omtorney.doer.settings.presentation.signin.SignInState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -23,8 +21,11 @@ class SettingsViewModel @Inject constructor(
     private val settingsDataStore: SettingsStore
 ) : ViewModel() {
 
-    fun setLineSeparatorState(state: Boolean) = viewModelScope.launch {
-        settingsDataStore.setLineSeparatorState(state)
+    fun setNoteSeparatorState(state: Boolean) = viewModelScope.launch {
+        settingsDataStore.setNoteSeparatorState(state)
+    }
+    fun setNoteSeparatorSize(size: Int) = viewModelScope.launch {
+        settingsDataStore.setNoteSeparatorSize(size)
     }
 
     fun setAccentColor(color: Color) = viewModelScope.launch {

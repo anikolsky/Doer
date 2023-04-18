@@ -41,7 +41,8 @@ fun SettingsScreen(
     navController: NavController,
     accentColor: Long,
     secondaryColor: Long,
-    lineSeparatorState: Boolean,
+    noteSeparatorState: Boolean,
+    noteSeparatorSize: Int,
     signInState: SignInState,
     userData: UserData?,
     viewModel: SettingsViewModel = hiltViewModel(),
@@ -50,7 +51,6 @@ fun SettingsScreen(
     onSignOutClick: () -> Unit
 ) {
     val context = LocalContext.current
-    var sliderValue by remember { mutableStateOf(8) }
     var colorPickerOpen by remember { mutableStateOf(false) }
     var colorType by remember { mutableStateOf<ColorType>(ColorType.Accent) }
     val scaffoldState = rememberScaffoldState()
@@ -81,22 +81,29 @@ fun SettingsScreen(
                     .fillMaxSize()
                     .padding(8.dp)
             ) {
-                /** Line divider switcher */
+                /** Note separator switcher */
                 MenuSwitcher(
                     color = accentColor,
-                    title = { Text(text = "Enable divider") },
-                    subtitle = "Add divider to the task list",
-                    state = lineSeparatorState,
-                    onCheckedChange = { viewModel.setLineSeparatorState(it) }
+                    title = { Text(text = "Enable separation") },
+                    subtitle = "Add separation to the task list",
+                    state = noteSeparatorState,
+                    onCheckedChange = { viewModel.setNoteSeparatorState(it) }
                 )
-                /** Divider size */
+                /** Separator size */
                 MenuSlider(
                     color = accentColor,
-                    title = { Text(text = "Divider size") },
-                    subtitle = "Select the divider size between notes",
-                    value = sliderValue.toFloat(),
+                    title = { Text(text = "Separator size") },
+                    subtitle = "Select separator size between notes",
+                    value = noteSeparatorSize.toFloat(),
                     valueRange = (1f..15f),
-                    onSlide = { sliderValue = it.toInt() }
+                    onSlide = { viewModel.setNoteSeparatorSize(it.toInt()) }
+                )
+                Text(
+                    text = noteSeparatorSize.toString(),
+                    textAlign = TextAlign.End,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp)
                 )
                 /** Accent color */
                 MenuButton(
@@ -186,8 +193,8 @@ fun SettingsScreen(
                     text = "Name: ${userData?.username ?: "not logged in"}",
                     textAlign = TextAlign.End,
                     modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 4.dp)
                         .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp)
                 )
             }
         }

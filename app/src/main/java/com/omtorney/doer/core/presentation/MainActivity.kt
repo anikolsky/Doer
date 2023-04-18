@@ -8,7 +8,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
@@ -66,7 +65,8 @@ class MainActivity : ComponentActivity() {
                     val systemUiController = rememberSystemUiController()
                     val accentColor by mainViewModel.accentColor.collectAsStateWithLifecycle()
                     val secondaryColor by mainViewModel.secondaryColor.collectAsStateWithLifecycle()
-                    val lineSeparatorState by mainViewModel.lineSeparatorState.collectAsStateWithLifecycle()
+                    val noteSeparatorState by mainViewModel.noteSeparatorState.collectAsStateWithLifecycle()
+                    val noteSeparatorSize by mainViewModel.noteSeparatorSize.collectAsStateWithLifecycle()
                     systemUiController.setStatusBarColor(Color(accentColor))
 
                     val signInState by mainViewModel.signInState.collectAsStateWithLifecycle()
@@ -97,7 +97,8 @@ class MainActivity : ComponentActivity() {
                                 navController = navController,
                                 accentColor = accentColor,
                                 secondaryColor = secondaryColor,
-                                lineSeparatorState = lineSeparatorState,
+                                noteSeparatorState = noteSeparatorState,
+                                noteSeparatorSize = noteSeparatorSize,
                                 onNoteClick = { noteId ->
                                     navController.navigate(Screen.Note.route + "?noteId=$noteId") {
                                         popUpTo(navController.graph.findStartDestination().id) { saveState = true }
@@ -191,13 +192,15 @@ class MainActivity : ComponentActivity() {
                             LaunchedEffect(key1 = signInState.isSignInSuccessful) {
                                 if (signInState.isSignInSuccessful) {
                                     Toast.makeText(applicationContext, "Sign in successful", Toast.LENGTH_SHORT).show()
+                                    mainViewModel.resetState()
                                 }
                             }
                             SettingsScreen(
                                 navController = navController,
                                 accentColor = accentColor,
                                 secondaryColor = secondaryColor,
-                                lineSeparatorState = lineSeparatorState,
+                                noteSeparatorState = noteSeparatorState,
+                                noteSeparatorSize = noteSeparatorSize,
                                 signInState = signInState,
                                 userData = googleAuthUiClient.getSignedInUser(),
                                 onClickClose = { navController.popBackStack() },

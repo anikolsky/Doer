@@ -77,7 +77,7 @@ class GoogleAuthUiClient(
             .setGoogleIdTokenRequestOptions(
                 GoogleIdTokenRequestOptions.builder()
                     .setSupported(true)
-                    .setFilterByAuthorizedAccounts(false)
+                    .setFilterByAuthorizedAccounts(false) // Only show accounts previously used to sign in
                     .setServerClientId(context.getString(R.string.web_client_id))
                     .build()
             )

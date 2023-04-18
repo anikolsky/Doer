@@ -32,10 +32,16 @@ class MainViewModel @Inject constructor(
         initialValue = Constants.INITIAL_SECONDARY_COLOR
     )
 
-    val lineSeparatorState = settingsDataStore.getLineSeparatorState.stateIn(
+    val noteSeparatorState = settingsDataStore.getNoteSeparatorState.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
         initialValue = true
+    )
+
+    val noteSeparatorSize = settingsDataStore.getNoteSeparatorSize.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = 8
     )
 
     /** Sign in */

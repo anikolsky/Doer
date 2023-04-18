@@ -9,6 +9,8 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.GsonBuilder
 import com.omtorney.doer.notes.domain.usecase.NoteUseCases
 import com.omtorney.doer.settings.data.SettingsStore
+import com.omtorney.doer.settings.presentation.signin.SignInResult
+import com.omtorney.doer.settings.presentation.signin.SignInState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -21,11 +23,6 @@ class SettingsViewModel @Inject constructor(
     private val settingsDataStore: SettingsStore
 ) : ViewModel() {
 
-    private val backupFile = File(
-        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-        "backup.json"
-    )
-
     fun setLineSeparatorState(state: Boolean) = viewModelScope.launch {
         settingsDataStore.setLineSeparatorState(state)
     }
@@ -37,6 +34,12 @@ class SettingsViewModel @Inject constructor(
     fun setSecondaryColor(color: Color) = viewModelScope.launch {
         settingsDataStore.setSecondaryColor(color.toArgb().toLong())
     }
+
+    /** Database backup */
+    private val backupFile = File(
+        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+        "backup.json"
+    )
 
     fun backupDatabase() { // FIXME
         val gson = GsonBuilder().setPrettyPrinting().create()

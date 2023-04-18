@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -37,6 +38,26 @@ fun GoalsScreen(
     val state = viewModel.state.value
 
     Scaffold(
+        topBar = {
+            TopBar(
+                color = accentColor,
+                modifier = Modifier.padding(8.dp)
+            ) {
+                AppName(
+                    accentColor = accentColor,
+//                    modifier = Modifier.weight(1f)
+                )
+                ScreenName(
+                    title = Screen.Goals.label,
+                    accentColor = accentColor,
+                    modifier = Modifier // TODO center
+                )
+                SettingsButton(
+                    accentColor = accentColor,
+                    onClick = onSettingsClick
+                )
+            }
+        },
         bottomBar = {
             BottomBar(
                 navController = navController,
@@ -61,36 +82,19 @@ fun GoalsScreen(
     ) { paddingValues ->
         Column(
             modifier = Modifier
-//                .padding(paddingValues)
+                .padding(paddingValues)
                 .fillMaxSize()
                 .background(
-                    brush = Brush.linearGradient(
+                    brush = Brush.horizontalGradient(
                         colors = listOf(
                             Color(accentColor),
                             Color(secondaryColor)
                         ),
-                        start = Offset(x = 0f, y = 0f),
-                        end = Offset(
-                            with(LocalDensity.current) { 600.dp.toPx() },
-                            with(LocalDensity.current) { 600.dp.toPx() })
+                        startX = 0f,
+                        endX = LocalContext.current.resources.displayMetrics.widthPixels.dp.value
                     )
                 )
         ) {
-            TopBar(modifier = Modifier.padding(8.dp)) {
-                AppName(
-                    accentColor = accentColor,
-//                    modifier = Modifier.weight(1f)
-                )
-                ScreenName(
-                    title = Screen.Goals.label,
-                    accentColor = accentColor,
-                    modifier = Modifier // TODO center
-                )
-                SettingsButton(
-                    accentColor = accentColor,
-                    onClick = onSettingsClick
-                )
-            }
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()

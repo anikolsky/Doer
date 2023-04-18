@@ -5,6 +5,7 @@ plugins {
     kotlin("android")
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -52,7 +53,7 @@ android {
 }
 
 val compose_ui_version by extra("1.4.1")
-val accompanist_version by extra("0.30.0")
+val accompanist_version by extra("0.30.1")
 val hilt_compose_version by extra("1.0.0")
 val hilt_version by extra("2.45")
 val lifecycle_version by extra("2.6.1")
@@ -91,6 +92,11 @@ dependencies {
 
     // Navigation
     implementation("androidx.navigation:navigation-compose:$nav_version")
+    implementation("com.google.accompanist:accompanist-navigation-animation:$accompanist_version")
+
+    // Firebase
+    implementation("com.google.firebase:firebase-auth-ktx:21.3.0")
+    implementation("com.google.android.gms:play-services-auth:20.5.0")
 
     // Unit tests
     testImplementation("junit:junit:4.13.2")

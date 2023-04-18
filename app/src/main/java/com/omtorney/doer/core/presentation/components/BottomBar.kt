@@ -28,12 +28,12 @@ fun BottomBar(
 
     BottomAppBar(
 //        backgroundColor = Color(accentColor),
-        cutoutShape = MaterialTheme.shapes.small.copy(CornerSize(percent = 50)),
-        elevation = 1.dp,
-        modifier = Modifier.graphicsLayer {
-            shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
-            clip = true
-        }
+//        cutoutShape = MaterialTheme.shapes.small.copy(CornerSize(percent = 50)),
+        elevation = 2.dp,
+//        modifier = Modifier.graphicsLayer {
+//            shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
+//            clip = true
+//        }
     ) {
         navItems.forEach { item ->
             BottomNavigationItem(

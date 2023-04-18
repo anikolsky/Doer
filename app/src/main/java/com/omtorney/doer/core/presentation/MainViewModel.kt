@@ -4,10 +4,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omtorney.doer.core.util.Constants
 import com.omtorney.doer.settings.data.SettingsStore
+import com.omtorney.doer.settings.presentation.signin.SignInResult
+import com.omtorney.doer.settings.presentation.signin.SignInState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,4 +37,19 @@ class MainViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(),
         initialValue = true
     )
+
+    /** Sign in */
+    private val _signInState = MutableStateFlow(SignInState())
+    val signInState = _signInState.asStateFlow()
+
+    fun onSignInResult(result: SignInResult) {
+        _signInState.update { it.copy(
+            isSignInSuccessful = result.data != null,
+            signInErrorMessage = result.errorMessage
+        ) }
+    }
+
+    fun resetState() {
+        _signInState.update { SignInState() }
+    }
 }

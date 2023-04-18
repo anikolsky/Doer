@@ -14,7 +14,7 @@
 bin/
 gen/
 out/
-#  Uncomment the following line in case you need and you don't have the release build type files in your app
+#  Uncomment the following line in case you need and you don't have the release build type files in your doerApp
 # release/
 
 # Gradle files
@@ -89,5 +89,5 @@ lint/reports/
 .DS_Store
 
 # App Specific cases 
-app/release/output.json
+doerApp/release/output.json
 .idea/codeStyles/

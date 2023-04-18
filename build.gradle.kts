@@ -16,6 +16,7 @@ buildscript {
         classpath("com.android.tools.build:gradle:8.0.0")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20")
         classpath("com.google.dagger:hilt-android-gradle-plugin:${rootProject.extra.get("hilt_version") as String}")
+        classpath("com.google.gms:google-services:4.3.15")
     }
 }
 

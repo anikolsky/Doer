@@ -13,10 +13,9 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -45,6 +44,25 @@ fun NotesScreen(
     val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
+        topBar = {
+            TopBar(color = accentColor) {
+                ScreenName(
+                    title = Screen.Notes.label,
+                    accentColor = accentColor,
+                    modifier = Modifier.weight(1f)
+                )
+                Row {
+                    MoreButton(
+                        accentColor = accentColor,
+                        onClick = { viewModel.onEvent(NotesEvent.ToggleOrderSection) }
+                    )
+                    SettingsButton(
+                        accentColor = accentColor,
+                        onClick = onSettingsClick
+                    )
+                }
+            }
+        },
         bottomBar = {
             BottomBar(
                 navController = navController,
@@ -69,38 +87,19 @@ fun NotesScreen(
     ) { paddingValues ->
         Column(
             modifier = Modifier
-//                .padding(paddingValues)
+                .padding(paddingValues)
                 .fillMaxSize()
                 .background(
-                    brush = Brush.linearGradient(
+                    brush = Brush.horizontalGradient(
                         colors = listOf(
                             Color(accentColor),
                             Color(secondaryColor)
                         ),
-                        start = Offset(x = 0f, y = 0f),
-                        end = Offset(
-                            with(LocalDensity.current) { 600.dp.toPx() },
-                            with(LocalDensity.current) { 600.dp.toPx() })
+                        startX = 0f,
+                        endX = LocalContext.current.resources.displayMetrics.widthPixels.dp.value
                     )
                 )
         ) {
-            TopBar(modifier = Modifier.padding(8.dp)) {
-                ScreenName(
-                    title = Screen.Notes.label,
-                    accentColor = accentColor,
-                    modifier = Modifier // TODO center
-                )
-                Row {
-                    MoreButton(
-                        accentColor = accentColor,
-                        onClick = { viewModel.onEvent(NotesEvent.ToggleOrderSection) }
-                    )
-                    SettingsButton(
-                        accentColor = accentColor,
-                        onClick = onSettingsClick
-                    )
-                }
-            }
             AnimatedVisibility(
                 visible = state.isOrderSectionVisible,
                 enter = fadeIn() + slideInVertically(),
@@ -116,12 +115,11 @@ fun NotesScreen(
                             .padding(horizontal = 10.dp)
                             .clip(RoundedCornerShape(4.dp))
                     )
-                    Spacer(modifier = Modifier.height(10.dp))
                 }
             }
             LazyColumn(
                 modifier = Modifier
-                    .padding(horizontal = 10.dp)
+                    .padding(start = 10.dp, end = 10.dp, top = 10.dp, bottom = 0.dp)
                     .fillMaxSize()
                     .testTag("NOTES_SCREEN_LAZY_COLUMN")
             ) {
@@ -138,7 +136,7 @@ fun NotesScreen(
                             modifier = Modifier.animateItemPlacement()
                         )
                         if (lineSeparatorState) {
-                            Spacer(modifier = Modifier.height(10.dp)) // TODO add an option
+                            Spacer(modifier = Modifier.height(8.dp)) // TODO add an option
                         }
                     }
                 }
@@ -173,7 +171,7 @@ fun NotesScreen(
                                 .testTag("NOTE_ITEM")
                         )
                         if (lineSeparatorState) {
-                            Spacer(modifier = Modifier.height(10.dp)) // TODO add an option
+                            Spacer(modifier = Modifier.height(8.dp)) // TODO add an option
                         }
                     }
                 }

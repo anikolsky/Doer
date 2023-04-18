@@ -3,7 +3,7 @@ package com.omtorney.doer.notes.presentation.notelist
 import androidx.activity.compose.setContent
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import com.omtorney.doer.core.presentation.DoerApp
+//import com.omtorney.doer.core.presentation.DoerApp
 import com.omtorney.doer.core.presentation.MainActivity
 import org.junit.Before
 import org.junit.Rule
@@ -16,7 +16,7 @@ class NotesScreenTest {
 
     @Before
     fun setUp() {
-        composeTestRule.activity.setContent { DoerApp() }
+//        composeTestRule.activity.setContent { DoerApp() }
     }
 
 //    @After

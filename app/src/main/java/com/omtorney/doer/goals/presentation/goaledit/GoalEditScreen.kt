@@ -17,6 +17,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -61,9 +62,11 @@ fun GoalEditScreen(
                     is UiEvent.ShowSnackbar -> {
                         scaffoldState.snackbarHostState.showSnackbar(message = event.message)
                     }
+
                     UiEvent.Save -> {
                         scaffoldState.snackbarHostState.showSnackbar(message = "Saved")
                     }
+
                     UiEvent.HideSnackbar -> {
                         scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
                     }
@@ -76,52 +79,56 @@ fun GoalEditScreen(
 //        focusRequester.requestFocus()
 //    }
 
-    Scaffold(scaffoldState = scaffoldState) { paddingValues ->
+    Scaffold(
+        topBar = {
+            TopBar(
+                color = accentColor,
+                modifier = Modifier.padding(vertical = 8.dp)
+            ) {
+                BackButton(onClick = onClickClose)
+                ScreenName(
+                    title = Screen.Goal.label,
+                    accentColor = accentColor,
+//                        modifier = Modifier.weight(1f)
+                )
+                IconButton(
+                    onClick = {
+                        viewModel.onEvent(GoalEditEvent.DeleteGoal(state.id!!))
+                        snackbarCoroutineScope.launch {
+                            scaffoldState.snackbarHostState.showSnackbar(
+                                message = "Deleted",
+                                duration = SnackbarDuration.Short
+                            )
+                        }
+                        onClickClose()
+                    }
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_round_delete),
+                        contentDescription = stringResource(R.string.delete),
+                        tint = contentColorFor(backgroundColor = Color(accentColor))
+                    )
+                }
+            }
+        },
+        scaffoldState = scaffoldState
+    ) { paddingValues ->
         Box(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
                 .background(
-                    brush = Brush.linearGradient(
+                    brush = Brush.horizontalGradient(
                         colors = listOf(
                             Color(accentColor),
                             Color(secondaryColor)
                         ),
-                        start = Offset(x = 0f, y = 0f),
-                        end = Offset(
-                            with(LocalDensity.current) { 600.dp.toPx() },
-                            with(LocalDensity.current) { 600.dp.toPx() }
-                        )
+                        startX = 0f,
+                        endX = LocalContext.current.resources.displayMetrics.widthPixels.dp.value
                     )
                 )
         ) {
             Column(modifier = Modifier.padding(horizontal = 8.dp)) {
-                TopBar(modifier = Modifier.padding(vertical = 8.dp)) {
-                    BackButton(onClick = onClickClose)
-                    ScreenName(
-                        title = Screen.Goal.label,
-                        accentColor = accentColor,
-//                        modifier = Modifier.weight(1f)
-                    )
-                    IconButton(
-                        onClick = {
-                            viewModel.onEvent(GoalEditEvent.DeleteGoal(state.id!!))
-                            snackbarCoroutineScope.launch {
-                                scaffoldState.snackbarHostState.showSnackbar(
-                                    message = "Deleted",
-                                    duration = SnackbarDuration.Short
-                                )
-                            }
-                            onClickClose()
-                        }
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_round_delete),
-                            contentDescription = stringResource(R.string.delete),
-                            tint = contentColorFor(backgroundColor = Color(accentColor))
-                        )
-                    }
-                }
                 /** Goal description */
                 Card {
                     Box(modifier = Modifier.fillMaxWidth()) {

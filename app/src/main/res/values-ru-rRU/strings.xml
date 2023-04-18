@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Doer</string>
     <string name="home">Дела</string>
     <string name="note">Заметка</string>
     <string name="add">Добавить</string>
@@ -9,4 +8,10 @@
     <string name="deleted">Удалено</string>
     <string name="edit">Редактировать</string>
     <string name="dismiss">Отмена</string>
+    <string name="settings">Настройки</string>
+    <string name="export_db">Экспорт</string>
+    <string name="import_db">Импорт</string>
+    <string name="pin">Закрепить</string>
+    <string name="sort">Соритровка</string>
+    <string name="undo">Отменить</string>
 </resources>

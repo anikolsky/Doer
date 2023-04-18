@@ -10,11 +10,10 @@ import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -58,11 +57,9 @@ fun NoteEditScreen(
                     is UiEvent.ShowSnackbar -> {
                         scaffoldState.snackbarHostState.showSnackbar(message = uiEvent.message)
                     }
-
                     UiEvent.Save -> {
                         scaffoldState.snackbarHostState.showSnackbar(message = "Saved")
                     }
-
                     UiEvent.HideSnackbar -> {
                         scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
                     }
@@ -72,6 +69,62 @@ fun NoteEditScreen(
     }
 
     Scaffold(
+        topBar = {
+            TopBar(color = accentColor) {
+                BackButton(onClick = onClickClose)
+                /** Priority buttons */
+                Row(modifier = Modifier.weight(1f)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        radioOptions.forEach { notePriority ->
+                            val priorityIndex = NoteConverters().priorityToInt(notePriority)
+                            RadioButton(
+                                selected = priorityIndex == state.priority,
+                                onClick = {
+                                    viewModel.onEvent(NoteEditEvent.SetPriority(priorityIndex))
+                                },
+                                colors = RadioButtonDefaults.colors(
+                                    selectedColor = notePriority.color,
+                                    unselectedColor = notePriority.color
+                                )
+                            )
+                        }
+                    }
+                }
+                /** Pin button */
+                IconButton(onClick = { viewModel.onEvent(NoteEditEvent.Pin) }) {
+                    Icon(
+                        painter = if (state.isPinned)
+                            painterResource(R.drawable.ic_round_push_pin)
+                        else
+                            painterResource(R.drawable.ic_outline_push_pin),
+                        contentDescription = stringResource(R.string.pin),
+                        tint = contentColorFor(backgroundColor = Color(accentColor))
+                    )
+                }
+                /** Delete button */
+                IconButton(
+                    onClick = {
+                        viewModel.onEvent(NoteEditEvent.Delete(state.id!!))
+                        snackbarCoroutineScope.launch {
+                            scaffoldState.snackbarHostState.showSnackbar(
+                                message = "Deleted",
+                                duration = SnackbarDuration.Short
+                            )
+                        }
+                        onClickClose()
+                    }
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_round_delete),
+                        contentDescription = stringResource(R.string.delete),
+                        tint = contentColorFor(backgroundColor = Color(accentColor))
+                    )
+                }
+            }
+        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
@@ -95,90 +148,23 @@ fun NoteEditScreen(
                 .padding(paddingValues)
                 .fillMaxSize()
                 .background(
-                    brush = Brush.linearGradient(
+                    brush = Brush.horizontalGradient(
                         colors = listOf(
                             Color(accentColor),
                             Color(secondaryColor)
                         ),
-                        start = Offset(
-                            0f,
-                            0f
-                        ),
-                        end = Offset(
-                            with(LocalDensity.current) { 600.dp.toPx() },
-                            with(LocalDensity.current) { 600.dp.toPx() })
+                        startX = 0f,
+                        endX = LocalContext.current.resources.displayMetrics.widthPixels.dp.value
                     )
                 )
         ) {
             Column(modifier = Modifier.padding(8.dp)) {
-                TopBar(modifier = Modifier.padding(bottom = 8.dp)) {
-                    BackButton(onClick = onClickClose)
-                    /** Priority buttons */
-                    Surface(
-                        shape = RoundedCornerShape(10.dp),
-                        color = MaterialTheme.colors.surface.copy(alpha = 0.65f),
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            radioOptions.forEach { notePriority ->
-                                val priorityIndex = NoteConverters().priorityToInt(notePriority)
-                                RadioButton(
-                                    selected = priorityIndex == state.priority,
-                                    onClick = {
-                                        viewModel.onEvent(
-                                            NoteEditEvent.SetPriority(
-                                                priorityIndex
-                                            )
-                                        )
-                                    },
-                                    colors = RadioButtonDefaults.colors(
-                                        selectedColor = notePriority.color,
-                                        unselectedColor = notePriority.color
-                                    )
-                                )
-                            }
-                        }
-                    }
-                    /** Pin button */
-                    IconButton(onClick = { viewModel.onEvent(NoteEditEvent.Pin) }) {
-                        Icon(
-                            painter = if (state.isPinned)
-                                painterResource(R.drawable.ic_round_push_pin)
-                            else
-                                painterResource(R.drawable.ic_outline_push_pin),
-                            contentDescription = stringResource(R.string.pin),
-                            tint = contentColorFor(backgroundColor = Color(accentColor))
-                        )
-                    }
-                    /** Delete button */
-                    IconButton(
-                        onClick = {
-                            viewModel.onEvent(NoteEditEvent.Delete(state.id!!))
-                            snackbarCoroutineScope.launch {
-                                scaffoldState.snackbarHostState.showSnackbar(
-                                    message = "Deleted",
-                                    duration = SnackbarDuration.Short
-                                )
-                            }
-                            onClickClose()
-                        }
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_round_delete),
-                            contentDescription = stringResource(R.string.delete),
-                            tint = contentColorFor(backgroundColor = Color(accentColor))
-                        )
-                    }
-                }
                 Card(
                     shape = RoundedCornerShape(10.dp),
                     elevation = 1.dp,
                     modifier = Modifier
-                        .fillMaxWidth(0.95f)
-                        .fillMaxHeight(0.88f)
+                        .fillMaxWidth()
+                        .fillMaxHeight()
                         .align(Alignment.CenterHorizontally)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
@@ -244,7 +230,6 @@ fun NoteInfoMenu(
         Column {
             Text(
                 text = """
-                    Priority: ${state.priority}
                     Note id: ${state.id}
                     Created at: ${sdf.format(state.createdAt)}
                     Modified at: ${sdf.format(state.modifiedAt)}

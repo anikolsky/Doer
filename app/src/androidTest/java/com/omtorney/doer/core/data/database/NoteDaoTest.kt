@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.omtorney.doer.notes.domain.model.Note
+import com.omtorney.doer.notes.domain.model.NoteStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -30,7 +31,7 @@ class NoteDaoTest {
 
     @Before
     fun setUp() {
-        note = Note(1, "test note 1", 1, 0L, 0L)
+        note = Note(1, "title", "test note 1", 1, NoteStatus.ToDo,0L, 0L)
     }
 
     @After
@@ -65,10 +66,10 @@ class NoteDaoTest {
 
         noteDao.insert(note)
         val notes = noteDao.getNotes().first()
-        noteDao.insert(notes.first().copy(text = newText))
+        noteDao.insert(notes.first().copy(content = newText))
         val newNotes = noteDao.getNotes().first()
 
-        assertThat(newNotes.first().text).isEqualTo(newText)
+        assertThat(newNotes.first().content).isEqualTo(newText)
     }
 
     @Test

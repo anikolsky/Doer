@@ -46,12 +46,12 @@ fun NoteItem(
         onSwipe = { onSwipeStart(note) }
     )
 
-    SwipeableActionsBox(
-        startActions = listOf(pin),
-        endActions = listOf(delete),
-        swipeThreshold = 60.dp,
-        backgroundUntilSwipeThreshold = Color.Transparent
-    ) {
+//    SwipeableActionsBox(
+//        startActions = listOf(pin),
+//        endActions = listOf(delete),
+//        swipeThreshold = 60.dp,
+//        backgroundUntilSwipeThreshold = Color.Transparent
+//    ) {
         Card(
             elevation = 1.dp,
             modifier = modifier
@@ -69,7 +69,7 @@ fun NoteItem(
                         .fillMaxHeight()
                         .background(NoteConverters().priorityFromInt(note.priority).color)
                 )
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(modifier = Modifier.padding(14.dp)) {
                     if (note.title.isNotEmpty()) {
                         Text(
                             text = note.title,
@@ -79,7 +79,7 @@ fun NoteItem(
 //                        overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.fillMaxWidth()
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(6.dp))
                     }
                     Text(
                         text = note.content,
@@ -92,7 +92,7 @@ fun NoteItem(
                 }
             }
         }
-    }
+//    }
 }
 
 // TODO common NoteItem:
@@ -131,7 +131,7 @@ fun PinnedNoteItem(
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(16.dp)
+                    .padding(14.dp)
             ) {
                 if (note.title.isNotEmpty()) {
                     Text(
@@ -142,7 +142,7 @@ fun PinnedNoteItem(
 //                    overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.fillMaxWidth()
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(6.dp))
                 }
                 Text(
                     text = note.content,

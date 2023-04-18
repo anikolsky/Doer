@@ -10,13 +10,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -28,6 +27,13 @@ import com.omtorney.doer.core.presentation.components.BackButton
 import com.omtorney.doer.core.presentation.components.ScreenName
 import com.omtorney.doer.core.presentation.components.TopBar
 import com.omtorney.doer.settings.presentation.components.ColorType
+import com.omtorney.doer.settings.presentation.components.DatabaseActions
+import com.omtorney.doer.settings.presentation.components.MenuButton
+import com.omtorney.doer.settings.presentation.components.MenuSlider
+import com.omtorney.doer.settings.presentation.components.MenuSwitcher
+import com.omtorney.doer.settings.presentation.components.SignActions
+import com.omtorney.doer.settings.presentation.signin.SignInState
+import com.omtorney.doer.settings.presentation.signin.UserData
 
 @Composable
 fun SettingsScreen(
@@ -36,15 +42,36 @@ fun SettingsScreen(
     accentColor: Long,
     secondaryColor: Long,
     lineSeparatorState: Boolean,
+    signInState: SignInState,
+    userData: UserData?,
     viewModel: SettingsViewModel = hiltViewModel(),
-    onClickClose: () -> Unit
+    onClickClose: () -> Unit,
+    onSignInClick: () -> Unit,
+    onSignOutClick: () -> Unit
 ) {
     val context = LocalContext.current
+    var sliderValue by remember { mutableStateOf(8) }
     var colorPickerOpen by remember { mutableStateOf(false) }
     var colorType by remember { mutableStateOf<ColorType>(ColorType.Accent) }
     val scaffoldState = rememberScaffoldState()
 
+    LaunchedEffect(key1 = signInState.signInErrorMessage) {
+        signInState.signInErrorMessage?.let { error ->
+            Toast.makeText(context, error, Toast.LENGTH_LONG).show()
+        }
+    }
+
     Scaffold(
+        topBar = {
+            TopBar(color = accentColor) {
+                BackButton(onClick = onClickClose)
+                ScreenName(
+                    title = Screen.Settings.label,
+                    accentColor = accentColor
+                )
+                Spacer(modifier = Modifier)
+            }
+        },
         modifier = modifier,
         scaffoldState = scaffoldState,
     ) { paddingValues ->
@@ -54,23 +81,26 @@ fun SettingsScreen(
                     .fillMaxSize()
                     .padding(8.dp)
             ) {
-                TopBar {
-                    BackButton(onClick = onClickClose)
-                    ScreenName(
-                        title = Screen.Settings.label,
-                        accentColor = accentColor
-                    )
-                    Spacer(modifier = Modifier)
-                }
-                /** Line divider switch */
-                SettingsMenuSwitch(
+                /** Line divider switcher */
+                MenuSwitcher(
+                    color = accentColor,
                     title = { Text(text = "Enable divider") },
                     subtitle = "Add divider to the task list",
                     state = lineSeparatorState,
                     onCheckedChange = { viewModel.setLineSeparatorState(it) }
                 )
+                /** Divider size */
+                MenuSlider(
+                    color = accentColor,
+                    title = { Text(text = "Divider size") },
+                    subtitle = "Select the divider size between notes",
+                    value = sliderValue.toFloat(),
+                    valueRange = (1f..15f),
+                    onSlide = { sliderValue = it.toInt() }
+                )
                 /** Accent color */
-                SettingsMenuButton(
+                MenuButton(
+                    color = accentColor,
                     icon = {
                         Icon(
                             painter = painterResource(R.drawable.ic_round_color),
@@ -91,13 +121,15 @@ fun SettingsScreen(
                         ) {}
                     },
                     subtitle = "Select accent color",
+                    buttonText = "Select",
                     onClick = {
                         colorPickerOpen = true
                         colorType = ColorType.Accent
                     }
                 )
                 /** Secondary color */
-                SettingsMenuButton(
+                MenuButton(
+                    color = accentColor,
                     icon = {
                         Icon(
                             painter = painterResource(R.drawable.ic_round_color),
@@ -118,18 +150,17 @@ fun SettingsScreen(
                         ) {}
                     },
                     subtitle = "Select secondary color",
+                    buttonText = "Select",
                     onClick = {
                         colorPickerOpen = true
                         colorType = ColorType.Secondary
                     }
                 )
-                Divider(
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    thickness = 1.dp,
-                    color = MaterialTheme.colors.onBackground.copy(alpha = 0.3f) // TODO add an option
-                )
+                /** Export/import database buttons */
                 DatabaseActions(
                     color = accentColor,
+                    title = { Text(text = "Database") },
+                    subtitle = "Export and import database",
                     onExportClick = {
                         if (ContextCompat.checkSelfPermission(
                                 context, Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -143,6 +174,21 @@ fun SettingsScreen(
                     },
                     onImportClick = { viewModel.restoreDatabase() }
                 )
+                /** Account actions and info */
+                SignActions(
+                    color = accentColor,
+                    title = { Text(text = "Account") },
+                    subtitle = "Sign in with google account",
+                    onSignInClick = onSignInClick,
+                    onSignOutClick = onSignOutClick
+                )
+                Text(
+                    text = "Name: ${userData?.username ?: "not logged in"}",
+                    textAlign = TextAlign.End,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                        .fillMaxWidth()
+                )
             }
         }
         if (colorPickerOpen) {
@@ -153,6 +199,7 @@ fun SettingsScreen(
                         ColorType.Accent -> {
                             viewModel.setAccentColor(color)
                         }
+
                         ColorType.Secondary -> {
                             viewModel.setSecondaryColor(color)
                         }
@@ -162,111 +209,4 @@ fun SettingsScreen(
             )
         }
     }
-}
-
-@Composable
-fun SettingsMenuSwitch(
-    modifier: Modifier = Modifier,
-    icon: @Composable (() -> Unit)? = null,
-    title: @Composable () -> Unit,
-    subtitle: String,
-    state: Boolean,
-    onCheckedChange: (Boolean) -> Unit
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-    ) {
-        icon?.invoke()
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 8.dp)
-        ) {
-            title()
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.caption,
-                color = MaterialTheme.colors.onBackground.copy(alpha = 0.5f)
-            )
-        }
-        Switch(
-            checked = state,
-            onCheckedChange = { onCheckedChange(it) },
-            colors = SwitchDefaults.colors(MaterialTheme.colors.primary)
-        )
-    }
-}
-
-@Composable
-fun SettingsMenuButton(
-    modifier: Modifier = Modifier,
-    icon: @Composable (() -> Unit)? = null,
-    title: @Composable () -> Unit,
-    subtitle: String,
-    onClick: () -> Unit
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-    ) {
-        icon?.invoke()
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 8.dp)
-        ) {
-            title()
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.caption,
-                color = MaterialTheme.colors.onBackground.copy(alpha = 0.5f)
-            )
-        }
-        Button(
-            onClick = onClick,
-            colors = ButtonDefaults.buttonColors(MaterialTheme.colors.primary)
-        ) {
-            Text(text = "Select")
-        }
-    }
-}
-
-@Composable
-fun DatabaseActions(
-    color: Long,
-    onExportClick: () -> Unit,
-    onImportClick: () -> Unit
-) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            text = "Database",
-            modifier = Modifier.weight(1f),
-            style = MaterialTheme.typography.body1
-        )
-        Button(
-            onClick = onExportClick,
-            colors = ButtonDefaults.buttonColors(Color(color))
-        ) {
-            Text(text = "Export")
-        }
-        Spacer(modifier = Modifier.width(8.dp))
-        Button(
-            onClick = onImportClick,
-            colors = ButtonDefaults.buttonColors(Color(color))
-        ) {
-            Text(text = "Import")
-        }
-    }
-}
-
-@Preview
-@Composable
-fun SettingsMenuButtonPreview() {
-    SettingsMenuButton(
-        icon = {},
-        title = { /*TODO*/ },
-        subtitle = "",
-        onClick = {}
-    )
 }

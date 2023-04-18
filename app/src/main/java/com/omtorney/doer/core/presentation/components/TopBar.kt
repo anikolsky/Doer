@@ -1,5 +1,6 @@
 package com.omtorney.doer.core.presentation.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -19,12 +20,12 @@ import com.omtorney.doer.R
 @Composable
 fun TopBar(
     modifier: Modifier = Modifier,
+    color: Long,
     content: @Composable (RowScope.() -> Unit),
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth().background(color = Color(color))
     ) {
         content()
     }

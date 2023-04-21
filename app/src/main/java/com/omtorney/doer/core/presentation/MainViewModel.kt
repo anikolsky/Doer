@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omtorney.doer.core.util.Constants
 import com.omtorney.doer.settings.data.SettingsStore
-import com.omtorney.doer.settings.presentation.signin.SignInResult
-import com.omtorney.doer.settings.presentation.signin.SignInState
+import com.omtorney.doer.signin.SignInResult
+import com.omtorney.doer.signin.SignInState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

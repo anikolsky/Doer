@@ -62,11 +62,9 @@ fun GoalEditScreen(
                     is UiEvent.ShowSnackbar -> {
                         scaffoldState.snackbarHostState.showSnackbar(message = event.message)
                     }
-
                     UiEvent.Save -> {
                         scaffoldState.snackbarHostState.showSnackbar(message = "Saved")
                     }
-
                     UiEvent.HideSnackbar -> {
                         scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
                     }

@@ -37,7 +37,7 @@ import com.omtorney.doer.goals.presentation.goallist.GoalsScreen
 import com.omtorney.doer.notes.presentation.noteedit.NoteEditScreen
 import com.omtorney.doer.notes.presentation.notelist.NotesScreen
 import com.omtorney.doer.settings.presentation.SettingsScreen
-import com.omtorney.doer.settings.presentation.signin.GoogleAuthUiClient
+import com.omtorney.doer.signin.GoogleAuthUiClient
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 

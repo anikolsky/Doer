@@ -11,9 +11,8 @@ import javax.inject.Inject
 class GetNotes @Inject constructor(
     private val repository: Repository
 ) {
-
     operator fun invoke(
-        noteOrder: NoteOrder = NoteOrder.DateCreated(OrderType.Descending)
+        noteOrder: NoteOrder = NoteOrder.Priority(OrderType.Ascending)
     ): Flow<List<Note>> {
         return repository.getNotes().map { notes ->
             when (noteOrder.orderType) {

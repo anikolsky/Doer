@@ -96,6 +96,7 @@ dependencies {
 
     // Firebase
     implementation("com.google.firebase:firebase-auth-ktx:21.3.0")
+    implementation("com.google.firebase:firebase-firestore-ktx:24.5.0")
     implementation("com.google.android.gms:play-services-auth:20.5.0")
 
     // Unit tests

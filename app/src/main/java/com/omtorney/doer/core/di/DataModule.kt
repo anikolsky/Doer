@@ -6,11 +6,14 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.omtorney.doer.core.data.RepositoryImpl
-import com.omtorney.doer.settings.data.SettingsStore
-import com.omtorney.doer.core.data.database.AppDatabase
-import com.omtorney.doer.core.data.database.GoalDao
-import com.omtorney.doer.core.data.database.NoteDao
+import com.omtorney.doer.core.data.local.AppDatabase
+import com.omtorney.doer.core.data.local.GoalDao
+import com.omtorney.doer.core.data.local.NoteDao
+import com.omtorney.doer.firestore.data.remote.FirestoreDatabase
 import com.omtorney.doer.core.domain.Repository
 import com.omtorney.doer.core.util.Constants.DATA_STORE_NAME
 import dagger.Module
@@ -56,10 +59,17 @@ object DataModule {
 
     @Provides
     @Singleton
+    fun provideFirestoreDatabaseReference(): CollectionReference {
+        return Firebase.firestore.collection("user")
+    }
+
+    @Provides
+    @Singleton
     fun provideRepository(
         noteDao: NoteDao,
-        goalDao: GoalDao
+        goalDao: GoalDao,
+        firestoreDatabase: FirestoreDatabase
     ): Repository {
-        return RepositoryImpl(noteDao, goalDao)
+        return RepositoryImpl(noteDao, goalDao, firestoreDatabase)
     }
 }

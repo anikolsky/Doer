@@ -1,6 +1,11 @@
 package com.omtorney.doer.core.di
 
 import com.omtorney.doer.core.domain.Repository
+import com.omtorney.doer.firestore.domain.usecase.CreateBackup
+import com.omtorney.doer.firestore.domain.usecase.DeleteBackup
+import com.omtorney.doer.firestore.domain.usecase.FirestoreUseCases
+import com.omtorney.doer.firestore.domain.usecase.GetUsers
+import com.omtorney.doer.firestore.domain.usecase.UpdateBackup
 import com.omtorney.doer.goals.domain.usecase.*
 import com.omtorney.doer.notes.domain.usecase.*
 import dagger.Module
@@ -33,6 +38,17 @@ object DomainModule {
             deleteGoal = DeleteGoal(repository),
             getGoal = GetGoal(repository),
             getGoals = GetGoals(repository)
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirestoreUseCases(repository: Repository): FirestoreUseCases {
+        return FirestoreUseCases(
+            getUsers = GetUsers(repository),
+            createBackup = CreateBackup(repository),
+            updateBackup = UpdateBackup(repository),
+            deleteBackup = DeleteBackup(repository)
         )
     }
 }

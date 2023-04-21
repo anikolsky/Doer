@@ -1,4 +1,4 @@
-package com.omtorney.doer.settings.presentation.signin
+package com.omtorney.doer.signin
 
 data class SignInState(
     val isSignInSuccessful: Boolean = false,

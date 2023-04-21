@@ -1,4 +1,4 @@
-package com.omtorney.doer.core.data.database
+package com.omtorney.doer.core.data.local
 
 import android.content.Context
 import androidx.room.Room

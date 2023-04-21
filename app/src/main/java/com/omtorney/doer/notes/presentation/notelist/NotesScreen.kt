@@ -128,7 +128,7 @@ fun NotesScreen(
                 /** Pinned list */
                 items(
                     items = state.notes,
-                    key = { it.id?.plus(1000) ?: "" } // TODO get other unique id
+                    key = { it.hashCode() }
                 ) { note ->
                     if (note.isPinned) {
                         PinnedNoteItem(
@@ -145,7 +145,7 @@ fun NotesScreen(
                 /** Unpinned list */
                 items(
                     items = state.notes,
-                    key = { it.id ?: "" }
+                    key = { it.hashCode() + 1 }
                 ) { note ->
                     val snackbarMessage = stringResource(R.string.deleted)
                     val snackbarActionLabel = stringResource(R.string.undo)

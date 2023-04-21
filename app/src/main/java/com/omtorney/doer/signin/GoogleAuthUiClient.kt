@@ -1,4 +1,4 @@
-package com.omtorney.doer.settings.presentation.signin
+package com.omtorney.doer.signin
 
 import android.content.Context
 import android.content.Intent

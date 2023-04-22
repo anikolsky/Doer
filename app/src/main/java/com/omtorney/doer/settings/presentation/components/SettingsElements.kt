@@ -69,17 +69,23 @@ fun MenuSlider(
         title = title,
         subtitle = subtitle
     ) {
-        Slider(
-            modifier = Modifier.width(100.dp),
-            value = value,
-            valueRange = valueRange,
-            steps = 1,
-            onValueChange = { onSlide(it) },
-            colors = SliderDefaults.colors(
-                thumbColor = Color(color),
-                activeTrackColor = Color(color)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Slider(
+                modifier = Modifier.width(100.dp),
+                value = value,
+                valueRange = valueRange,
+                steps = 1,
+                onValueChange = { onSlide(it) },
+                colors = SliderDefaults.colors(
+                    thumbColor = Color(color),
+                    activeTrackColor = Color(color)
+                )
             )
-        )
+            Text(
+                text = "${value.toInt()}",
+                style = MaterialTheme.typography.caption
+            )
+        }
     }
 }
 
@@ -226,7 +232,7 @@ fun ElementFrame(
         Column(
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = 8.dp)
+                .padding(horizontal = 6.dp)
         ) {
             title()
             Text(

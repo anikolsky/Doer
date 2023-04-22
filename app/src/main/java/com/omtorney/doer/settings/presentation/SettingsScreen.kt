@@ -1,18 +1,22 @@
 package com.omtorney.doer.settings.presentation
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.widget.Toast
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
@@ -24,13 +28,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import com.omtorney.doer.core.presentation.Screen
 import com.omtorney.doer.core.presentation.components.BackButton
 import com.omtorney.doer.core.presentation.components.ScreenName
@@ -39,7 +42,6 @@ import com.omtorney.doer.firestore.data.FirestoreUser
 import com.omtorney.doer.firestore.presentation.FirestoreListItem
 import com.omtorney.doer.settings.presentation.components.ColorPickerDialog
 import com.omtorney.doer.settings.presentation.components.ColorType
-import com.omtorney.doer.settings.presentation.components.DatabaseActions
 import com.omtorney.doer.settings.presentation.components.MenuColor
 import com.omtorney.doer.settings.presentation.components.MenuSlider
 import com.omtorney.doer.settings.presentation.components.MenuSwitcher
@@ -50,7 +52,6 @@ import com.omtorney.doer.signin.UserData
 @Composable
 fun SettingsScreen(
     modifier: Modifier = Modifier,
-    navController: NavController,
     accentColor: Long,
     secondaryColor: Long,
     noteSeparatorState: Boolean,
@@ -107,17 +108,10 @@ fun SettingsScreen(
                 MenuSlider(
                     color = accentColor,
                     title = { Text(text = "Separator size") },
-                    subtitle = "Select separator size between notes",
+                    subtitle = "Set spacing between notes",
                     value = noteSeparatorSize.toFloat(),
                     valueRange = (1f..15f),
                     onSlide = { viewModel.setNoteSeparatorSize(it.toInt()) }
-                )
-                Text(
-                    text = "$noteSeparatorSize",
-                    textAlign = TextAlign.End,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 4.dp)
                 )
                 /** Accent color picker */
                 MenuColor(
@@ -139,24 +133,7 @@ fun SettingsScreen(
                         colorType = ColorType.Secondary
                     }
                 )
-                /** Export/import database buttons */
-                DatabaseActions(
-                    color = accentColor,
-                    title = { Text(text = "Database") },
-                    subtitle = "Export and import database",
-                    onExportClick = {
-//                        if (ContextCompat.checkSelfPermission(
-//                                context, Manifest.permission.WRITE_EXTERNAL_STORAGE
-//                            ) == PackageManager.PERMISSION_GRANTED
-//                        ) {
-//                            viewModel.backupDatabase()
-//                            Toast.makeText(context, "Exported", Toast.LENGTH_SHORT).show()
-//                        } else {
-//                            navController.navigate(Screen.PermissionsRequest.route)
-//                        }
-                    },
-                    onImportClick = { viewModel.restoreDatabase() }
-                )
+                Divider(modifier = Modifier.padding(vertical = 4.dp))
                 /** Sign in/out */
                 SignActions(
                     color = accentColor,
@@ -165,27 +142,41 @@ fun SettingsScreen(
                     onSignInClick = onSignInClick,
                     onSignOutClick = onSignOutClick
                 )
-                /** Account info */
-                Text(
-                    text = "Account name: ${userData?.username ?: "not logged in"}",
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
-                )
                 /** Firestore */
                 Column(
                     Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .border(
+                            width = 1.dp,
+                            color = if (userData != null)
+                                Color(secondaryColor).copy(alpha = 0.5f)
+                            else
+                                Color(accentColor),
+                            shape = RoundedCornerShape(6.dp)
+                        )
                 ) {
+                    /** Account info */
+                    Text(
+                        text = "Account name: ${userData?.username ?: "not logged in"}",
+                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)
+                    )
+                    /** Backup button */
                     Button(
                         enabled = userData?.username != null,
                         onClick = {
                             if (userData != null) {
-                                viewModel.createUser(
+                                viewModel.createBackup(
                                     firestoreUserName = userData.username!!,
                                     context = context
                                 )
                             }
-                    }) {
+                        },
+                        colors = ButtonDefaults.buttonColors(backgroundColor = Color(secondaryColor).copy(alpha = 0.5f)),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 14.dp, vertical = 0.dp)
+                    ) {
                         Text("Backup ${userData?.username ?: "unavailable"}")
                     }
                     when {
@@ -193,22 +184,28 @@ fun SettingsScreen(
                             CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
                         }
                         !firestoreUserState.errorMessage.isNullOrEmpty() -> {
-                            Text(text = firestoreUserState.errorMessage!!)
+                            Text(
+                                text = firestoreUserState.errorMessage!!,
+                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp)
+                            )
                         }
                         firestoreUserState.data.isNullOrEmpty() -> {
-                            Text(text = "Empty")
+                            Text(
+                                text = "Empty",
+                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp)
+                            )
                         }
                         !firestoreUserState.data.isNullOrEmpty() -> {
-                            LazyColumn {
-                                items(firestoreUserState.data ?: emptyList()) { item ->
+                            LazyColumn(modifier = Modifier.padding(horizontal = 14.dp, vertical = 0.dp)) {
+                                items(items = firestoreUserState.data ?: emptyList()) { item ->
                                     FirestoreListItem(
                                         userName = item?.name!!,
                                         userId = item.id!!,
                                         onUpdateClick = { id, name ->
-                                            viewModel.updateUser(FirestoreUser(id, name), context)
+                                            viewModel.updateBackup(FirestoreUser(id, name), context)
                                         },
                                         onDeleteClick = { id, name ->
-                                            viewModel.deleteUser(FirestoreUser(id, name), context)
+                                            viewModel.deleteBackup(FirestoreUser(id, name), context)
                                         }
                                     )
                                 }

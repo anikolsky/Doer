@@ -57,7 +57,7 @@ class SettingsViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5000)
     )
 
-    fun createUser(
+    fun createBackup(
         firestoreUserName: String,
         context: Context
     ) {
@@ -79,33 +79,37 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun updateUser(firestoreUser: FirestoreUser, context: Context) = viewModelScope.launch {
-        firestoreUseCases.updateBackup(firestoreUser).collect { result ->
-            when (result) {
-                is FirestoreResult.Success -> {
-                    Toast.makeText(context, result.data, Toast.LENGTH_SHORT).show()
-                }
-                is FirestoreResult.Error -> {
-                    Toast.makeText(context, result.exception.message, Toast.LENGTH_SHORT).show()
-                }
-                else -> {
-                    return@collect
+    fun updateBackup(firestoreUser: FirestoreUser, context: Context) {
+        viewModelScope.launch {
+            firestoreUseCases.updateBackup(firestoreUser).collect { result ->
+                when (result) {
+                    is FirestoreResult.Success -> {
+                        Toast.makeText(context, result.data, Toast.LENGTH_SHORT).show()
+                    }
+                    is FirestoreResult.Error -> {
+                        Toast.makeText(context, result.exception.message, Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {
+                        return@collect
+                    }
                 }
             }
         }
     }
 
-    fun deleteUser(firestoreUser: FirestoreUser, context: Context) = viewModelScope.launch {
-        firestoreUseCases.deleteBackup(firestoreUser).collect { result ->
-            when (result) {
-                is FirestoreResult.Success -> {
-                    Toast.makeText(context, result.data, Toast.LENGTH_SHORT).show()
-                }
-                is FirestoreResult.Error -> {
-                    Toast.makeText(context, result.exception.message, Toast.LENGTH_SHORT).show()
-                }
-                else -> {
-                    return@collect
+    fun deleteBackup(firestoreUser: FirestoreUser, context: Context) {
+        viewModelScope.launch {
+            firestoreUseCases.deleteBackup(firestoreUser).collect { result ->
+                when (result) {
+                    is FirestoreResult.Success -> {
+                        Toast.makeText(context, result.data, Toast.LENGTH_SHORT).show()
+                    }
+                    is FirestoreResult.Error -> {
+                        Toast.makeText(context, result.exception.message, Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {
+                        return@collect
+                    }
                 }
             }
         }

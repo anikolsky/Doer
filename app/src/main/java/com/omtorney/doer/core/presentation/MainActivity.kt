@@ -196,7 +196,6 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                             SettingsScreen(
-                                navController = navController,
                                 accentColor = accentColor,
                                 secondaryColor = secondaryColor,
                                 noteSeparatorState = noteSeparatorState,

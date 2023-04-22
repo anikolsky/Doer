@@ -53,7 +53,8 @@ fun NoteItem(
 //        backgroundUntilSwipeThreshold = Color.Transparent
 //    ) {
         Card(
-            elevation = 1.dp,
+            elevation = 0.dp,
+            backgroundColor = MaterialTheme.colors.surface.copy(alpha = 0.9f),
             modifier = modifier
                 .fillMaxWidth()
                 .height(IntrinsicSize.Max)
@@ -108,6 +109,7 @@ fun PinnedNoteItem(
     modifier: Modifier = Modifier
 ) {
     Card(
+        elevation = 0.dp,
         backgroundColor = MaterialTheme.colors.surface.copy(alpha = 0.9f),
         modifier = modifier
             .height(IntrinsicSize.Max)

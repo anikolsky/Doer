@@ -52,7 +52,7 @@ android {
     }
 }
 
-val compose_ui_version by extra("1.4.1")
+val compose_ui_version by extra("1.4.2")
 val accompanist_version by extra("0.30.1")
 val hilt_compose_version by extra("1.0.0")
 val hilt_version by extra("2.45")
@@ -63,7 +63,7 @@ val room_version by extra("2.5.1")
 dependencies {
 
     implementation("androidx.core:core-ktx:1.10.0")
-    implementation("androidx.activity:activity-compose:1.7.0")
+    implementation("androidx.activity:activity-compose:1.7.1")
     implementation("androidx.compose.ui:ui:$compose_ui_version")
     implementation("androidx.compose.ui:ui-tooling-preview:$compose_ui_version")
     implementation("androidx.compose.material:material:$compose_ui_version")
@@ -71,7 +71,7 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("me.saket.swipe:swipe:1.1.1")
-    implementation("com.github.skydoves:colorpicker-compose:1.0.1")
+    implementation("com.github.skydoves:colorpicker-compose:1.0.2")
 
     implementation("com.google.accompanist:accompanist-systemuicontroller:$accompanist_version")
     implementation("com.google.accompanist:accompanist-permissions:$accompanist_version")

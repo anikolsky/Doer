@@ -31,7 +31,7 @@ class FirestoreDatabase @Inject constructor(
         callbackFlow {
             val documentID = reference.document().id
             reference.document(documentID).set(firestoreUser.copy(id = documentID))
-                .addOnSuccessListener { trySend(FirestoreResult.Success("User added")) }
+                .addOnSuccessListener { trySend(FirestoreResult.Success("Backup created")) }
                 .addOnFailureListener { trySend(FirestoreResult.Error(Throwable(it.message))) }
             awaitClose { close() }
         }
@@ -40,7 +40,7 @@ class FirestoreDatabase @Inject constructor(
         callbackFlow {
             if (firestoreUser.id != null) {
                 reference.document(firestoreUser.id).update(firestoreUser.toMap())
-                    .addOnSuccessListener { trySend(FirestoreResult.Success("User updated")) }
+                    .addOnSuccessListener { trySend(FirestoreResult.Success("Backup updated")) }
                     .addOnFailureListener { trySend(FirestoreResult.Error(Throwable(it.message))) }
             }
             awaitClose { close() }
@@ -50,7 +50,7 @@ class FirestoreDatabase @Inject constructor(
         callbackFlow {
             if (firestoreUser.id != null) {
                 reference.document(firestoreUser.id).delete()
-                    .addOnSuccessListener { trySend(FirestoreResult.Success("User deleted")) }
+                    .addOnSuccessListener { trySend(FirestoreResult.Success("Backup deleted")) }
                     .addOnFailureListener { trySend(FirestoreResult.Error(Throwable(it.message))) }
             }
             awaitClose { close() }

@@ -1,6 +1,6 @@
 buildscript {
     extra.apply {
-        set("compose_ui_version", "1.4.1")
+        set("compose_ui_version", "1.4.2")
         set("accompanist_version", "0.30.0")
         set("hilt_compose_version", "1.0.0")
         set("hilt_version", "2.45")

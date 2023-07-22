@@ -1,14 +1,13 @@
 package com.omtorney.doer.notes.presentation
 
 import androidx.lifecycle.SavedStateHandle
-import com.omtorney.doer.core.data.RepositoryImpl
-import com.omtorney.doer.notes.domain.model.Note
-import com.omtorney.doer.notes.domain.usecase.NoteUseCases
-import com.omtorney.doer.notes.presentation.noteedit.NoteEditEvent
-import com.omtorney.doer.notes.presentation.noteedit.NoteEditViewModel
-import com.omtorney.doer.notes.presentation.notelist.NotesViewModel
-import com.omtorney.doer.settings.data.SettingsStore
-import com.omtorney.doer.settings.domain.usecase.SettingsUseCases
+import com.omtorney.doer.data.RepositoryImpl
+import com.omtorney.doer.data.local.datastore.SettingsStore
+import com.omtorney.doer.data.model.note.Note
+import com.omtorney.doer.domain.usecases.NoteUseCases
+import com.omtorney.doer.presentation.screen.notes.noteedit.NoteEditEvent
+import com.omtorney.doer.presentation.screen.notes.noteedit.NoteEditViewModel
+import com.omtorney.doer.presentation.screen.notes.notelist.NotesViewModel
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit4.MockKRule
@@ -41,10 +40,10 @@ class NotesViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(dispatcher)
-        note = Note(1, "test note 1", 1, 0L, 0L)
+        note = Note(1, "test note 1", "note content 1", 1, "ToDo", 0L, 0L)
         savedStateHandle = SavedStateHandle()
-        notesViewModel = NotesViewModel(noteUseCases, settingsDataStore)
-        noteEditViewModel = NoteEditViewModel(noteUseCases, settingsDataStore, savedStateHandle)
+        notesViewModel = NotesViewModel(noteUseCases)
+        noteEditViewModel = NoteEditViewModel(noteUseCases, savedStateHandle)
 
 //        coEvery {
 //            noteUseCases.addNote(note)

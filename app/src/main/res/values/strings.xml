@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name" translatable="false">Doer</string>
-    <string name="web_client_id" translatable="false">1035048113397-v1uvqk5kkgr86sltidojjv7bbba7bhn5.apps.googleusercontent.com</string>
     <string name="home">Home</string>
     <string name="note">Note</string>
     <string name="add">Add</string>
